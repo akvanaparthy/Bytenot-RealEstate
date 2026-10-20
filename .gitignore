@@ -4,3 +4,4 @@ dist/
 *.zip
 plugin/**/build/
 .DS_Store
+.playwright-mcp/
