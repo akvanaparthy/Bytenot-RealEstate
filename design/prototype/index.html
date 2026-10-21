@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lavenor Realty — Home with honor</title>
+<meta name="description" content="Lavenor Realty helps you find a home you'll feel lavish in and honored to own, in Hyderabad, Bangalore and beyond.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============ HEADER (sticky, frosted after scroll) ============ -->
+<header class="site-header" id="site-header" data-header>
+	<div class="container site-header__inner">
+		<a class="brand" href="#" aria-label="Lavenor Realty, home">
+			<span class="brand__name">Lavenor</span>
+			<span class="brand__sub">Realty</span>
+		</a>
+
+		<nav class="nav" aria-label="Primary">
+			<ul class="nav__list">
+				<li><a class="nav__link is-active" href="#" aria-current="page">Home</a></li>
+				<li><a class="nav__link" href="#about">About Us</a></li>
+				<li><a class="nav__link" href="properties.html">Properties</a></li>
+				<li><a class="nav__link" href="#contact">Contact Us</a></li>
+			</ul>
+		</nav>
+
+		<div class="site-header__right">
+			<div class="lang" data-lang>
+				<button class="lang__button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>
+					<span class="lang__label" data-lang-label>Eng</span>
+				</button>
+				<ul class="lang__menu" id="lang-menu" role="menu" hidden>
+					<li><button type="button" role="menuitemradio" data-lang-code="Eng" aria-checked="true">English</button></li>
+					<li><button type="button" role="menuitemradio" data-lang-code="हिं" aria-checked="false">हिन्दी</button></li>
+					<li><button type="button" role="menuitemradio" data-lang-code="తె" aria-checked="false">తెలుగు</button></li>
+					<li><button type="button" role="menuitemradio" data-lang-code="ಕ" aria-checked="false">ಕನ್ನಡ</button></li>
+				</ul>
+			</div>
+			<a class="btn btn--accent" href="#contact">Sign Up</a>
+			<button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer" data-drawer-open>
+				<span></span><span></span><span></span>
+			</button>
+		</div>
+	</div>
+</header>
+
+<!-- mobile drawer -->
+<div class="drawer" id="drawer" hidden data-drawer>
+	<div class="drawer__backdrop" data-drawer-close></div>
+	<div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+		<div class="drawer__head">
+			<span class="brand brand--dark"><span class="brand__name">Lavenor</span><span class="brand__sub">Realty</span></span>
+			<button class="drawer__close" type="button" aria-label="Close menu" data-drawer-close>
+				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+			</button>
+		</div>
+		<nav aria-label="Mobile">
+			<ul class="drawer__nav">
+				<li><a href="#" aria-current="page">Home</a></li>
+				<li><a href="#about">About Us</a></li>
+				<li><a href="properties.html">Properties</a></li>
+				<li><a href="#contact">Contact Us</a></li>
+			</ul>
+		</nav>
+		<a class="btn btn--accent drawer__cta" href="#contact">Sign Up</a>
+	</div>
+</div>
+
+<main id="main">
+
+<!-- ============ HERO (fills the viewport) ============ -->
+<section class="hero" aria-labelledby="hero-title">
+	<div class="hero__media" aria-hidden="true">
+		<img class="hero__bg" src="assets/hero.jpg" alt="" width="1800" height="1200" fetchpriority="high">
+		<div class="hero__shade"></div>
+	</div>
+
+	<div class="container hero__inner">
+		<div class="hero__content">
+			<ul class="tags" aria-label="Quick property type">
+				<li><button class="tag" type="button" data-type="apartment">Apartment</button></li>
+				<li><button class="tag" type="button" data-type="villa">Villa</button></li>
+				<li><button class="tag" type="button" data-type="plot">Plot</button></li>
+			</ul>
+
+			<div class="hero__row">
+				<h1 class="hero__title" id="hero-title">Home with Honor, <br>Wealth with Vision.</h1>
+				<p class="hero__lede">Lavenor Realty finds you a home you'll feel lavish in and honored to own, and investments that grow with you. Hyderabad, Bangalore and beyond.</p>
+			</div>
+		</div>
+
+		<div class="search-wrap">
+		<form class="search" action="properties.html" method="get" aria-labelledby="search-title" data-search novalidate>
+			<h2 class="search__title" id="search-title">Find your perfect home</h2>
+
+			<div class="search__fields">
+				<div class="field">
+					<label class="field__label" for="f-type">Looking for</label>
+					<span class="field__select">
+						<select class="field__input" id="f-type" name="type">
+							<option value="">Enter type</option>
+							<option value="apartment">Apartment</option>
+							<option value="villa">Villa</option>
+							<option value="plot">Plot</option>
+							<option value="commercial">Commercial</option>
+						</select>
+					</span>
+				</div>
+				<div class="field">
+					<label class="field__label" for="f-budget">Budget</label>
+					<span class="field__select">
+						<select class="field__input" id="f-budget" name="budget">
+							<option value="">Price range</option>
+							<option value="0-50l">Under ₹50 L</option>
+							<option value="50l-1cr">₹50 L – ₹1 Cr</option>
+							<option value="1cr-2cr">₹1 Cr – ₹2 Cr</option>
+							<option value="2cr-">Above ₹2 Cr</option>
+						</select>
+					</span>
+				</div>
+				<div class="field">
+					<label class="field__label" for="f-location">Locations</label>
+					<span class="field__select">
+						<select class="field__input" id="f-location" name="location">
+							<option value="">Location</option>
+							<option value="hyderabad">Hyderabad</option>
+							<option value="bangalore">Bangalore</option>
+							<option value="other">Other</option>
+						</select>
+					</span>
+				</div>
+				<div class="field">
+					<label class="field__label" for="f-bhk">Configuration</label>
+					<span class="field__select">
+						<select class="field__input" id="f-bhk" name="bhk">
+							<option value="">Any</option>
+							<option value="1">1 BHK</option>
+							<option value="2" selected>2 BHK</option>
+							<option value="3">3 BHK</option>
+							<option value="4">4 BHK+</option>
+						</select>
+					</span>
+				</div>
+			</div>
+
+			<div class="search__footer">
+				<fieldset class="filters">
+					<legend class="filters__label">Filter:</legend>
+					<label class="chip"><input type="radio" name="intent" value="buy" checked><span>Buy</span></label>
+					<label class="chip"><input type="radio" name="intent" value="rent"><span>Rent</span></label>
+					<label class="chip"><input type="radio" name="intent" value="new-launch"><span>New Launch</span></label>
+					<label class="chip"><input type="radio" name="intent" value="resale"><span>Resale</span></label>
+				</fieldset>
+				<button class="btn btn--dark" type="submit">Search Properties</button>
+			</div>
+		</form>
+		</div>
+	</div>
+
+	<div class="partners" aria-label="Our channel partners">
+		<div class="partners__inner">
+			<p class="partners__word" aria-hidden="true">Our</p>
+			<div class="marquee" data-marquee>
+				<div class="marquee__inner" data-marquee-inner>
+					<ul class="marquee__track">
+						<li class="partner partner--tall"><img src="assets/partners/aparna.png" alt="Aparna Constructions" width="423" height="271"></li>
+						<li class="partner partner--wide"><img src="assets/partners/jayabheri.png" alt="Jayabheri" width="324" height="35"></li>
+						<li class="partner"><img src="assets/partners/smr.png" alt="SMR Holdings" width="85" height="40"></li>
+						<li class="partner partner--tall"><img src="assets/partners/myhome.svg" alt="My Home Group" width="137" height="72"></li>
+						<li class="partner partner--tall"><img src="assets/partners/prestige.svg" alt="Prestige Group" width="48" height="51"></li>
+						<li class="partner partner--mark"><img src="assets/partners/brigade.png" alt="" width="53" height="54"><span>Brigade Group</span></li>
+						<li class="partner partner--wide"><img src="assets/partners/sobha.png" alt="Sobha" width="1032" height="237"></li>
+						<li class="partner partner--tall"><img src="assets/partners/rajapushpa.png" alt="Rajapushpa Properties" width="689" height="495"></li>
+						<li class="partner partner--tall"><img src="assets/partners/ramky.svg" alt="Ramky Estates" width="154" height="90"></li>
+					</ul>
+					<ul class="marquee__track" aria-hidden="true">
+						<li class="partner partner--tall"><img src="assets/partners/aparna.png" alt="" width="423" height="271"></li>
+						<li class="partner partner--wide"><img src="assets/partners/jayabheri.png" alt="" width="324" height="35"></li>
+						<li class="partner"><img src="assets/partners/smr.png" alt="" width="85" height="40"></li>
+						<li class="partner partner--tall"><img src="assets/partners/myhome.svg" alt="" width="137" height="72"></li>
+						<li class="partner partner--tall"><img src="assets/partners/prestige.svg" alt="" width="48" height="51"></li>
+						<li class="partner partner--mark"><img src="assets/partners/brigade.png" alt="" width="53" height="54"><span>Brigade Group</span></li>
+						<li class="partner partner--wide"><img src="assets/partners/sobha.png" alt="" width="1032" height="237"></li>
+						<li class="partner partner--tall"><img src="assets/partners/rajapushpa.png" alt="" width="689" height="495"></li>
+						<li class="partner partner--tall"><img src="assets/partners/ramky.svg" alt="" width="154" height="90"></li>
+					</ul>
+				</div>
+			</div>
+			<p class="partners__word" aria-hidden="true">Partners</p>
+		</div>
+		</div>
+	</div>
+</section>
+
+<!-- ============ INTRO / FEATURED ============ -->
+<section class="intro" id="properties" aria-labelledby="intro-title">
+	<div class="container">
+		<div class="intro__head">
+			<h2 class="intro__title" id="intro-title">A home you'll feel lavish in, <br>and honored to own.</h2>
+			<button class="video" type="button" data-video-open aria-haspopup="dialog">
+				<span class="video__thumb">
+					<img src="assets/video-thumb.jpg" alt="" width="136" height="78" loading="lazy">
+					<span class="video__play" aria-hidden="true"></span>
+				</span>
+				<span class="video__caption">Every listing is hand-picked for quality, location and long-term value.</span>
+			</button>
+		</div>
+
+		<div class="showcase" data-showcase aria-roledescription="carousel" aria-label="Featured properties">
+			<figure class="showcase__hero">
+				<img class="showcase__img" data-main-img src="assets/house-large.jpg" alt="" width="900" height="660">
+				<ul class="thumbs" data-thumbs aria-label="Photos of this property"></ul>
+			</figure>
+
+			<div class="showcase__card" aria-live="polite">
+				<h3 class="showcase__card-title" data-title></h3>
+				<p data-blurb></p>
+				<a class="btn btn--outline" data-details-link href="#">Details</a>
+			</div>
+
+			<div class="showcase__aside">
+				<img class="showcase__aside-img" data-aside-img src="assets/house-small.jpg" alt="" width="900" height="660" loading="lazy">
+				<p class="showcase__price"><span class="showcase__price-label">Pricing starts at</span> <span data-price></span></p>
+				<a class="btn btn--dark" href="properties.html">Explore Properties
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+				</a>
+			</div>
+
+			<p class="showcase__note" data-note></p>
+
+			<div class="showcase__nav">
+				<button class="arrow" type="button" aria-label="Previous property" data-prev>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+				</button>
+				<button class="arrow is-active" type="button" aria-label="Next property" data-next>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="testimonials" id="testimonials" aria-labelledby="testimonials-title">
+	<div class="container testimonials__head">
+		<div class="testimonials__intro">
+			<p class="eyebrow">Testimonials</p>
+			<h2 class="testimonials__title" id="testimonials-title">What our clients are saying</h2>
+			<p class="testimonials__lede">Honest advice, clear paperwork and a home that feels right. Here is what buyers and investors across Hyderabad and Bangalore say about working with Lavenor.</p>
+		</div>
+		<div class="testimonials__nav" data-t-nav>
+			<button class="arrow" type="button" aria-label="Previous testimonial" data-t-prev>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+			</button>
+			<button class="arrow is-active" type="button" aria-label="Next testimonial" data-t-next>
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+			</button>
+		</div>
+	</div>
+
+	<ul class="t-track" data-t-track aria-label="Client testimonials" tabindex="0">
+		<li class="t-card">
+			<img class="t-card__photo" src="assets/t1.jpg" alt="" width="600" height="700" loading="lazy">
+			<div class="t-card__body">
+				<span class="t-card__mark" aria-hidden="true">&ldquo;</span>
+				<blockquote class="t-card__quote"><p>Lavenor kept us informed at every step, from the first site visit to registration. Their calm, honest approach made a stressful decision feel easy.</p></blockquote>
+				<p class="t-card__name">Priya &amp; Arjun Reddy</p>
+				<p class="t-card__role">Bought a 3 BHK in Gachibowli, Hyderabad</p>
+			</div>
+		</li>
+		<li class="t-card">
+			<img class="t-card__photo" src="assets/t2.jpg" alt="" width="600" height="700" loading="lazy">
+			<div class="t-card__body">
+				<span class="t-card__mark" aria-hidden="true">&ldquo;</span>
+				<blockquote class="t-card__quote"><p>As a first-time buyer I had a hundred questions. The team answered every one patiently and negotiated a better price than I expected.</p></blockquote>
+				<p class="t-card__name">Sneha Iyer</p>
+				<p class="t-card__role">Bought a 2 BHK in Whitefield, Bangalore</p>
+			</div>
+		</li>
+		<li class="t-card">
+			<img class="t-card__photo" src="assets/t3.jpg" alt="" width="600" height="700" loading="lazy">
+			<div class="t-card__body">
+				<span class="t-card__mark" aria-hidden="true">&ldquo;</span>
+				<blockquote class="t-card__quote"><p>I wanted a long-term investment, not just a house. Lavenor walked me through the approvals, the numbers and the risks, and never once pushed.</p></blockquote>
+				<p class="t-card__name">Karthik Menon</p>
+				<p class="t-card__role">Invested in a villa plot at Kokapet</p>
+			</div>
+		</li>
+		<li class="t-card">
+			<img class="t-card__photo" src="assets/t4.jpg" alt="" width="600" height="700" loading="lazy">
+			<div class="t-card__body">
+				<span class="t-card__mark" aria-hidden="true">&ldquo;</span>
+				<blockquote class="t-card__quote"><p>We bought our home from Pune without a single wasted trip. Video walkthroughs, paperwork handled, keys ready the day we landed.</p></blockquote>
+				<p class="t-card__name">Rahul &amp; Meera Sharma</p>
+				<p class="t-card__role">Relocated to Hyderabad, bought in Kondapur</p>
+			</div>
+		</li>
+	</ul>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer" id="contact">
+	<div class="site-footer__bg" aria-hidden="true">
+		<img src="assets/footer.jpg" alt="" width="2000" height="2000" loading="lazy">
+	</div>
+
+	<div class="container site-footer__cta">
+		<h2 class="site-footer__cta-title">Ready to find your home?</h2>
+		<p class="site-footer__cta-lede">Tell us what you're looking for. A Lavenor advisor will shortlist homes, arrange visits and handle the paperwork.</p>
+		<div class="site-footer__cta-actions">
+			<a class="btn btn--light" href="properties.html">Get started <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+			<a class="site-footer__cta-link" href="mailto:hello@lavenorrealty.com">Contact us</a>
+		</div>
+	</div>
+
+	<div class="site-footer__panel">
+	<div class="container">
+	<div class="site-footer__top">
+		<nav class="site-footer__col" aria-label="Footer">
+			<ul class="site-footer__links">
+				<li><a href="index.html" aria-current="page">Home</a></li>
+				<li><a href="index.html#about">About Us</a></li>
+				<li><a href="properties.html">Properties</a></li>
+				<li><a href="#contact">Contact Us</a></li>
+			</ul>
+		</nav>
+
+		<div class="site-footer__contact">
+			<a class="site-footer__phone" href="tel:+919876543210">+91 98765 43210</a>
+			<a class="site-footer__email" href="mailto:hello@lavenorrealty.com">hello@lavenorrealty.com</a>
+			<ul class="social" aria-label="Lavenor on social media">
+				<li><a href="#" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></li>
+				<li><a href="#" aria-label="X"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg></a></li>
+				<li><a href="#" aria-label="Facebook"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.07C24 5.45 18.63.07 12 .07S0 5.45 0 12.07c0 5.99 4.39 10.95 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.01 1.79-4.67 4.53-4.67 1.31 0 2.69.23 2.69.23v2.96h-1.51c-1.49 0-1.96.92-1.96 1.87v2.25h3.33l-.53 3.47h-2.8v8.38C19.61 23.02 24 18.06 24 12.07z"/></svg></a></li>
+				<li><a href="#" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"/></svg></a></li>
+			</ul>
+		</div>
+
+		<nav class="site-footer__col site-footer__col--right" aria-label="Property types">
+			<ul class="site-footer__links">
+				<li><a href="properties.html?type=apartment">Apartments</a></li>
+				<li><a href="properties.html?type=villa">Villas</a></li>
+				<li><a href="properties.html?type=plot">Plots</a></li>
+				<li><a href="properties.html?type=commercial">Commercial</a></li>
+			</ul>
+		</nav>
+	</div>
+
+	<div class="site-footer__legal">
+		<div class="site-footer__cell">
+			<p class="site-footer__label">All rights reserved</p>
+			<p class="site-footer__meta">Lavenor Realty 2026</p>
+		</div>
+		<div class="site-footer__cell site-footer__cell--center">
+			<p class="site-footer__label">Address location</p>
+			<p class="site-footer__meta">Office 402, Plot 12, Road No. 36, Jubilee Hills, Hyderabad 500033</p>
+			<p class="site-footer__meta">TG RERA No. A02400001234</p>
+		</div>
+		<div class="site-footer__cell site-footer__cell--right">
+			<p class="site-footer__label"><a href="#">Terms &amp; Conditions</a></p>
+			<p class="site-footer__meta site-footer__meta--plain"><a href="#">Privacy policy</a></p>
+		</div>
+	</div>
+	</div>
+	</div>
+
+	<p class="site-footer__wordmark" aria-hidden="true">Lavenor</p>
+</footer>
+
+<!-- video modal -->
+<dialog class="modal" id="video-modal" data-video-modal aria-label="Property tour video">
+	<button class="modal__close" type="button" aria-label="Close video" data-video-close>
+		<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+	</button>
+	<div class="modal__frame">
+		<div class="modal__placeholder">
+			<span class="video__play video__play--lg" aria-hidden="true"></span>
+			<p>Property tour video placeholder. The theme will embed a YouTube or self-hosted video here.</p>
+		</div>
+	</div>
+</dialog>
+
+<!-- toast for search preview -->
+<div class="toast" role="status" aria-live="polite" data-toast hidden></div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
