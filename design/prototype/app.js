@@ -545,13 +545,15 @@
 	}
 
 	/* ------------------------------------------------------------------
-	 * Property page. One listing (?id=) plus its detail record fills the
-	 * page; the gallery lightbox, chapter nav, floor-plan tabs, map, EMI,
-	 * enquiry form and compact bar are small independent behaviours.
+	 * Property page. One listing (?id=) plus its detail record fills a
+	 * brochure-style page: opening photo, ledgers, three chapters, a
+	 * filmstrip, the plan as a drawing, an editable EMI sentence, a radial
+	 * distance plot, papers and a visit form.
 	 * → Interactivity API stores in the theme, data from the plugin.
 	 * ------------------------------------------------------------------ */
 	const propertyRoot = $('[data-property]');
 	if (propertyRoot) {
+		const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 		const id = Number(new URLSearchParams(location.search).get('id')) || 1;
 		const p = LISTINGS.find((l) => l.id === id) || LISTINGS[0];
 		const rent = p.intent === 'rent';
@@ -563,37 +565,40 @@
 		const cityCode = { hyderabad: 'HYD', bangalore: 'BLR' };
 		const landmarksByCity = {
 			hyderabad: [
-				{ name: 'Raidurg Metro', type: 'metro', d: '2.1 km', t: '6 min' },
-				{ name: 'Financial District', type: 'work', d: '4.5 km', t: '10 min' },
-				{ name: 'Oakridge International School', type: 'school', d: '3.2 km', t: '8 min' },
-				{ name: 'Continental Hospitals', type: 'hospital', d: '3.8 km', t: '9 min' },
-				{ name: 'Inorbit Mall', type: 'shop', d: '5.6 km', t: '14 min' },
-				{ name: 'RGIA Airport', type: 'air', d: '31 km', t: '40 min' },
+				{ name: 'Raidurg Metro', type: 'Metro', km: 2.1, t: '6 min' },
+				{ name: 'Financial District', type: 'Work', km: 4.5, t: '10 min' },
+				{ name: 'Oakridge International School', type: 'School', km: 3.2, t: '8 min' },
+				{ name: 'Continental Hospitals', type: 'Hospital', km: 3.8, t: '9 min' },
+				{ name: 'Inorbit Mall', type: 'Shopping', km: 5.6, t: '14 min' },
+				{ name: 'RGIA Airport', type: 'Airport', km: 31, t: '40 min' },
 			],
 			bangalore: [
-				{ name: 'Nearest Metro station', type: 'metro', d: '1.8 km', t: '5 min' },
-				{ name: 'Tech park cluster', type: 'work', d: '3.9 km', t: '12 min' },
-				{ name: 'International school', type: 'school', d: '2.7 km', t: '8 min' },
-				{ name: 'Multi-speciality hospital', type: 'hospital', d: '3.1 km', t: '9 min' },
-				{ name: 'Neighbourhood mall', type: 'shop', d: '4.4 km', t: '13 min' },
-				{ name: 'Kempegowda Airport', type: 'air', d: '38 km', t: '55 min' },
+				{ name: 'Nearest Metro station', type: 'Metro', km: 1.8, t: '5 min' },
+				{ name: 'Tech park cluster', type: 'Work', km: 3.9, t: '12 min' },
+				{ name: 'International school', type: 'School', km: 2.7, t: '8 min' },
+				{ name: 'Multi-speciality hospital', type: 'Hospital', km: 3.1, t: '9 min' },
+				{ name: 'Neighbourhood mall', type: 'Shopping', km: 4.4, t: '13 min' },
+				{ name: 'Kempegowda Airport', type: 'Airport', km: 38, t: '55 min' },
 			],
 		};
 		const DETAILS = {
 			1: {
 				ref: 'LAV-HYD-0231', updated: '3 days ago',
 				photos: ['assets/house-large.jpg', 'assets/p6.jpg', 'assets/p2.jpg', 'assets/p8.jpg', 'assets/house-small.jpg', 'assets/p4.jpg', 'assets/p9.jpg', 'assets/p5.jpg'],
-				highlights: ['Private 1,100 sq ft lawn', 'Lake-facing master bedroom', 'East facing, Vastu compliant', 'Gated community of 42 villas', '10 min to the Financial District'],
+				chapters: [
+					{ title: 'The lawn', photo: 0, body: 'Eleven hundred square feet of lawn runs from the porch to the community green, with the lake behind it. The house faces east, so mornings arrive in the living room and evenings settle on the terrace above.', cap: 'Fig. 1 · East elevation and private lawn, 1,100 sq ft' },
+					{ title: 'The light', photo: 2, body: 'A double-height living room, floor-to-ceiling glazing on the east wall, and a courtyard that pulls morning sun through to the dining table. Italian marble below, engineered oak above, teak at every door and window.', cap: 'Fig. 2 · Living room, looking toward the courtyard' },
+					{ title: 'Upstairs', photo: 3, body: 'Three bedrooms and a family lounge. The master suite takes the lake view with a walk-in wardrobe and a balcony, and the 420 sq ft terrace is laid out for evenings with people over.', cap: 'Fig. 3 · Master bedroom and terrace, first floor' },
+				],
 				description: [
-					'Lakeview Villa sits at the quiet end of a 42-home gated community in Gachibowli, with its lawn opening onto the community green and the lake beyond. The house is built around light: a double-height living room, floor-to-ceiling glazing on the east and a courtyard that pulls morning sun into the dining space.',
-					'Downstairs holds the living and dining rooms, a modular kitchen with a separate utility, a guest bedroom and a two-car porch. Upstairs are three bedrooms including a master suite with a walk-in wardrobe and a lake-facing balcony, a family lounge and a 420 sq ft terrace laid out for evening gatherings.',
-					'Finishes are Italian marble downstairs, engineered oak upstairs, teak doors and windows, and concealed copper plumbing. The home is brand new, never occupied, with occupancy certificate in hand and immediate possession.',
+					'Lakeview Villa sits at the quiet end of a 42-home gated community in Gachibowli. Downstairs holds the living and dining rooms, a modular kitchen with a separate utility, a guest bedroom and a two-car porch. Upstairs are three bedrooms, a family lounge and the terrace.',
+					'The home is brand new and never occupied, with the occupancy certificate in hand and immediate possession.',
 				],
 				carpet: 3650, builtup: 4015, superBuiltup: 4560,
 				specs: { Facing: 'East', Floors: 'G+1', 'Built in': '2025, never occupied', Parking: '2 covered + 1 open', Furnishing: 'Semi-furnished, modular kitchen', Water: 'Municipal + borewell', 'Power backup': '100% DG backup', Ownership: 'Freehold, single owner' },
-				amenities: ['Clubhouse', 'Swimming pool', 'Gym', "Children's play area", '24x7 security', 'Landscaped gardens', 'Jogging track', 'Indoor games', 'Rainwater harvesting', 'Solar water heating', 'Visitor parking', 'EV charging'],
+				amenities: ['clubhouse', 'swimming pool', 'gym', "children's play area", '24x7 security', 'landscaped gardens', 'jogging track', 'indoor games', 'rainwater harvesting', 'solar water heating', 'visitor parking', 'EV charging'],
 				rera: 'P02400001234', reraState: 'Telangana RERA', reraUrl: 'https://rera.telangana.gov.in',
-				approvals: ['Occupancy certificate received', 'HMDA approved layout', 'Clear title, EC verified', 'Vastu compliant'],
+				approvals: ['Occupancy certificate received', 'HMDA approved layout', 'Clear title, EC verified for 30 years', 'Vastu compliant'],
 				banks: ['SBI', 'HDFC', 'ICICI', 'Axis'],
 				advisor: { name: 'Priya Menon', meta: 'Senior advisor, Hyderabad West · RERA agent A02400001234', photo: 'assets/t2.jpg' },
 				lat: 17.4401, lng: 78.3489,
@@ -603,25 +608,29 @@
 			const seed = p.id;
 			const photos = [p.img, ...pool.filter((x) => x !== p.img).slice(seed % 5, seed % 5 + 5)];
 			const typeWord = isPlot ? 'plot' : p.type === 'villa' ? 'villa' : 'apartment';
+			const city = cityLabel[p.city];
 			return {
 				ref: `LAV-${cityCode[p.city]}-0${String(200 + seed * 7).padStart(3, '0')}`, updated: `${1 + (seed % 6)} days ago`,
 				photos,
-				highlights: isPlot
-					? ['Clear title, ready to register', 'Gated layout with 40 ft roads', 'Vastu-friendly orientation', 'Approved layout, all amenities']
-					: [`${p.bhk} BHK, ${p.baths} bath ${typeWord}`, `${p.area}, well connected`, p.status, 'Verified documents', p.type === 'villa' ? 'Private garden' : 'Covered parking'],
-				description: isPlot
-					? [`A ${fmt(p.sqft)} sq yd plot in an approved, gated layout in ${p.area}. Roads, drainage, water and power lines are in place, and the layout has clear title with encumbrance verified for the last 30 years.`,
-						`Build when you are ready: the layout allows G+2 construction, and the area is seeing steady appreciation on the back of new road and metro links.`]
-					: [`${p.title} is a ${p.bhk} BHK ${typeWord} in ${p.area}, ${cityLabel[p.city]}, with ${fmt(p.sqft)} sq ft of carpet area across well-proportioned rooms, good cross ventilation and a ${p.type === 'villa' ? 'private garden' : 'generous balcony'}.`,
-						`The home comes with ${p.baths} bathrooms, a modular kitchen with utility, covered parking and access to the community's clubhouse, pool and gym. Schools, hospitals and daily shopping are all within a short drive.`,
-						`Documents are verified by Lavenor: title, approvals and tax receipts are available on request, and possession is as listed.`],
+				chapters: isPlot
+					? [
+						{ title: 'The land', photo: 0, body: `A ${fmt(p.sqft)} sq yd plot in an approved, gated layout in ${p.area}. Roads, drainage, water and power lines are already in, and the layout holds clear title with encumbrance verified for 30 years.`, cap: `Fig. 1 · Plot frontage, ${p.area}` },
+						{ title: 'The layout', photo: 1, body: 'Forty-foot internal roads, a boundary wall, street lighting and a small park at the centre. The layout allows ground plus two floors when you are ready to build.', cap: 'Fig. 2 · Internal road and park' },
+						{ title: 'The neighbourhood', photo: 2, body: `${p.area} is seeing steady appreciation on the back of new road and metro links, with schools and hospitals already within a short drive.`, cap: `Fig. 3 · ${p.area}, looking toward the main road` },
+					]
+					: [
+						{ title: 'The home', photo: 0, body: `${p.title} is a ${p.bhk} BHK ${typeWord} in ${p.area}, ${city}, with ${fmt(p.sqft)} sq ft of carpet area across well-proportioned rooms and good cross ventilation.`, cap: `Fig. 1 · ${p.title}, ${p.area}` },
+						{ title: 'Inside', photo: 1, body: `${p.baths} bathrooms, a modular kitchen with a separate utility and a ${p.type === 'villa' ? 'private garden' : 'generous balcony'}. Finishes are vitrified tile, laminated wardrobes and branded fittings throughout.`, cap: 'Fig. 2 · Living and dining' },
+						{ title: 'Around it', photo: 2, body: `The community has a clubhouse, pool and gym, and ${p.area} puts schools, hospitals and daily shopping within a short drive.`, cap: `Fig. 3 · Community and ${p.area}` },
+					],
+				description: [`Documents are verified by Lavenor: title, approvals and tax receipts are available on request, and possession is as listed: ${p.status.toLowerCase()}.`],
 				carpet: p.sqft, builtup: Math.round(p.sqft * 1.1 / 5) * 5, superBuiltup: Math.round(p.sqft * 1.25 / 5) * 5,
 				specs: isPlot
 					? { Facing: ['East', 'North', 'West'][seed % 3], 'Plot size': `${fmt(p.sqft)} sq yd`, Approval: 'HMDA / DTCP', Roads: '40 ft internal', 'Boundary wall': 'Yes', Ownership: 'Freehold' }
 					: { Facing: ['East', 'North', 'West', 'South-east'][seed % 4], Floors: p.type === 'villa' ? 'G+1' : `${3 + (seed % 12)} of ${12 + (seed % 10)}`, 'Built in': `${2019 + (seed % 7)}`, Parking: p.bhk >= 3 ? '2 covered' : '1 covered', Furnishing: ['Unfurnished', 'Semi-furnished', 'Fully furnished'][seed % 3], Water: 'Municipal + borewell', 'Power backup': 'Full backup', Ownership: 'Freehold' },
 				amenities: isPlot
-					? ['24x7 security', 'Landscaped gardens', 'Jogging track', 'Rainwater harvesting', 'Street lighting', 'Underground drainage', "Children's play area", 'Clubhouse']
-					: ['Clubhouse', 'Swimming pool', 'Gym', "Children's play area", '24x7 security', 'Landscaped gardens', 'Jogging track', 'Indoor games', 'Rainwater harvesting', 'Visitor parking', 'Lift', 'Power backup'].slice(0, 8 + (seed % 5)),
+					? ['24x7 security', 'landscaped gardens', 'jogging track', 'rainwater harvesting', 'street lighting', 'underground drainage', "children's play area", 'clubhouse']
+					: ['clubhouse', 'swimming pool', 'gym', "children's play area", '24x7 security', 'landscaped gardens', 'jogging track', 'indoor games', 'rainwater harvesting', 'visitor parking', 'lift', 'power backup'].slice(0, 8 + (seed % 5)),
 				rera: p.city === 'hyderabad' ? `P0240000${1000 + seed * 37}` : `PRM/KA/RERA/1251/446/PR/${100000 + seed * 911}`,
 				reraState: p.city === 'hyderabad' ? 'Telangana RERA' : 'Karnataka RERA',
 				reraUrl: p.city === 'hyderabad' ? 'https://rera.telangana.gov.in' : 'https://rera.karnataka.gov.in',
@@ -634,37 +643,95 @@
 			};
 		};
 		const d = DETAILS[p.id] || generic();
+		const city = cityLabel[p.city];
 		const psf = Math.round(p.price / p.sqft);
+		const first = d.advisor.name.split(' ')[0];
 		const waText = encodeURIComponent(`Hi, I'm interested in ${p.title} (${d.ref}) in ${p.area}. Can we arrange a visit?`);
 
 		/* --- text fields --- */
 		document.title = `${p.title}, ${p.area} — Lavenor Realty`;
 		setAll('[data-title]', p.title);
-		setAll('[data-place]', `${p.area}, ${cityLabel[p.city]}`);
+		setAll('[data-place]', `${p.area}, ${city}`);
+		setAll('[data-area]', p.area);
 		setAll('[data-price]', rupees(p.price, rent));
 		setAll('[data-psf]', rent ? `${fmt(p.sqft)} ${unit} · deposit 2 months` : `₹${fmt(psf)} per ${unit}`);
-		setAll('[data-price-note]', rent ? 'Maintenance extra' : /possession|launch/i.test(p.status) ? 'Plus GST, as applicable' : 'All inclusive, no GST');
+		setAll('[data-psf-carpet]', rent ? 'per month, maintenance extra' : `₹${fmt(psf)} per ${isPlot ? 'sq yd' : 'carpet sq ft'}`);
 		setAll('[data-status]', p.status);
 		setAll('[data-ref]', d.ref);
 		setAll('[data-updated]', d.updated);
-		const crumbCity = $('[data-crumb-city]'); crumbCity.textContent = cityLabel[p.city]; crumbCity.href = `properties.html?location=${p.city}`;
-		$('[data-crumb-title]').textContent = p.title;
-		const similarLink = $('[data-similar-link]'); similarLink.textContent = `See all in ${cityLabel[p.city]}`; similarLink.href = `properties.html?location=${p.city}`;
+		setAll('[data-advisor-first]', first);
+		setAll('[data-call-label]', `Call ${first}`);
+		setAll('[data-oneline]', isPlot
+			? `${fmt(p.sqft)} sq yd plot · ${d.specs.Facing} facing · ${d.specs.Approval}`
+			: `${p.bhk} BHK ${p.type} · ${fmt(p.sqft)} sq ft carpet · ${d.specs.Facing} facing`);
+		const crumbCity = $('[data-crumb-city]'); crumbCity.textContent = city; crumbCity.href = `properties.html?location=${p.city}`;
+		$('[data-crumb-area]').textContent = p.area;
+		const similarLink = $('[data-similar-link]'); similarLink.firstChild.textContent = `See all in ${city} `; similarLink.href = `properties.html?location=${p.city}`;
 		$$('[data-wa]').forEach((a) => { a.href = `https://wa.me/919876543210?text=${waText}`; });
-		$('[data-pill-img]').src = d.photos[2] || d.photos[0];
-
-		/* --- facts strip --- */
-		const facts = {
-			beds: p.bhk ? `${p.bhk} BHK` : 'Plot', baths: p.baths ? `${p.baths} Baths` : 'Gated layout',
-			area: `${fmt(p.sqft)} ${unit}`, 'area-label': isPlot ? 'Plot area' : 'Carpet area',
-			facing: `${d.specs.Facing} facing`, floors: d.specs.Floors || d.specs.Approval, parking: (d.specs.Parking || d.specs.Roads).split(' +')[0], possession: p.status,
-		};
-		Object.entries(facts).forEach(([k, v]) => { const el = $(`[data-fact="${k}"]`); if (el) el.textContent = v; });
-		if (isPlot) { $('[data-fact="floors"]').nextElementSibling.textContent = 'Approval'; $('[data-fact="parking"]').nextElementSibling.textContent = 'Roads'; }
-
-		/* --- gallery tiles + lightbox --- */
-		$$('[data-open-photo]').forEach((tile) => { const img = $('img', tile); if (img) img.src = d.photos[+tile.dataset.openPhoto] || d.photos[0]; });
+		$('[data-ph-img]').src = d.photos[0];
 		$('[data-photo-count]').textContent = d.photos.length;
+
+		/* --- opening: the photo eases back into its frame as you scroll --- */
+		const ph = $('[data-ph]');
+		const phImg = $('[data-ph-img]');
+		const zoom = () => {
+			const k = Math.min(1, Math.max(0, scrollY / Math.max(1, ph.offsetHeight)));
+			phImg.style.setProperty('--ph-zoom', reduced ? 1 : (1.08 - 0.08 * k).toFixed(4));
+		};
+
+		/* --- at a glance --- */
+		const glance = isPlot
+			? [['Plot area', `${fmt(p.sqft)}<small>sq yd</small>`], ['Approval', d.specs.Approval], ['Facing', d.specs.Facing], ['Roads', d.specs.Roads], ['Boundary wall', d.specs['Boundary wall']], ['Status', p.status]]
+			: [['Configuration', `${p.bhk} BHK`], [isPlot ? 'Plot area' : 'Carpet area', `${fmt(p.sqft)}<small>sq ft</small>`], ['Bathrooms', String(p.baths)], ['Facing', d.specs.Facing], ['Floors', d.specs.Floors], ['Possession', p.status]];
+		$('[data-glance]').innerHTML = glance.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+
+		/* --- chapters --- */
+		const chapterTpl = $('#chapter-template');
+		const chapterList = $('[data-chapters-list]');
+		d.chapters.forEach((c, i) => {
+			const node = chapterTpl.content.cloneNode(true);
+			const art = $('.chapter', node);
+			if (i % 2) art.classList.add('chapter--flip');
+			const img = $('.chapter__img', node); img.src = d.photos[c.photo] || d.photos[0]; img.alt = c.cap;
+			if (i === 0) img.loading = 'eager';
+			$('.chapter__open', node).dataset.openPhoto = c.photo;
+			$('.chapter__num', node).textContent = `0${i + 1}`;
+			$('.chapter__title', node).textContent = c.title;
+			$('.chapter__body', node).textContent = c.body;
+			$('.chapter__cap', node).textContent = c.cap;
+			chapterList.append(node);
+		});
+		const chapterEls = $$('[data-chapter]');
+		if (reduced || !('IntersectionObserver' in window)) chapterEls.forEach((c) => c.classList.add('is-in'));
+		else {
+			const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -18% 0px' });
+			chapterEls.forEach((c) => io.observe(c));
+		}
+
+		/* --- filmstrip: drag to scroll, counter follows, click opens the lightbox --- */
+		const track = $('[data-strip-track]');
+		$('[data-strip-total]').textContent = String(d.photos.length).padStart(2, '0');
+		track.innerHTML = d.photos.map((src, i) => `<li><button type="button" data-open-photo="${i}" aria-label="Open photo ${i + 1}"><img src="${src}" alt="" loading="lazy"></button></li>`).join('');
+		const stripIndex = $('[data-strip-index]');
+		track.addEventListener('scroll', () => {
+			const li = track.firstElementChild;
+			const step = li.offsetWidth + 12;
+			stripIndex.textContent = String(Math.min(d.photos.length, Math.round(track.scrollLeft / step) + 1)).padStart(2, '0');
+		}, { passive: true });
+		let drag = null;
+		track.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') { drag = { x: e.clientX, left: track.scrollLeft, moved: false }; track.setPointerCapture(e.pointerId); } });
+		track.addEventListener('pointermove', (e) => {
+			if (!drag) return;
+			const dx = e.clientX - drag.x;
+			if (Math.abs(dx) > 6) { drag.moved = true; track.classList.add('is-dragging'); }
+			if (drag.moved) track.scrollLeft = drag.left - dx;
+		});
+		const endDrag = () => { if (drag?.moved) setTimeout(() => track.classList.remove('is-dragging')); drag = null; };
+		track.addEventListener('pointerup', endDrag);
+		track.addEventListener('pointercancel', endDrag);
+		track.addEventListener('click', (e) => { if (track.classList.contains('is-dragging')) e.stopPropagation(); }, true);
+
+		/* --- lightbox --- */
 		const lb = $('[data-lightbox]');
 		if (lb && typeof lb.showModal === 'function') {
 			const img = $('[data-lb-img]', lb);
@@ -672,15 +739,6 @@
 			const idxEl = $('[data-lb-index]', lb);
 			$('[data-lb-total]', lb).textContent = d.photos.length;
 			let i = 0;
-			d.photos.forEach((src, k) => {
-				const li = document.createElement('li');
-				const b = document.createElement('button');
-				b.type = 'button'; b.setAttribute('aria-label', `Photo ${k + 1}`);
-				b.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
-				b.addEventListener('click', () => show(k));
-				li.append(b); strip.append(li);
-			});
-			const thumbs = $$('button', strip);
 			const show = (k) => {
 				i = (k + d.photos.length) % d.photos.length;
 				img.src = d.photos[i];
@@ -690,78 +748,53 @@
 				thumbs.forEach((t, k2) => t.classList.toggle('is-active', k2 === i));
 				thumbs[i].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
 			};
+			d.photos.forEach((src, k) => {
+				const li = document.createElement('li');
+				const b = document.createElement('button');
+				b.type = 'button'; b.setAttribute('aria-label', `Photo ${k + 1}`);
+				b.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+				b.addEventListener('click', () => show(k));
+				li.append(b); strip.append(li);
+			});
+			const thumbs = $$('button', strip);
 			const open = (k) => { show(k); lb.showModal(); document.body.classList.add('is-locked'); };
-			$$('[data-open-photo]').forEach((t) => t.addEventListener('click', () => open(+t.dataset.openPhoto)));
+			document.addEventListener('click', (e) => { const t = e.target.closest('[data-open-photo]'); if (t) open(+t.dataset.openPhoto); });
 			$('[data-lb-close]', lb).addEventListener('click', () => lb.close());
 			$('[data-lb-prev]', lb).addEventListener('click', () => show(i - 1));
 			$('[data-lb-next]', lb).addEventListener('click', () => show(i + 1));
 			lb.addEventListener('close', () => document.body.classList.remove('is-locked'));
 			lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
-			lb.addEventListener('keydown', (e) => {
-				if (e.key === 'ArrowRight') show(i + 1);
-				else if (e.key === 'ArrowLeft') show(i - 1);
-			});
-			// swipe
+			lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') show(i + 1); else if (e.key === 'ArrowLeft') show(i - 1); });
 			let x0 = null;
 			const stage = $('[data-lb-stage]', lb);
 			stage.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
 			stage.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) show(e.clientX < x0 ? i + 1 : i - 1); x0 = null; });
 		}
 
-		/* --- overview --- */
-		$('[data-highlights]').innerHTML = d.highlights.map((h) => `<li>${h}</li>`).join('');
-		const prose = $('[data-description]');
-		prose.innerHTML = d.description.map((t) => `<p>${t}</p>`).join('');
-		const more = $('[data-read-more]');
-		if (d.description.join(' ').length > 420) {
-			prose.classList.add('is-clamped');
-			more.addEventListener('click', () => {
-				const open = prose.classList.toggle('is-clamped');
-				more.setAttribute('aria-expanded', String(!open));
-				more.textContent = open ? 'Read the full description' : 'Show less';
-			});
-		} else more.hidden = true;
-		const areas = { carpet: fmt(d.carpet), builtup: fmt(d.builtup), super: fmt(d.superBuiltup), loading: Math.round((d.superBuiltup / d.carpet - 1) * 100), psf: `₹${fmt(p.price / d.carpet)}` };
-		Object.entries(areas).forEach(([k, v]) => { $(`[data-area="${k}"]`).textContent = v; });
-		if (isPlot || rent) $('.area-card').hidden = true;
+		/* --- specification --- */
 		$('[data-specs]').innerHTML = Object.entries(d.specs).map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+		const am = d.amenities;
+		$('[data-amenities-text]').textContent = `${am.slice(0, -1).join(', ')} and ${am[am.length - 1]}.`.replace(/^./, (c) => c.toUpperCase());
+		$('[data-description]').innerHTML = d.description.map((t) => `<p>${t}</p>`).join('');
 
-		/* --- amenities --- */
-		const icon = (paths, extra = '') => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${extra}>${paths}</svg>`;
-		const amenityIcon = {
-			'Clubhouse': icon('<path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/>'),
-			'Swimming pool': icon('<path d="M3 16c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0M3 20c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0M8 13V5a2 2 0 0 1 4 0M14 13V5a2 2 0 0 1 4 0"/>'),
-			'Gym': icon('<path d="M4 10v4M20 10v4M7 8v8M17 8v8M7 12h10"/>'),
-			"Children's play area": icon('<circle cx="12" cy="6" r="2.5"/><path d="M6 21l3-9h6l3 9M9 12l3-3 3 3"/>'),
-			'24x7 security': icon('<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/>'),
-			'Landscaped gardens': icon('<path d="M12 21v-8M12 13c-4 0-6-3-6-7 4 0 6 3 6 7zM12 13c4 0 6-3 6-7-4 0-6 3-6 7z"/>'),
-			'Jogging track': icon('<circle cx="14" cy="5" r="2"/><path d="M4 20l5-4 2-5 3 2 3-3M9 16l-1 4M13 13l3 7"/>'),
-			'Indoor games': icon('<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/>'),
-			'Rainwater harvesting': icon('<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>'),
-			'Solar water heating': icon('<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'),
-			'Visitor parking': icon('<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>'),
-			'EV charging': icon('<path d="M6 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M6 21h10M16 9h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2M12 7l-2 4h4l-2 4"/>'),
-			'Lift': icon('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 11l3-3 3 3M9 14l3 3 3-3"/>'),
-			'Power backup': icon('<path d="M13 2L5 14h6l-1 8 8-12h-6z"/>'),
-			'Street lighting': icon('<path d="M12 21V9M12 9a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 21h8"/>'),
-			'Underground drainage': icon('<path d="M3 8h18M3 16h18M7 8v8M17 8v8M12 8v8"/>'),
-		};
-		$('[data-amenities]').innerHTML = d.amenities.map((a) => `<li>${amenityIcon[a] || icon('<path d="M4 12.5l5 5L20 7"/>')}<span>${a}</span></li>`).join('');
-
-		/* --- floor plan: tabs + room highlight --- */
+		/* --- the plan --- */
 		const planTabs = $$('[data-plan]');
 		const sheets = $$('[data-plan-sheet]');
 		const roomLists = $$('[data-plan-rooms]');
+		const planFig = $('[data-plan-fig]');
 		planTabs.forEach((tab) => tab.addEventListener('click', () => {
 			const key = tab.dataset.plan;
 			planTabs.forEach((t) => { const on = t === tab; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
 			sheets.forEach((sh) => { sh.hidden = sh.dataset.planSheet !== key; });
 			roomLists.forEach((rl) => { rl.hidden = rl.dataset.planRooms !== key; });
+			planFig.textContent = key === 'ground' ? 'Fig. 1 — Ground floor' : 'Fig. 2 — First floor';
 		}));
 		$('[data-plan-tabs]').addEventListener('keydown', (e) => {
 			const i = planTabs.indexOf(document.activeElement);
-			if (i < 0) return;
-			if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const n = planTabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + planTabs.length) % planTabs.length]; n.focus(); n.click(); }
+			if (i < 0 || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
+			e.preventDefault();
+			const n = planTabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + planTabs.length) % planTabs.length];
+			n.focus(); n.click();
 		});
 		const hot = (room, on) => $$(`[data-room="${room}"]`).forEach((el) => el.classList.toggle('is-hot', on));
 		$$('[data-room]').forEach((el) => {
@@ -771,40 +804,32 @@
 		if (isPlot) { $('#plan').hidden = true; $('.chapters a[href="#plan"]').parentElement.hidden = true; }
 		$('[data-brochure]').addEventListener('click', (e) => { e.preventDefault(); showToast(`Brochure for <b>${p.title}</b> would download here. <code>GET /wp-json/property-core/v1/brochure/${p.id}</code>`); });
 
-		/* --- location --- */
-		const landmarkIcon = {
-			metro: icon('<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 17l-2 4M15 17l2 4M9 7h6"/>'),
-			work: icon('<path d="M3 21h18M5 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16M15 10h3a1 1 0 0 1 1 1v10M8 8h2M8 12h2M8 16h2"/>'),
-			school: icon('<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/>'),
-			hospital: icon('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 8v8M8 12h8"/>'),
-			shop: icon('<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>'),
-			air: icon('<path d="M2 14l20-8-6 15-3-6-7-1z"/>'),
-		};
-		const lms = landmarksByCity[p.city];
-		$('[data-landmarks]').innerHTML = lms.map((l) => `<li><span class="landmarks__type">${landmarkIcon[l.type]}</span><span>${l.name}<small>${l.t} drive</small></span><b>${l.d}</b></li>`).join('');
-		const mapEl = $('[data-map]');
-		$('[data-map-load]').addEventListener('click', () => {
-			const dl = 0.012;
-			const bbox = `${d.lng - dl * 1.6},${d.lat - dl},${d.lng + dl * 1.6},${d.lat + dl}`;
-			const f = document.createElement('iframe');
-			f.title = `Map of ${p.area}`;
-			f.loading = 'lazy';
-			f.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${d.lat},${d.lng}`;
-			mapEl.append(f);
-			mapEl.classList.add('is-loaded');
-		});
-
-		/* --- EMI --- */
-		const emiForm = $('[data-emi]');
-		if (rent) { $('#pricing').hidden = true; $('.chapters a[href="#pricing"]').parentElement.hidden = true; }
+		/* --- the numbers: ledger + editable EMI sentence --- */
+		const duty = p.price * 0.06;
+		const dealRows = rent
+			? [['Monthly rent', rupees(p.price)], ['Deposit', rupees(p.price * 2)], ['Maintenance', `₹${fmt(p.sqft * 3.5)}<small>/ month</small>`], ['Carpet area', `${fmt(p.sqft)}<small>sq ft</small>`], ['Per sq ft', `₹${(p.price / p.sqft).toFixed(1)}`], ['Lock-in', '11 months']]
+			: isPlot
+				? [['Plot area', `${fmt(p.sqft)}<small>sq yd</small>`], ['Per sq yd', `₹${fmt(psf)}`], ['Stamp duty & registration', rupees(Math.round(duty))], ['Development charges', 'Included'], ['Maintenance deposit', rupees(50000)], ['All-in', rupees(Math.round(p.price + duty + 50000)), 'accent']]
+				: [['Carpet area', `${fmt(d.carpet)}<small>sq ft</small>`], ['Built-up', `${fmt(d.builtup)}<small>sq ft</small>`], ['Super built-up', `${fmt(d.superBuiltup)}<small>sq ft</small>`], ['Loading', `${Math.round((d.superBuiltup / d.carpet - 1) * 100)}<small>%</small>`], ['Stamp duty & registration', rupees(Math.round(duty))], ['All-in, before loan', rupees(Math.round(p.price + duty)), 'accent']];
+		$('[data-deal]').innerHTML = dealRows.map(([k, v, cls]) => `<div${cls ? ` class="is-${cls}"` : ''}><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+		const emiP = $('[data-emi-sentence]');
+		const pop = $('[data-num-pop]');
+		if (rent) { emiP.hidden = true; }
 		else {
-			const out = (k) => $(`[data-emi-out="${k}"]`);
+			const state = { years: 20, rate: 8.5, ltv: 80 };
+			const fields = {
+				years: { min: 5, max: 30, step: 1, label: 'Tenure', text: (v) => `${v} years` },
+				rate: { min: 7, max: 12, step: 0.1, label: 'Interest rate', text: (v) => `${(+v).toFixed(1)}%` },
+				ltv: { min: 10, max: 90, step: 5, label: 'Financed', text: (v) => `${v}%` },
+			};
+			const valueEl = $('[data-emi-value]');
 			const tween = (el, to, format) => {
 				const from = Number(el.dataset.v || to);
 				el.dataset.v = to;
+				if (reduced) { el.textContent = format(to); return; }
 				const t0 = performance.now();
 				const step = (t) => {
-					const k = Math.min(1, (t - t0) / 320);
+					const k = Math.min(1, (t - t0) / 360);
 					const e = 1 - Math.pow(1 - k, 3);
 					el.textContent = format(from + (to - from) * e);
 					if (k < 1) requestAnimationFrame(step);
@@ -812,38 +837,103 @@
 				requestAnimationFrame(step);
 			};
 			const calc = () => {
-				const ltv = +emiForm.amount.value;
-				const rate = +emiForm.rate.value;
-				const years = +emiForm.years.value;
-				const loan = p.price * ltv / 100;
-				const r = rate / 1200;
-				const n = years * 12;
+				const loan = p.price * state.ltv / 100;
+				const r = state.rate / 1200;
+				const n = state.years * 12;
 				const emi = loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
-				const duty = p.price * 0.06;
-				out('amount').textContent = rupees(loan);
-				out('rate').textContent = `${rate.toFixed(1)}%`;
-				out('years').textContent = `${years} years`;
-				$('[data-emi-ltv]').textContent = ltv;
-				tween($('[data-emi-value]'), emi, (v) => `₹${fmt(v)}`);
-				tween($('[data-emi-down]'), p.price - loan, (v) => rupees(Math.round(v)));
-				tween($('[data-emi-interest]'), emi * n - loan, (v) => rupees(Math.round(v)));
-				tween($('[data-emi-duty]'), duty, (v) => rupees(Math.round(v)));
-				tween($('[data-emi-total]'), p.price + duty + emi * n - loan, (v) => rupees(Math.round(v)));
+				tween(valueEl, emi, (v) => v >= L ? `₹${(v / L).toFixed(2)} L` : `₹${fmt(v)}`);
+				Object.keys(fields).forEach((k) => { $(`[data-emi-field="${k}"]`).textContent = fields[k].text(state[k]); });
 			};
-			emiForm.addEventListener('input', calc);
+			const range = $('[data-pop-range]', pop);
+			const popOut = $('[data-pop-out]', pop);
+			const popLabel = $('[data-pop-label]', pop);
+			let openBtn = null;
+			const closePop = () => { pop.hidden = true; openBtn?.classList.remove('is-open'); openBtn = null; };
+			const openPop = (btn) => {
+				const k = btn.dataset.emiField;
+				const f = fields[k];
+				if (openBtn === btn) { closePop(); return; }
+				closePop();
+				openBtn = btn; btn.classList.add('is-open');
+				range.min = f.min; range.max = f.max; range.step = f.step; range.value = state[k];
+				popLabel.textContent = f.label; popOut.textContent = f.text(state[k]);
+				range.oninput = () => { state[k] = +range.value; popOut.textContent = f.text(state[k]); calc(); };
+				pop.hidden = false;
+				const card = pop.offsetParent;
+				const left = Math.min(btn.offsetLeft + emiP.offsetLeft, card.clientWidth - pop.offsetWidth - 20);
+				pop.style.left = `${Math.max(20, left)}px`;
+				pop.style.top = `${btn.offsetTop + emiP.offsetTop + btn.offsetHeight + 10}px`;
+				range.focus();
+			};
+			$$('[data-emi-field]').forEach((b) => b.addEventListener('click', () => openPop(b)));
+			document.addEventListener('pointerdown', (e) => { if (!pop.hidden && !pop.contains(e.target) && !e.target.closest('[data-emi-field]')) closePop(); });
+			document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !pop.hidden) { const b = openBtn; closePop(); b?.focus(); } });
 			calc();
 		}
 
-		/* --- trust --- */
-		$('[data-rera]').textContent = d.rera;
-		const reraLink = $('[data-rera-link]'); reraLink.href = d.reraUrl; reraLink.previousSibling.textContent = `${d.reraState} `;
-		$('[data-approvals]').innerHTML = d.approvals.map((a) => `<li>${icon('<path d="M4 12.5l5 5L20 7"/>', ' width="14" height="14"')}${a}</li>`).join('');
-		$('[data-banks]').innerHTML = d.banks.map((b) => `<li>${b}</li>`).join('');
+		/* --- the place: radial distance plot + ledger --- */
+		const lms = landmarksByCity[p.city];
+		const R = 236, C = 280;
+		const rings = [2, 5, 10, 20, 40];
+		const scale = (km) => R * Math.log(1 + km) / Math.log(1 + 40);
+		const svgNS = 'http://www.w3.org/2000/svg';
+		const radar = $('[data-radar-svg]');
+		const el = (tag, attrs, text) => { const n = document.createElementNS(svgNS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); if (text) n.textContent = text; return n; };
+		rings.forEach((km) => {
+			radar.append(el('circle', { class: 'radar__ring', cx: C, cy: C, r: scale(km) }));
+			const la = -102 * Math.PI / 180; // ring labels sit up-left, between the first and last spokes, where no landmark label reaches
+			radar.append(el('text', { class: 'radar__ring-label', x: C + Math.cos(la) * scale(km) - 4, y: C + Math.sin(la) * scale(km) - 4, 'text-anchor': 'end' }, `${km} km`));
+		});
+		const spots = lms.map((l, i) => {
+			const a = (-90 + 18 + i * (360 / lms.length)) * Math.PI / 180;
+			const r = scale(l.km);
+			const x = C + Math.cos(a) * r, y = C + Math.sin(a) * r;
+			radar.append(el('line', { class: 'radar__spoke', x1: C, y1: C, x2: x, y2: y }));
+			const g = el('g', { class: 'radar__spot', 'data-spot': i });
+			g.append(el('circle', { class: 'radar__dot', cx: x, cy: y, r: 6 }));
+			const right = Math.cos(a) >= 0;
+			const tx = x + (right ? 12 : -12), anchor = right ? 'start' : 'end';
+			g.append(el('text', { class: 'radar__label', x: tx, y: y - 2, 'text-anchor': anchor }, l.name));
+			g.append(el('text', { class: 'radar__sub', x: tx, y: y + 12, 'text-anchor': anchor }, `${l.km} km · ${l.t}`));
+			radar.append(g);
+			return g;
+		});
+		radar.append(el('circle', { class: 'radar__home-ring', cx: C, cy: C, r: 14 }));
+		radar.append(el('circle', { class: 'radar__home', cx: C, cy: C, r: 7 }));
+		radar.append(el('text', { class: 'radar__label', x: C, y: C + 34, 'text-anchor': 'middle' }, p.title));
+		const lmList = $('[data-landmarks]');
+		lmList.innerHTML = lms.map((l, i) => `<div data-spot="${i}"><dt>${l.name}<small>${l.type}</small></dt><dd>${l.km} km<small>${l.t} drive</small></dd></div>`).join('');
+		const hotSpot = (i, on) => { $$(`[data-spot="${i}"]`).forEach((n) => n.classList.toggle('is-hot', on)); spots[i].querySelector('circle').setAttribute('r', on ? 9 : 6); };
+		$$('[data-spot]').forEach((n) => {
+			n.addEventListener('pointerenter', () => hotSpot(+n.dataset.spot, true));
+			n.addEventListener('pointerleave', () => hotSpot(+n.dataset.spot, false));
+		});
+		const mapEl = $('[data-map]');
+		$('[data-map-load]').addEventListener('click', (e) => {
+			const dl = 0.012;
+			const bbox = `${d.lng - dl * 1.6},${d.lat - dl},${d.lng + dl * 1.6},${d.lat + dl}`;
+			const frame = document.createElement('div');
+			frame.className = 'locmap__frame';
+			frame.innerHTML = `<iframe title="Map of ${p.area}" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${d.lat},${d.lng}"></iframe>`;
+			mapEl.append(frame);
+			e.currentTarget.hidden = true;
+			$('.locmap__hint', mapEl).hidden = true;
+		});
+
+		/* --- papers & people --- */
+		const papers = [
+			['RERA registration', `<span>${d.rera}</span><a href="${d.reraUrl}" target="_blank" rel="noopener">Verify</a>`],
+			['Authority', d.reraState],
+			...d.approvals.map((a, i) => [i === 0 ? 'Approvals' : '', a]),
+			['Loans pre-approved with', d.banks.join(', ')],
+			['Documents on request', 'Sale deed, EC, approved plan, OC, tax receipts'],
+		];
+		$('[data-papers]').innerHTML = papers.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 		$('[data-advisor-name]').textContent = d.advisor.name;
 		$('[data-advisor-meta]').textContent = d.advisor.meta;
 		$('[data-advisor-photo]').src = d.advisor.photo;
 
-		/* --- similar homes: same city, closest price, same intent --- */
+		/* --- nearby: same city, same intent, closest price --- */
 		const similar = LISTINGS.filter((l) => l.id !== p.id && l.city === p.city && l.intent === p.intent)
 			.sort((a, b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price)).slice(0, 3);
 		const tpl = $('#card-template');
@@ -862,6 +952,7 @@
 			$('.card__price', node).textContent = rupees(q.price, q.intent === 'rent');
 			simEl.append(node);
 		});
+		if (!similar.length) $('#nearby').hidden = true;
 		const canHover = matchMedia('(hover: hover)').matches;
 		$$('.card', simEl).forEach((card) => {
 			if (canHover) {
@@ -872,35 +963,29 @@
 			card.addEventListener('focusout', (e) => { if (!card.contains(e.relatedTarget)) card.classList.remove('is-open'); });
 		});
 
-		/* --- chapter nav: highlight the section in view --- */
+		/* --- chapter nav + compact bar + hero zoom, one scroll handler --- */
 		const chapterLinks = $$('[data-chapters] a');
 		const sections = chapterLinks.map((a) => $(a.getAttribute('href'))).filter((s) => s && !s.hidden);
-		const setChapter = (sec) => chapterLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${sec.id}`));
-		const spy = () => {
-			const line = innerHeight * 0.32;
+		const bar = $('[data-prop-bar]');
+		const onScroll = () => {
+			zoom();
+			const line = innerHeight * 0.34;
 			let cur = sections[0];
 			sections.forEach((s) => { if (s.getBoundingClientRect().top <= line) cur = s; });
-			setChapter(cur);
-		};
-		window.addEventListener('scroll', spy, { passive: true });
-		spy();
-
-		/* --- compact bar: after the gallery has scrolled away (mobile: always, via CSS) --- */
-		const bar = $('[data-prop-bar]');
-		const mosaic = $('[data-mosaic]');
-		const barWatch = () => {
-			const on = mosaic.getBoundingClientRect().bottom < 0 || matchMedia('(max-width: 720px)').matches;
+			chapterLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${cur.id}`));
+			const on = ph.getBoundingClientRect().bottom < 0 || matchMedia('(max-width: 720px)').matches;
 			bar.classList.toggle('is-visible', on);
 			bar.setAttribute('aria-hidden', String(!on));
 		};
-		window.addEventListener('scroll', barWatch, { passive: true });
-		window.addEventListener('resize', barWatch);
-		barWatch();
-		$('[data-bar-enquire]').addEventListener('click', (e) => {
+		let ticking = false;
+		window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; onScroll(); }); } }, { passive: true });
+		window.addEventListener('resize', onScroll);
+		onScroll();
+		$$('[data-go-visit]').forEach((a) => a.addEventListener('click', (e) => {
 			e.preventDefault();
-			$('#enquire').scrollIntoView({ behavior: 'smooth', block: 'center' });
-			setTimeout(() => $('#enquire [name="name"]').focus({ preventScroll: true }), 600);
-		});
+			$('#visit').scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'center' });
+			setTimeout(() => $('[data-enquire] [name="name"]').focus({ preventScroll: true }), reduced ? 0 : 650);
+		}));
 
 		/* --- save / share --- */
 		const save = $('[data-save]');
@@ -921,26 +1006,25 @@
 			} catch { /* dismissed */ }
 		});
 
-		/* --- enquiry --- */
+		/* --- visit form --- */
 		const enq = $('[data-enquire]');
 		enq.addEventListener('submit', (e) => {
 			e.preventDefault();
 			if (!enq.reportValidity()) return;
 			const f = new FormData(enq);
-			const payload = { property: p.id, ref: d.ref, name: f.get('name'), phone: `+91${f.get('phone')}`, want: f.get('want'), date: f.get('date') || null, source: location.pathname + location.search };
-			showToast(`Thanks ${payload.name.split(' ')[0]}, ${d.advisor.name.split(' ')[0]} will call you within the hour about <b>${p.title}</b>.<code>POST /wp-json/property-core/v1/leads ${JSON.stringify(payload)}</code>`);
+			const payload = { property: p.id, ref: d.ref, name: f.get('name'), phone: `+91${f.get('phone')}`, date: f.get('date') || null, source: location.pathname + location.search };
+			showToast(`Thanks ${payload.name.split(' ')[0]}, ${first} will call you within the hour about <b>${p.title}</b>.<code>POST /wp-json/property-core/v1/leads ${JSON.stringify(payload)}</code>`);
 			enq.reset();
-			$$('select', enq).forEach((sel) => sel.dd?.sync());
 		});
 
 		/* --- structured data (RealEstateListing) --- */
 		const ld = $('[data-jsonld]');
 		if (ld) ld.textContent = JSON.stringify({
 			'@context': 'https://schema.org', '@type': 'RealEstateListing', name: p.title, url: location.href, datePosted: '2026-10-01',
-			image: d.photos, description: d.description[0],
+			image: d.photos, description: d.chapters[0].body,
 			about: { '@type': isPlot ? 'Place' : p.type === 'villa' ? 'House' : 'Apartment', numberOfBedrooms: p.bhk || undefined, numberOfBathroomsTotal: p.baths || undefined,
 				floorSize: { '@type': 'QuantitativeValue', value: p.sqft, unitCode: isPlot ? 'YDK' : 'FTK' },
-				address: { '@type': 'PostalAddress', addressLocality: p.area, addressRegion: cityLabel[p.city], addressCountry: 'IN' },
+				address: { '@type': 'PostalAddress', addressLocality: p.area, addressRegion: city, addressCountry: 'IN' },
 				geo: { '@type': 'GeoCoordinates', latitude: d.lat, longitude: d.lng },
 				amenityFeature: d.amenities.map((a) => ({ '@type': 'LocationFeatureSpecification', name: a, value: true })) },
 			offers: { '@type': 'Offer', price: p.price, priceCurrency: 'INR', availability: 'https://schema.org/InStock', businessFunction: rent ? 'http://purl.org/goodrelations/v1#LeaseOut' : 'http://purl.org/goodrelations/v1#Sell',

@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lakeview Villa, Gachibowli — Lavenor Realty</title>
-<meta name="description" content="4 BHK villa in Gachibowli, Hyderabad. Carpet area, floor plans, amenities, location, EMI estimate and RERA details. Book a site visit with a Lavenor advisor.">
+<meta name="description" content="4 BHK villa in Gachibowli, Hyderabad. The home in three chapters, the plan as a drawing, the numbers, the place and the papers. Book a site visit with a Lavenor advisor.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script type="application/ld+json" data-jsonld></script>
 </head>
-<body class="page--solid page--property">
+<body class="page--property">
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<!-- ============ HEADER (dark variant: dark text at rest, same split on scroll) ============ -->
-<header class="site-header site-header--dark" id="site-header" data-header>
+<!-- ============ HEADER (light over the photo, splits on scroll) ============ -->
+<header class="site-header" id="site-header" data-header>
 	<div class="container site-header__inner">
 		<a class="brand" href="index.html" aria-label="Lavenor Realty, home">
 			<span class="brand__name">Lavenor</span>
@@ -77,335 +77,290 @@
 
 <main id="main" data-property>
 
-<!-- ============ TITLE BLOCK ============ -->
-<section class="prop-head">
-	<div class="container">
-		<nav class="crumbs" aria-label="Breadcrumb">
+<!-- ============ OPENING: one photo, the name, the price ============ -->
+<section class="ph" aria-labelledby="ph-title" data-ph>
+	<div class="ph__media">
+		<img class="ph__img" src="assets/house-large.jpg" alt="" width="2000" height="1333" fetchpriority="high" data-ph-img>
+		<div class="ph__shade" aria-hidden="true"></div>
+		<button class="ph__all" type="button" data-open-photo="0">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+			All <span data-photo-count>8</span> photos
+		</button>
+	</div>
+	<div class="container ph__inner">
+		<p class="ph__status"><span class="ph__status-dot" aria-hidden="true"></span><span data-status>Ready to move</span></p>
+		<nav class="ph__crumbs" aria-label="Breadcrumb">
 			<ol>
-				<li><a href="index.html">Home</a></li>
 				<li><a href="properties.html">Properties</a></li>
 				<li><a href="properties.html?location=hyderabad" data-crumb-city>Hyderabad</a></li>
-				<li aria-current="page" data-crumb-title>Lakeview Villa</li>
+				<li aria-current="page" data-crumb-area>Gachibowli</li>
 			</ol>
 		</nav>
-		<div class="prop-head__row">
-			<div class="prop-head__main">
-				<p class="prop-head__meta">
-					<span class="prop-ref">Ref <b data-ref>LAV-HYD-0231</b></span>
-					<span class="prop-verified"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>Verified by Lavenor</span>
-					<span class="prop-updated">Updated <span data-updated>3 days ago</span></span>
-				</p>
-				<h1 class="prop-head__title" data-title>Lakeview Villa</h1>
-				<p class="prop-head__place">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.4 7-11.5A7 7 0 0 0 5 9.5C5 14.6 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
-					<span data-place>Gachibowli, Hyderabad</span>
-					<a class="prop-head__maplink" href="#location">See on map</a>
-				</p>
+		<h1 class="ph__title" id="ph-title" data-title>Lakeview Villa</h1>
+		<p class="ph__line" data-oneline>4 BHK villa · 3,650 sq ft carpet · East facing</p>
+	</div>
+	<aside class="ph__price" aria-label="Price">
+		<p class="ph__amount" data-price>₹2.4 Cr</p>
+		<p class="ph__psf" data-psf>₹6,575 per sq ft</p>
+		<a class="btn btn--dark btn--sm" href="#visit" data-go-visit>Book a visit</a>
+	</aside>
+</section>
+
+<!-- ============ CHAPTER NAV ============ -->
+<nav class="chapters chapters--page" aria-label="On this page" data-chapters>
+	<ul>
+		<li><a href="#glance" class="is-active">At a glance</a></li>
+		<li><a href="#home">The home</a></li>
+		<li><a href="#plan">The plan</a></li>
+		<li><a href="#numbers">The numbers</a></li>
+		<li><a href="#place">The place</a></li>
+		<li><a href="#papers">Papers</a></li>
+		<li><a href="#nearby">Nearby</a></li>
+	</ul>
+</nav>
+
+<!-- ============ AT A GLANCE: ledger of big numbers ============ -->
+<section class="glance container" id="glance" aria-labelledby="glance-title">
+	<div class="meta-line">
+		<p>Ref <b data-ref>LAV-HYD-0231</b> <span class="dot" aria-hidden="true">·</span> <span class="meta-line__ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>Verified by Lavenor</span> <span class="dot" aria-hidden="true">·</span> Updated <span data-updated>3 days ago</span></p>
+		<p class="meta-line__tools">
+			<button class="link-btn" type="button" data-save aria-pressed="false"><span data-save-label>Save</span></button>
+			<button class="link-btn" type="button" data-share>Share</button>
+		</p>
+	</div>
+	<h2 class="visually-hidden" id="glance-title">At a glance</h2>
+	<dl class="ledger ledger--glance" data-glance></dl>
+</section>
+
+<!-- ============ THE HOME: three chapters + filmstrip ============ -->
+<section class="story container" id="home" aria-labelledby="home-title">
+	<div class="sec-head">
+		<p class="fig-label">01 — 03</p>
+		<h2 class="sec-head__title" id="home-title">The home</h2>
+	</div>
+	<div data-chapters-list></div>
+
+	<div class="strip" data-strip>
+		<div class="strip__head">
+			<p class="fig-label">All photos</p>
+			<p class="strip__count"><span data-strip-index>01</span> / <span data-strip-total>08</span></p>
+		</div>
+		<ul class="strip__track" data-strip-track></ul>
+	</div>
+</section>
+
+<!-- ============ SPECIFICATION ============ -->
+<section class="spec container" id="spec" aria-labelledby="spec-title">
+	<div class="sec-head">
+		<p class="fig-label">Specification</p>
+		<h2 class="sec-head__title" id="spec-title">What you are buying</h2>
+	</div>
+	<div class="spec__grid">
+		<dl class="ledger ledger--spec" data-specs></dl>
+		<div class="spec__also">
+			<p class="fig-label">Also</p>
+			<p data-amenities-text></p>
+			<div class="prose prose--spec" data-description></div>
+		</div>
+	</div>
+</section>
+
+<!-- ============ THE PLAN: drawing + ledger ============ -->
+<section class="planx container" id="plan" aria-labelledby="plan-title">
+	<div class="sec-head">
+		<p class="fig-label" data-plan-fig>Fig. 1 — Ground floor</p>
+		<h2 class="sec-head__title" id="plan-title">The plan</h2>
+		<div class="toggle" role="tablist" aria-label="Floors" data-plan-tabs>
+			<button class="toggle__btn is-active" role="tab" aria-selected="true" aria-controls="plan-ground" id="tab-ground" type="button" data-plan="ground">Ground floor</button>
+			<button class="toggle__btn" role="tab" aria-selected="false" aria-controls="plan-first" id="tab-first" type="button" data-plan="first" tabindex="-1">First floor</button>
+		</div>
+	</div>
+	<div class="drawing">
+		<div class="drawing__paper">
+			<div class="drawing__sheet is-active" id="plan-ground" role="tabpanel" aria-labelledby="tab-ground" data-plan-sheet="ground">
+				<svg viewBox="0 0 680 480" class="drawing__svg" aria-hidden="true">
+					<g class="drawing__dims">
+						<line x1="24" y1="452" x2="616" y2="452"/><line x1="24" y1="446" x2="24" y2="458"/><line x1="616" y1="446" x2="616" y2="458"/><text x="320" y="472">62'-0"</text>
+						<line x1="648" y1="24" x2="648" y2="416"/><line x1="642" y1="24" x2="654" y2="24"/><line x1="642" y1="416" x2="654" y2="416"/><text x="664" y="222" class="drawing__vtext">41'-0"</text>
+					</g>
+					<g data-room="lawn"><rect x="24" y="24" width="190" height="392"/><text x="119" y="224">Lawn</text></g>
+					<g data-room="porch"><rect x="226" y="24" width="150" height="110"/><text x="301" y="83">Car porch</text></g>
+					<g data-room="foyer"><rect x="388" y="24" width="228" height="60"/><text x="502" y="58">Foyer</text></g>
+					<g data-room="living"><rect x="226" y="146" width="236" height="150"/><text x="344" y="226">Living</text></g>
+					<g data-room="dining"><rect x="474" y="96" width="142" height="120"/><text x="545" y="160">Dining</text></g>
+					<g data-room="kitchen"><rect x="474" y="228" width="142" height="90"/><text x="545" y="277">Kitchen</text></g>
+					<g data-room="bed1"><rect x="226" y="308" width="170" height="108"/><text x="311" y="366">Bedroom 1</text></g>
+					<g data-room="bath1"><rect x="408" y="330" width="88" height="86"/><text x="452" y="377">Bath</text></g>
+					<g data-room="utility"><rect x="508" y="330" width="108" height="86"/><text x="562" y="377">Utility</text></g>
+					<g class="drawing__doors"><path d="M300 134v12M300 146a12 12 0 0 1 12-12M462 300v8M462 308a12 12 0 0 1-12 12"/></g>
+				</svg>
 			</div>
-			<div class="prop-head__side">
-				<p class="prop-price"><span data-price>₹2.4 Cr</span></p>
-				<p class="prop-price__sub"><span data-psf>₹6,575 per sq ft</span> <span class="dot" aria-hidden="true">·</span> <span data-price-note>All inclusive, no GST</span></p>
-				<div class="prop-head__tools">
-					<button class="tool" type="button" data-save aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.3A4.2 4.2 0 0 1 12 7.6a4.2 4.2 0 0 1 7.5 2.6c0 5.7-7.5 10.3-7.5 10.3z"/></svg><span data-save-label>Save</span></button>
-					<button class="tool" type="button" data-share><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M12 4v12M7 9l5-5 5 5"/></svg>Share</button>
+			<div class="drawing__sheet" id="plan-first" role="tabpanel" aria-labelledby="tab-first" data-plan-sheet="first" hidden>
+				<svg viewBox="0 0 680 480" class="drawing__svg" aria-hidden="true">
+					<g class="drawing__dims">
+						<line x1="24" y1="452" x2="616" y2="452"/><line x1="24" y1="446" x2="24" y2="458"/><line x1="616" y1="446" x2="616" y2="458"/><text x="320" y="472">62'-0"</text>
+						<line x1="648" y1="24" x2="648" y2="416"/><line x1="642" y1="24" x2="654" y2="24"/><line x1="642" y1="416" x2="654" y2="416"/><text x="664" y="222" class="drawing__vtext">41'-0"</text>
+					</g>
+					<g data-room="terrace"><rect x="24" y="24" width="190" height="200"/><text x="119" y="128">Terrace</text></g>
+					<g data-room="master"><rect x="24" y="236" width="190" height="180"/><text x="119" y="330">Master bedroom</text></g>
+					<g data-room="lounge"><rect x="226" y="24" width="236" height="200"/><text x="344" y="128">Family lounge</text></g>
+					<g data-room="bed2"><rect x="226" y="236" width="150" height="180"/><text x="301" y="330">Bedroom 2</text></g>
+					<g data-room="bed3"><rect x="388" y="236" width="140" height="180"/><text x="458" y="330">Bedroom 3</text></g>
+					<g data-room="bath2"><rect x="474" y="24" width="142" height="96"/><text x="545" y="76">Bath</text></g>
+					<g data-room="bath3"><rect x="474" y="132" width="142" height="92"/><text x="545" y="182">Bath</text></g>
+					<g data-room="balcony"><rect x="540" y="236" width="76" height="180"/><text x="578" y="330" class="drawing__vtext">Balcony</text></g>
+					<g class="drawing__doors"><path d="M300 224v12M300 236a12 12 0 0 1 12-12M462 224v12M462 236a12 12 0 0 0-12-12"/></g>
+				</svg>
+			</div>
+		</div>
+		<div class="drawing__side">
+			<dl class="ledger ledger--rooms" data-plan-rooms="ground">
+				<div data-room="living"><dt>1.1 Living</dt><dd>18' × 14'</dd></div>
+				<div data-room="dining"><dt>1.2 Dining</dt><dd>14' × 11'</dd></div>
+				<div data-room="kitchen"><dt>1.3 Kitchen</dt><dd>12' × 9'</dd></div>
+				<div data-room="bed1"><dt>1.4 Bedroom 1</dt><dd>14' × 12'</dd></div>
+				<div data-room="bath1"><dt>1.5 Bath</dt><dd>8' × 6'</dd></div>
+				<div data-room="utility"><dt>1.6 Utility</dt><dd>9' × 6'</dd></div>
+				<div data-room="porch"><dt>1.7 Car porch</dt><dd>2 cars</dd></div>
+				<div data-room="lawn"><dt>1.8 Private lawn</dt><dd>1,100 sq ft</dd></div>
+			</dl>
+			<dl class="ledger ledger--rooms" data-plan-rooms="first" hidden>
+				<div data-room="master"><dt>2.1 Master bedroom</dt><dd>18' × 14'</dd></div>
+				<div data-room="bed2"><dt>2.2 Bedroom 2</dt><dd>14' × 12'</dd></div>
+				<div data-room="bed3"><dt>2.3 Bedroom 3</dt><dd>13' × 12'</dd></div>
+				<div data-room="lounge"><dt>2.4 Family lounge</dt><dd>20' × 14'</dd></div>
+				<div data-room="bath2"><dt>2.5 Bath, master</dt><dd>9' × 7'</dd></div>
+				<div data-room="bath3"><dt>2.6 Bath, shared</dt><dd>8' × 6'</dd></div>
+				<div data-room="terrace"><dt>2.7 Terrace</dt><dd>420 sq ft</dd></div>
+				<div data-room="balcony"><dt>2.8 Balcony</dt><dd>6' deep</dd></div>
+			</dl>
+			<a class="link-arrow" href="#" data-brochure>Download the brochure
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>
+			</a>
+		</div>
+	</div>
+</section>
+
+<!-- ============ THE NUMBERS: deal sheet ============ -->
+<section class="deal container" id="numbers" aria-labelledby="numbers-title">
+	<div class="deal__card">
+		<div class="deal__top">
+			<div>
+				<p class="fig-label fig-label--light">The numbers</p>
+				<h2 class="deal__title" id="numbers-title">What it costs, honestly</h2>
+			</div>
+			<p class="deal__price"><b data-price>₹2.4 Cr</b><span data-psf-carpet>₹6,575 per carpet sq ft</span></p>
+		</div>
+		<dl class="ledger ledger--dark" data-deal></dl>
+		<p class="deal__emi" data-emi-sentence>
+			Roughly <b class="num num--static" data-emi-value>₹1,66,622</b> a month over
+			<button class="num" type="button" data-emi-field="years" aria-haspopup="dialog">20 years</button> at
+			<button class="num" type="button" data-emi-field="rate" aria-haspopup="dialog">8.5%</button>, with
+			<button class="num" type="button" data-emi-field="ltv" aria-haspopup="dialog">80%</button> of the price financed.
+			<span class="deal__hint">Tap a number to change it.</span>
+		</p>
+		<div class="num-pop" data-num-pop hidden>
+			<label><span data-pop-label>Tenure</span><output data-pop-out>20 years</output></label>
+			<input type="range" data-pop-range>
+		</div>
+		<p class="deal__note">Indicative only. Stamp duty and registration use the Telangana rate of about 6 percent. Your bank's offer and the final agreement value will differ.</p>
+	</div>
+</section>
+
+<!-- ============ THE PLACE: radial distances ============ -->
+<section class="place container" id="place" aria-labelledby="place-title">
+	<div class="sec-head">
+		<p class="fig-label">The place</p>
+		<h2 class="sec-head__title" id="place-title"><span data-area>Gachibowli</span>, from the front door</h2>
+	</div>
+	<div class="place__grid">
+		<div class="radar" data-radar>
+			<svg viewBox="0 0 560 560" class="radar__svg" aria-hidden="true" data-radar-svg></svg>
+		</div>
+		<div class="place__side">
+			<dl class="ledger ledger--places" data-landmarks></dl>
+			<div class="locmap locmap--inline" data-map>
+				<button class="link-arrow" type="button" data-map-load>Load the map
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+				</button>
+				<p class="locmap__hint">Loads on request, so nothing is tracked until you ask.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- ============ PAPERS & PEOPLE ============ -->
+<section class="papers container" id="papers" aria-labelledby="papers-title">
+	<div class="sec-head">
+		<p class="fig-label">Papers &amp; people</p>
+		<h2 class="sec-head__title" id="papers-title">Everything checked, one person to call</h2>
+	</div>
+	<div class="papers__grid">
+		<dl class="ledger ledger--papers" data-papers></dl>
+		<div class="signature">
+			<img class="signature__photo" src="assets/t2.jpg" alt="" width="160" height="160" loading="lazy" data-advisor-photo>
+			<div class="signature__body">
+				<p class="fig-label">Your advisor</p>
+				<p class="signature__name" data-advisor-name>Priya Menon</p>
+				<p class="signature__meta" data-advisor-meta>Senior advisor, Hyderabad West · RERA agent A02400001234</p>
+				<div class="signature__actions">
+					<a class="btn btn--dark btn--sm" href="tel:+919876543210" data-call-label>Call Priya</a>
+					<a class="btn btn--outline btn--sm" href="https://wa.me/919876543210" target="_blank" rel="noopener" data-wa>WhatsApp</a>
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
 
-<!-- ============ GALLERY ============ -->
-<section class="gallery" aria-label="Photos">
-	<div class="container">
-		<div class="mosaic" data-mosaic>
-			<span class="mosaic__tab"><span class="card__status" data-status>Ready to move</span></span>
-			<button class="mosaic__tile mosaic__tile--main" type="button" data-open-photo="0" aria-label="Open photo 1">
-				<img src="assets/house-large.jpg" alt="" width="1200" height="800" fetchpriority="high">
-			</button>
-			<button class="mosaic__tile" type="button" data-open-photo="1" aria-label="Open photo 2"><img src="assets/p6.jpg" alt="" width="600" height="400" loading="lazy"></button>
-			<button class="mosaic__tile" type="button" data-open-photo="2" aria-label="Open photo 3"><img src="assets/p2.jpg" alt="" width="600" height="400" loading="lazy"></button>
-			<button class="mosaic__tile" type="button" data-open-photo="3" aria-label="Open photo 4"><img src="assets/p8.jpg" alt="" width="600" height="400" loading="lazy"></button>
-			<button class="mosaic__tile" type="button" data-open-photo="4" aria-label="Open photo 5"><img src="assets/house-small.jpg" alt="" width="600" height="400" loading="lazy"></button>
-			<button class="mosaic__all" type="button" data-open-photo="0">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-				View all <span data-photo-count>8</span> photos
-			</button>
+<!-- ============ BOOK A VISIT ============ -->
+<section class="visit" id="visit" aria-labelledby="visit-title">
+	<div class="container visit__inner">
+		<div class="visit__head">
+			<p class="fig-label">Book a visit</p>
+			<h2 class="visit__title" id="visit-title">Walk through it this week.</h2>
+			<p class="visit__lede">Free, no obligation. <span data-advisor-first>Priya</span> confirms within the hour and meets you at the gate.</p>
 		</div>
-
-		<ul class="facts-strip" data-facts aria-label="Key facts">
-			<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/></svg><b data-fact="beds">4 BHK</b><span>Configuration</span></li>
-			<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-3zM6 12V6a2 2 0 0 1 2-2h1"/></svg><b data-fact="baths">4 Baths</b><span>Bathrooms</span></li>
-			<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h6M4 4v6M20 20h-6M20 20v-6"/></svg><b data-fact="area">3,650 sq ft</b><span data-fact="area-label">Carpet area</span></li>
-			<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3M12 12l3-4"/></svg><b data-fact="facing">East facing</b><span>Vastu</span></li>
-			<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M6 20V9l6-5 6 5v11M10 20v-5h4v5"/></svg><b data-fact="floors">G+1</b><span>Floors</span></li>
-			<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14l-1.5-6h-11zM7 11l1.2-4h7.6L17 11M7 17v2M17 17v2"/></svg><b data-fact="parking">2 covered</b><span>Parking</span></li>
-			<li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><b data-fact="possession">Ready to move</b><span>Possession</span></li>
-		</ul>
-	</div>
-</section>
-
-<!-- ============ BODY: content + enquiry rail ============ -->
-<div class="container prop-layout">
-	<div class="prop-main">
-
-		<nav class="chapters" aria-label="On this page" data-chapters>
-			<ul>
-				<li><a href="#overview" class="is-active">Overview</a></li>
-				<li><a href="#amenities">Amenities</a></li>
-				<li><a href="#plan">Floor plan</a></li>
-				<li><a href="#location">Location</a></li>
-				<li><a href="#pricing">Pricing</a></li>
-				<li><a href="#trust">Trust</a></li>
-				<li><a href="#similar">Similar</a></li>
-			</ul>
-		</nav>
-
-		<!-- overview -->
-		<section class="sec" id="overview" aria-labelledby="overview-title">
-			<h2 class="sec__title" id="overview-title">The home, <span class="sec__pill" aria-hidden="true"><img data-pill-img src="assets/thumb-2.jpg" alt="" width="120" height="60" loading="lazy"></span> in detail</h2>
-			<ul class="highlights" data-highlights></ul>
-			<div class="prose" data-description></div>
-			<button class="link-btn prose__more" type="button" data-read-more aria-expanded="false">Read the full description</button>
-
-			<div class="area-card">
-				<div class="area-card__head">
-					<h3>Area, the honest way</h3>
-					<p>Carpet area is the RERA figure you pay for. Built-up and super built-up add walls and common spaces.</p>
-				</div>
-				<dl class="area-card__grid" data-areas>
-					<div class="area-card__cell area-card__cell--hero"><dt>Carpet area</dt><dd><b data-area="carpet">3,650</b> <small>sq ft</small></dd></div>
-					<div class="area-card__cell"><dt>Built-up</dt><dd><b data-area="builtup">4,015</b> <small>sq ft</small></dd></div>
-					<div class="area-card__cell"><dt>Super built-up</dt><dd><b data-area="super">4,560</b> <small>sq ft</small></dd></div>
-					<div class="area-card__cell"><dt>Loading</dt><dd><b data-area="loading">25</b> <small>%</small></dd></div>
-					<div class="area-card__cell"><dt>Price per carpet sq ft</dt><dd><b data-area="psf">₹6,575</b></dd></div>
-				</dl>
-			</div>
-
-			<dl class="specs" data-specs></dl>
-		</section>
-
-		<!-- amenities -->
-		<section class="sec" id="amenities" aria-labelledby="amenities-title">
-			<h2 class="sec__title" id="amenities-title">Amenities</h2>
-			<ul class="amenities" data-amenities></ul>
-		</section>
-
-		<!-- floor plan -->
-		<section class="sec" id="plan" aria-labelledby="plan-title">
-			<div class="sec__head">
-				<h2 class="sec__title" id="plan-title">Floor plan</h2>
-				<div class="tabs" role="tablist" aria-label="Floors" data-plan-tabs>
-					<button class="tabs__tab is-active" role="tab" aria-selected="true" aria-controls="plan-ground" id="tab-ground" type="button" data-plan="ground">Ground floor</button>
-					<button class="tabs__tab" role="tab" aria-selected="false" aria-controls="plan-first" id="tab-first" type="button" data-plan="first" tabindex="-1">First floor</button>
-				</div>
-			</div>
-			<div class="plan">
-				<div class="plan__canvas">
-					<!-- ground -->
-					<div class="plan__sheet is-active" id="plan-ground" role="tabpanel" aria-labelledby="tab-ground" data-plan-sheet="ground">
-						<svg viewBox="0 0 640 440" class="plan__svg" aria-hidden="true">
-							<rect x="0" y="0" width="640" height="440" rx="18" fill="#f6f6f6"/>
-							<g data-room="lawn"><rect x="24" y="24" width="190" height="392" rx="10"/><text x="119" y="224">Lawn</text></g>
-							<g data-room="porch"><rect x="226" y="24" width="150" height="110" rx="10"/><text x="301" y="83">Car porch</text></g>
-							<g data-room="foyer"><rect x="388" y="24" width="228" height="60" rx="10"/><text x="502" y="58">Foyer</text></g>
-							<g data-room="living"><rect x="226" y="146" width="236" height="150" rx="10"/><text x="344" y="226">Living</text></g>
-							<g data-room="dining"><rect x="474" y="96" width="142" height="120" rx="10"/><text x="545" y="160">Dining</text></g>
-							<g data-room="kitchen"><rect x="474" y="228" width="142" height="90" rx="10"/><text x="545" y="277">Kitchen</text></g>
-							<g data-room="bed1"><rect x="226" y="308" width="170" height="108" rx="10"/><text x="311" y="366">Bedroom 1</text></g>
-							<g data-room="bath1"><rect x="408" y="330" width="88" height="86" rx="10"/><text x="452" y="377">Bath</text></g>
-							<g data-room="utility"><rect x="508" y="330" width="108" height="86" rx="10"/><text x="562" y="377">Utility</text></g>
-						</svg>
-					</div>
-					<!-- first -->
-					<div class="plan__sheet" id="plan-first" role="tabpanel" aria-labelledby="tab-first" data-plan-sheet="first" hidden>
-						<svg viewBox="0 0 640 440" class="plan__svg" aria-hidden="true">
-							<rect x="0" y="0" width="640" height="440" rx="18" fill="#f6f6f6"/>
-							<g data-room="terrace"><rect x="24" y="24" width="190" height="200" rx="10"/><text x="119" y="128">Terrace</text></g>
-							<g data-room="master"><rect x="24" y="236" width="190" height="180" rx="10"/><text x="119" y="330">Master bedroom</text></g>
-							<g data-room="lounge"><rect x="226" y="24" width="236" height="200" rx="10"/><text x="344" y="128">Family lounge</text></g>
-							<g data-room="bed2"><rect x="226" y="236" width="150" height="180" rx="10"/><text x="301" y="330">Bedroom 2</text></g>
-							<g data-room="bed3"><rect x="388" y="236" width="140" height="180" rx="10"/><text x="458" y="330">Bedroom 3</text></g>
-							<g data-room="bath2"><rect x="474" y="24" width="142" height="96" rx="10"/><text x="545" y="76">Bath</text></g>
-							<g data-room="bath3"><rect x="474" y="132" width="142" height="92" rx="10"/><text x="545" y="182">Bath</text></g>
-							<g data-room="balcony"><rect x="540" y="236" width="76" height="180" rx="10"/><text x="578" y="330" class="plan__vert">Balcony</text></g>
-						</svg>
-					</div>
-				</div>
-				<div class="plan__side">
-					<ul class="plan__rooms" data-plan-rooms="ground">
-						<li data-room="living"><span>Living</span><b>18' × 14'</b></li>
-						<li data-room="dining"><span>Dining</span><b>14' × 11'</b></li>
-						<li data-room="kitchen"><span>Kitchen</span><b>12' × 9'</b></li>
-						<li data-room="bed1"><span>Bedroom 1</span><b>14' × 12'</b></li>
-						<li data-room="bath1"><span>Bath</span><b>8' × 6'</b></li>
-						<li data-room="utility"><span>Utility</span><b>9' × 6'</b></li>
-						<li data-room="porch"><span>Car porch</span><b>2 cars</b></li>
-						<li data-room="lawn"><span>Private lawn</span><b>1,100 sq ft</b></li>
-					</ul>
-					<ul class="plan__rooms" data-plan-rooms="first" hidden>
-						<li data-room="master"><span>Master bedroom</span><b>18' × 14'</b></li>
-						<li data-room="bed2"><span>Bedroom 2</span><b>14' × 12'</b></li>
-						<li data-room="bed3"><span>Bedroom 3</span><b>13' × 12'</b></li>
-						<li data-room="lounge"><span>Family lounge</span><b>20' × 14'</b></li>
-						<li data-room="bath2"><span>Bath, master</span><b>9' × 7'</b></li>
-						<li data-room="bath3"><span>Bath, shared</span><b>8' × 6'</b></li>
-						<li data-room="terrace"><span>Terrace</span><b>420 sq ft</b></li>
-						<li data-room="balcony"><span>Balcony</span><b>6' deep</b></li>
-					</ul>
-					<a class="btn btn--outline btn--sm plan__download" href="#" data-brochure>Download brochure
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>
-					</a>
-				</div>
-			</div>
-		</section>
-
-		<!-- location -->
-		<section class="sec" id="location" aria-labelledby="location-title">
-			<h2 class="sec__title" id="location-title">Location</h2>
-			<div class="locmap" data-map>
-				<img class="locmap__img" src="assets/p9.jpg" alt="" width="1200" height="600" loading="lazy">
-				<div class="locmap__pin" aria-hidden="true"><span></span></div>
-				<div class="locmap__cta">
-					<p>Map loads on request, so nothing is tracked until you ask.</p>
-					<button class="btn btn--dark btn--sm" type="button" data-map-load>Load map</button>
-				</div>
-			</div>
-			<ul class="landmarks" data-landmarks></ul>
-		</section>
-
-		<!-- pricing -->
-		<section class="sec" id="pricing" aria-labelledby="pricing-title">
-			<h2 class="sec__title" id="pricing-title">Pricing &amp; EMI</h2>
-			<div class="emi">
-				<form class="emi__form" data-emi>
-					<label class="range">
-						<span class="range__head"><span>Loan amount</span><output data-emi-out="amount">₹1.92 Cr</output></span>
-						<input type="range" name="amount" min="10" max="100" step="1" value="80" aria-label="Loan amount as a percentage of price">
-						<span class="range__hint"><span data-emi-ltv>80</span>% of price, the usual bank ceiling</span>
-					</label>
-					<label class="range">
-						<span class="range__head"><span>Interest rate</span><output data-emi-out="rate">8.5%</output></span>
-						<input type="range" name="rate" min="7" max="12" step="0.1" value="8.5" aria-label="Interest rate per year">
-						<span class="range__hint">Per year, reducing balance</span>
-					</label>
-					<label class="range">
-						<span class="range__head"><span>Tenure</span><output data-emi-out="years">20 years</output></span>
-						<input type="range" name="years" min="5" max="30" step="1" value="20" aria-label="Loan tenure in years">
-						<span class="range__hint">Shorter tenure, less interest</span>
-					</label>
-				</form>
-				<div class="emi__result">
-					<p class="emi__label">Estimated EMI</p>
-					<p class="emi__value"><span data-emi-value>₹1,66,000</span><small>/ month</small></p>
-					<dl class="emi__rows">
-						<div><dt>Down payment</dt><dd data-emi-down>₹48 L</dd></div>
-						<div><dt>Total interest</dt><dd data-emi-interest>₹2.07 Cr</dd></div>
-						<div><dt>Stamp duty &amp; registration <small>(approx. 6% in Telangana)</small></dt><dd data-emi-duty>₹14.4 L</dd></div>
-						<div class="emi__total"><dt>All-in cost</dt><dd data-emi-total>₹2.54 Cr</dd></div>
-					</dl>
-					<p class="emi__note">Indicative only. Your bank's offer, processing fees and the final agreement value will differ.</p>
-				</div>
-			</div>
-		</section>
-
-		<!-- trust -->
-		<section class="sec" id="trust" aria-labelledby="trust-title">
-			<h2 class="sec__title" id="trust-title">Papers &amp; people</h2>
-			<div class="trust">
-				<div class="trust__card trust__card--rera">
-					<p class="trust__eyebrow">RERA registration</p>
-					<p class="trust__big" data-rera>P02400001234</p>
-					<p class="trust__meta">Telangana RERA <a href="https://rera.telangana.gov.in" target="_blank" rel="noopener" data-rera-link>Verify on the state portal</a></p>
-					<ul class="trust__chips" data-approvals></ul>
-				</div>
-				<div class="trust__card trust__card--banks">
-					<p class="trust__eyebrow">Home loans pre-approved with</p>
-					<ul class="trust__banks" data-banks></ul>
-					<p class="trust__meta">Documents on request: sale deed, EC, approved plan, OC, tax receipts.</p>
-				</div>
-				<div class="trust__card trust__card--advisor">
-					<img class="advisor__photo" src="assets/t2.jpg" alt="" width="120" height="120" loading="lazy" data-advisor-photo>
-					<div class="advisor__body">
-						<p class="trust__eyebrow">Your advisor</p>
-						<p class="advisor__name" data-advisor-name>Priya Menon</p>
-						<p class="trust__meta" data-advisor-meta>Senior advisor, Hyderabad West · RERA agent A02400001234</p>
-						<div class="advisor__actions">
-							<a class="btn btn--dark btn--sm" href="tel:+919876543210">Call</a>
-							<a class="btn btn--outline btn--sm" href="https://wa.me/919876543210?text=Hi%2C%20I%27m%20interested%20in%20Lakeview%20Villa" target="_blank" rel="noopener" data-wa>WhatsApp</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- similar -->
-		<section class="sec" id="similar" aria-labelledby="similar-title">
-			<div class="sec__head">
-				<h2 class="sec__title" id="similar-title">Similar homes nearby</h2>
-				<a class="sec__link" href="properties.html" data-similar-link>See all in Hyderabad</a>
-			</div>
-			<ul class="cards cards--similar" data-similar></ul>
-		</section>
-
-	</div>
-
-	<!-- enquiry rail -->
-	<aside class="prop-aside">
-		<form class="enquire" id="enquire" data-enquire>
-			<div class="enquire__head">
-				<p class="enquire__price"><span data-price>₹2.4 Cr</span> <small data-psf>₹6,575 per sq ft</small></p>
-				<h2 class="enquire__title">Book a site visit</h2>
-				<p class="enquire__lede">Free, no obligation. An advisor confirms within an hour.</p>
-			</div>
-			<label class="field">
-				<span class="field__label">Your name</span>
-				<input class="field__input" type="text" name="name" autocomplete="name" required>
+		<form class="visit__form" data-enquire>
+			<label class="vf">
+				<span class="vf__label">Your name</span>
+				<input class="vf__input" type="text" name="name" autocomplete="name" required>
 			</label>
-			<label class="field">
-				<span class="field__label">Phone</span>
-				<span class="field__phone"><span class="field__prefix">+91</span><input class="field__input" type="tel" name="phone" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" autocomplete="tel-national" required></span>
+			<label class="vf">
+				<span class="vf__label">Phone</span>
+				<span class="vf__phone"><span class="vf__prefix">+91</span><input class="vf__input" type="tel" name="phone" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" autocomplete="tel-national" required></span>
 			</label>
-			<div class="enquire__row">
-				<label class="field">
-					<span class="field__label" id="intent-label">I'd like to</span>
-					<span class="field__select">
-						<select class="field__input" name="want" id="want">
-							<option value="visit">Site visit</option>
-							<option value="video">Video tour</option>
-							<option value="callback">Call back</option>
-							<option value="price">Price talk</option>
-						</select>
-					</span>
-				</label>
-				<label class="field">
-					<span class="field__label">Preferred date</span>
-					<input class="field__input" type="date" name="date">
-				</label>
-			</div>
-			<label class="consent">
+			<label class="vf">
+				<span class="vf__label">Preferred date</span>
+				<input class="vf__input" type="date" name="date">
+			</label>
+			<button class="btn btn--dark visit__submit" type="submit">Request a visit
+				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+			</button>
+			<label class="consent visit__consent">
 				<input type="checkbox" name="consent" required>
 				<span>Lavenor may contact me about this property. No spam, and I can opt out any time.</span>
 			</label>
-			<button class="btn btn--dark enquire__submit" type="submit">Request a visit
-				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-			</button>
-			<div class="enquire__alt">
-				<a class="btn btn--outline" href="https://wa.me/919876543210?text=Hi%2C%20I%27m%20interested%20in%20Lakeview%20Villa" target="_blank" rel="noopener" data-wa>
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.3.8 3.2.7a2.7 2.7 0 0 0 1.8-1.3c.2-.6.2-1.1.2-1.3l-.6-.3z"/></svg>
-					WhatsApp
-				</a>
-				<a class="btn btn--outline" href="tel:+919876543210">
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
-					Call
-				</a>
-			</div>
 		</form>
-	</aside>
-</div>
+	</div>
+</section>
+
+<!-- ============ NEARBY ============ -->
+<section class="nearby container" id="nearby" aria-labelledby="nearby-title">
+	<div class="sec-head sec-head--row">
+		<div>
+			<p class="fig-label">Nearby</p>
+			<h2 class="sec-head__title" id="nearby-title">In the same budget, close by</h2>
+		</div>
+		<a class="link-arrow" href="properties.html" data-similar-link>See all in Hyderabad
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+		</a>
+	</div>
+	<ul class="cards cards--similar" data-similar></ul>
+</section>
 
 </main>
 
-<!-- compact bar: desktop after the gallery scrolls away, mobile always -->
+<!-- compact bar: after the opening scrolls away; mobile always -->
 <div class="prop-bar" data-prop-bar aria-hidden="true">
 	<div class="prop-bar__info">
 		<b data-title>Lakeview Villa</b>
@@ -416,7 +371,7 @@
 			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
 		</a>
 		<a class="btn btn--outline btn--sm" href="https://wa.me/919876543210" target="_blank" rel="noopener" data-wa>WhatsApp</a>
-		<a class="btn btn--accent btn--sm" href="#enquire" data-bar-enquire>Book a visit</a>
+		<a class="btn btn--accent btn--sm" href="#visit" data-go-visit>Book a visit</a>
 	</div>
 </div>
 
@@ -506,6 +461,23 @@
 	</button>
 	<ul class="lightbox__strip" data-lb-strip></ul>
 </dialog>
+
+<!-- chapter template -->
+<template id="chapter-template">
+	<article class="chapter" data-chapter>
+		<figure class="chapter__fig">
+			<button class="chapter__open" type="button" aria-label="Open photo">
+				<img class="chapter__img" src="" alt="" width="1200" height="900" loading="lazy">
+			</button>
+		</figure>
+		<div class="chapter__text">
+			<p class="chapter__num fig-label"></p>
+			<h3 class="chapter__title"></h3>
+			<p class="chapter__body"></p>
+			<p class="chapter__cap"></p>
+		</div>
+	</article>
+</template>
 
 <!-- card template (same as the listing page) -->
 <template id="card-template">
