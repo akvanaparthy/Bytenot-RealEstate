@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
 				<li><a class="nav__link is-active" href="#" aria-current="page">Home</a></li>
 				<li><a class="nav__link" href="#about">About Us</a></li>
 				<li><a class="nav__link" href="properties.html">Properties</a></li>
-				<li><a class="nav__link" href="#contact">Contact Us</a></li>
+				<li><a class="nav__link" href="#inquiry">Contact Us</a></li>
 			</ul>
 		</nav>
 
@@ -67,7 +67,7 @@
 				<li><a href="#" aria-current="page">Home</a></li>
 				<li><a href="#about">About Us</a></li>
 				<li><a href="properties.html">Properties</a></li>
-				<li><a href="#contact">Contact Us</a></li>
+				<li><a href="#inquiry">Contact Us</a></li>
 			</ul>
 		</nav>
 		<a class="btn btn--accent drawer__cta" href="#contact">Sign Up</a>
@@ -330,6 +330,76 @@
 
 </main>
 
+<!-- ============ FAQ ============ -->
+<section class="faq" id="faq" aria-labelledby="faq-title">
+	<div class="container faq__inner">
+		<div class="faq__intro">
+			<p class="fig-label">Your questions</p>
+			<h2 class="faq__title" id="faq-title">Frequently <br>Asked <br>Questions</h2>
+			<div class="faq__team">
+				<ul class="avatars" aria-hidden="true">
+					<li><img src="assets/t1.jpg" alt="" width="56" height="56" loading="lazy"></li>
+					<li><img src="assets/t2.jpg" alt="" width="56" height="56" loading="lazy"></li>
+					<li><img src="assets/t3.jpg" alt="" width="56" height="56" loading="lazy"></li>
+				</ul>
+				<a class="faq__go" href="#inquiry" aria-label="Ask our team">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+				</a>
+				<p class="faq__team-cap">Our team<br>helping you</p>
+			</div>
+		</div>
+		<div class="faq__list" data-faq>
+			<div class="faq__item is-open">
+				<h3 class="faq__h"><button class="faq__q" type="button" id="faq-q1" aria-expanded="true" aria-controls="faq-a1">How do I find the right property?<span class="faq__arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span></button></h3>
+				<div class="faq__a" id="faq-a1" role="region" aria-labelledby="faq-q1"><div class="faq__a-inner"><p>Start with the filters on the properties page: type, location, budget and configuration. Every listing there is verified by us. If you would rather talk it through, an advisor will shortlist homes against what you actually need and set up visits in one trip.</p></div></div>
+			</div>
+			<div class="faq__item">
+				<h3 class="faq__h"><button class="faq__q" type="button" id="faq-q2" aria-expanded="false" aria-controls="faq-a2">How does a site visit work?<span class="faq__arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span></button></h3>
+				<div class="faq__a" id="faq-a2" role="region" aria-labelledby="faq-q2"><div class="faq__a-inner"><p>Pick a date on any listing or ask us here. Your advisor confirms within the hour, meets you at the gate and walks you through the home, the project and the neighbourhood. Visits are free and you can see several homes in one morning.</p></div></div>
+			</div>
+			<div class="faq__item">
+				<h3 class="faq__h"><button class="faq__q" type="button" id="faq-q3" aria-expanded="false" aria-controls="faq-a3">What's included in a listing?<span class="faq__arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span></button></h3>
+				<div class="faq__a" id="faq-a3" role="region" aria-labelledby="faq-q3"><div class="faq__a-inner"><p>Photos, price with the per sq ft rate, carpet and built-up area, floor plan, amenities, the location with nearby landmarks, the RERA registration and the documents we have checked. If something is missing, it is because we could not verify it.</p></div></div>
+			</div>
+			<div class="faq__item">
+				<h3 class="faq__h"><button class="faq__q" type="button" id="faq-q4" aria-expanded="false" aria-controls="faq-a4">How do I check a project’s RERA registration?<span class="faq__arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span></button></h3>
+				<div class="faq__a" id="faq-a4" role="region" aria-labelledby="faq-q4"><div class="faq__a-inner"><p>Every listing shows its RERA number with a link to the state portal, where you can see the promoter, approvals, timelines and complaints. We check this before a home goes live and again before you sign anything.</p></div></div>
+			</div>
+			<div class="faq__item">
+				<h3 class="faq__h"><button class="faq__q" type="button" id="faq-q5" aria-expanded="false" aria-controls="faq-a5">What are the costs beyond the price?<span class="faq__arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span></button></h3>
+				<div class="faq__a" id="faq-a5" role="region" aria-labelledby="faq-q5"><div class="faq__a-inner"><p>Stamp duty and registration, about 6 percent in Telangana and 5 to 6 percent in Karnataka. GST applies only to under-construction homes. Add society maintenance, a one-time corpus fund and legal charges. The numbers section on each listing shows an all-in estimate.</p></div></div>
+			</div>
+			<div class="faq__item">
+				<h3 class="faq__h"><button class="faq__q" type="button" id="faq-q6" aria-expanded="false" aria-controls="faq-a6">Can Lavenor help with a home loan?<span class="faq__arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span></button></h3>
+				<div class="faq__a" id="faq-a6" role="region" aria-labelledby="faq-q6"><div class="faq__a-inner"><p>Yes. Each listing shows the banks that have pre-approved the project. We coordinate the application, the valuation and the disbursement schedule with the bank so the paperwork moves while you focus on the move.</p></div></div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- ============ INQUIRY ============ -->
+<section class="inquiry" id="inquiry" aria-labelledby="inquiry-title">
+	<div class="inquiry__frame">
+		<img class="inquiry__bg" src="assets/p7.jpg" alt="" width="2000" height="1333" loading="lazy">
+		<div class="inquiry__shade" aria-hidden="true"></div>
+		<h2 class="inquiry__title" id="inquiry-title">Property inquiry</h2>
+		<div class="inquiry__card">
+			<div class="inquiry__glass">
+				<p class="inquiry__glass-text">Discover <em>your ideal</em> place</p>
+			</div>
+			<form class="inquiry__form" data-inquiry>
+				<p class="inquiry__lede">Tell us what you're looking for, and we'll guide you to the best options.</p>
+				<label class="uf"><span class="uf__label">Name</span><input class="uf__input" type="text" name="name" placeholder="Jane Smith" autocomplete="name" required></label>
+				<label class="uf"><span class="uf__label">Email</span><input class="uf__input" type="email" name="email" placeholder="jane@example.com" autocomplete="email" required></label>
+				<label class="uf"><span class="uf__label">Phone</span><span class="uf__phone"><span class="uf__prefix">+91</span><input class="uf__input" type="tel" name="phone" placeholder="98765 43210" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" autocomplete="tel-national" required></span></label>
+				<label class="uf"><span class="uf__label">Message</span><textarea class="uf__input uf__input--area" name="message" rows="3" placeholder="Tell us about the home you're looking for"></textarea></label>
+				<button class="btn btn--dark inquiry__submit" type="submit">Submit</button>
+			</form>
+		</div>
+		<p class="inquiry__tag" aria-hidden="true">Let's find <em>your perfect</em> home</p>
+	</div>
+</section>
+
 <!-- ============ FOOTER ============ -->
 <footer class="site-footer" id="contact">
 	<div class="site-footer__bg" aria-hidden="true">
@@ -353,7 +423,7 @@
 				<li><a href="index.html" aria-current="page">Home</a></li>
 				<li><a href="index.html#about">About Us</a></li>
 				<li><a href="properties.html">Properties</a></li>
-				<li><a href="#contact">Contact Us</a></li>
+				<li><a href="#inquiry">Contact Us</a></li>
 			</ul>
 		</nav>
 

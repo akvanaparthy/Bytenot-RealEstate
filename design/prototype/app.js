@@ -1033,6 +1033,41 @@
 	}
 
 	/* ------------------------------------------------------------------
+	 * FAQ accordion: one answer open at a time; the height animates with
+	 * CSS grid rows, JS only flips the state.
+	 * → core Details block or a tiny Interactivity API store in the theme.
+	 * ------------------------------------------------------------------ */
+	const faq = $('[data-faq]');
+	if (faq) {
+		const items = $$('.faq__item', faq);
+		items.forEach((item) => {
+			$('.faq__q', item).addEventListener('click', () => {
+				const open = !item.classList.contains('is-open');
+				items.forEach((o) => {
+					const on = o === item && open;
+					o.classList.toggle('is-open', on);
+					$('.faq__q', o).setAttribute('aria-expanded', String(on));
+				});
+			});
+		});
+	}
+
+	/* ------------------------------------------------------------------
+	 * Inquiry form → lead payload (same endpoint as the visit form).
+	 * ------------------------------------------------------------------ */
+	const inquiry = $('[data-inquiry]');
+	if (inquiry) {
+		inquiry.addEventListener('submit', (e) => {
+			e.preventDefault();
+			if (!inquiry.reportValidity()) return;
+			const f = new FormData(inquiry);
+			const payload = { name: f.get('name'), email: f.get('email'), phone: `+91${f.get('phone')}`, message: f.get('message') || null, source: `${location.pathname}#inquiry` };
+			showToast(`Thanks ${payload.name.split(' ')[0]}, an advisor will reach you within the hour.<code>POST /wp-json/property-core/v1/leads ${JSON.stringify(payload)}</code>`);
+			inquiry.reset();
+		});
+	}
+
+	/* ------------------------------------------------------------------
 	 * Dropdowns. Every <select> inside .field__select gets a styled listbox
 	 * on mouse/trackpad devices; the select stays in the form as the value
 	 * store, so filtering, URL sync and submit work unchanged. Touch keeps
