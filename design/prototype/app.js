@@ -8,6 +8,28 @@
 	const $ = (sel, root = document) => root.querySelector(sel);
 	const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
+	/* Listing data shared by the properties page and the property page (→ plugin query / REST). */
+	const L = 100000, CR = 10000000;
+	const LISTINGS = [
+		{ id: 1,  title: 'Lakeview Villa',          type: 'villa',     city: 'hyderabad', area: 'Gachibowli',      bhk: 4, sqft: 3650, baths: 4, price: 2.4 * CR,  intent: 'buy',  status: 'Ready to move',      img: 'assets/house-large.jpg', added: 20 },
+		{ id: 2,  title: 'Skyline Residences',      type: 'apartment', city: 'bangalore', area: 'Whitefield',      bhk: 3, sqft: 1780, baths: 3, price: 95 * L,    intent: 'buy',  status: 'Possession 2026',    img: 'assets/p1.jpg',          added: 19 },
+		{ id: 3,  title: 'Courtyard Homes Plot',    type: 'plot',      city: 'hyderabad', area: 'Kokapet',         bhk: 0, sqft: 2400, baths: 0, price: 1.1 * CR,  intent: 'buy',  status: 'HMDA approved',      img: 'assets/p3.jpg',          added: 18 },
+		{ id: 4,  title: 'Palm Grove Apartment',    type: 'apartment', city: 'hyderabad', area: 'Kondapur',        bhk: 2, sqft: 1210, baths: 2, price: 78 * L,    intent: 'buy',  status: 'Ready to move',      img: 'assets/p2.jpg',          added: 17 },
+		{ id: 5,  title: 'Aralia Garden Villa',     type: 'villa',     city: 'bangalore', area: 'Sarjapur Road',   bhk: 4, sqft: 3100, baths: 4, price: 3.2 * CR,  intent: 'buy',  status: 'New launch',         img: 'assets/p4.jpg',          added: 16 },
+		{ id: 6,  title: 'Hebbal Lake Heights',     type: 'apartment', city: 'bangalore', area: 'Hebbal',          bhk: 3, sqft: 1650, baths: 3, price: 1.35 * CR, intent: 'buy',  status: 'Ready to move',      img: 'assets/p5.jpg',          added: 15 },
+		{ id: 7,  title: 'Jubilee Hills Duplex',    type: 'villa',     city: 'hyderabad', area: 'Jubilee Hills',   bhk: 4, sqft: 4200, baths: 5, price: 5.5 * CR,  intent: 'buy',  status: 'Resale',             img: 'assets/p6.jpg',          added: 14 },
+		{ id: 8,  title: 'Tellapur Meadows',        type: 'apartment', city: 'hyderabad', area: 'Tellapur',        bhk: 2, sqft: 1150, baths: 2, price: 62 * L,    intent: 'buy',  status: 'Possession 2027',    img: 'assets/p7.jpg',          added: 13 },
+		{ id: 9,  title: 'Indiranagar Studio',      type: 'apartment', city: 'bangalore', area: 'Indiranagar',     bhk: 1, sqft: 720,  baths: 1, price: 48 * L,    intent: 'buy',  status: 'Ready to move',      img: 'assets/p8.jpg',          added: 12 },
+		{ id: 10, title: 'Manikonda Residency',     type: 'apartment', city: 'hyderabad', area: 'Manikonda',       bhk: 3, sqft: 1580, baths: 3, price: 42000,     intent: 'rent', status: 'Available now',      img: 'assets/p9.jpg',          added: 11 },
+		{ id: 11, title: 'Electronic City Suites',  type: 'apartment', city: 'bangalore', area: 'Electronic City', bhk: 2, sqft: 1080, baths: 2, price: 28000,     intent: 'rent', status: 'Available 1 Dec',    img: 'assets/p2.jpg',          added: 10 },
+		{ id: 12, title: 'Banjara Hills Penthouse', type: 'apartment', city: 'hyderabad', area: 'Banjara Hills',   bhk: 4, sqft: 3900, baths: 4, price: 1.6 * L,   intent: 'rent', status: 'Available now',      img: 'assets/house-small.jpg', added: 9 },
+	];
+	const cityLabel = { hyderabad: 'Hyderabad', bangalore: 'Bangalore' };
+	const rupees = (n, rent) => {
+		const amount = n >= CR ? `₹${(n / CR).toFixed(n % CR ? 2 : 0).replace(/\.?0+$/, '')} Cr` : n >= L ? `₹${Math.round(n / L)} L` : `₹${n.toLocaleString('en-IN')}`;
+		return rent ? `${amount}/mo` : amount;
+	};
+
 	/* ------------------------------------------------------------------
 	 * Header: transparent over the hero, frosted + compact after scroll.
 	 * ------------------------------------------------------------------ */
@@ -132,7 +154,7 @@
 			gallery: ['assets/house-large.jpg', 'assets/p2.jpg', 'assets/p8.jpg'],
 			aside: 'assets/house-small.jpg',
 			alt: 'Contemporary two-storey villa with a landscaped garden',
-			url: '#lakeview-villa',
+			url: 'property.html?id=1',
 		},
 		{
 			id: 'skyline-residences',
@@ -143,7 +165,7 @@
 			gallery: ['assets/p1.jpg', 'assets/p6.jpg', 'assets/p9.jpg'],
 			aside: 'assets/p4.jpg',
 			alt: 'Modern apartment block lit at dusk under a large tree',
-			url: '#skyline-residences',
+			url: 'property.html?id=5',
 		},
 		{
 			id: 'courtyard-homes',
@@ -154,7 +176,7 @@
 			gallery: ['assets/p3.jpg', 'assets/p5.jpg', 'assets/p7.jpg'],
 			aside: 'assets/p1.jpg',
 			alt: 'Modern house with timber cladding and a courtyard entrance',
-			url: '#courtyard-homes',
+			url: 'property.html?id=7',
 		},
 	];
 
@@ -321,24 +343,9 @@
 	 * ------------------------------------------------------------------ */
 	const cardsEl = $('[data-cards]');
 	if (cardsEl) {
-		const L = 100000, CR = 10000000;
-		const listings = [
-			{ id: 1,  title: 'Lakeview Villa',          type: 'villa',     city: 'hyderabad', area: 'Gachibowli',      bhk: 4, sqft: 3650, baths: 4, price: 2.4 * CR,  intent: 'buy',  status: 'Ready to move',      img: 'assets/house-large.jpg', added: 20 },
-			{ id: 2,  title: 'Skyline Residences',      type: 'apartment', city: 'bangalore', area: 'Whitefield',      bhk: 3, sqft: 1780, baths: 3, price: 95 * L,    intent: 'buy',  status: 'Possession 2026',    img: 'assets/p1.jpg',          added: 19 },
-			{ id: 3,  title: 'Courtyard Homes Plot',    type: 'plot',      city: 'hyderabad', area: 'Kokapet',         bhk: 0, sqft: 2400, baths: 0, price: 1.1 * CR,  intent: 'buy',  status: 'HMDA approved',      img: 'assets/p3.jpg',          added: 18 },
-			{ id: 4,  title: 'Palm Grove Apartment',    type: 'apartment', city: 'hyderabad', area: 'Kondapur',        bhk: 2, sqft: 1210, baths: 2, price: 78 * L,    intent: 'buy',  status: 'Ready to move',      img: 'assets/p2.jpg',          added: 17 },
-			{ id: 5,  title: 'Aralia Garden Villa',     type: 'villa',     city: 'bangalore', area: 'Sarjapur Road',   bhk: 4, sqft: 3100, baths: 4, price: 3.2 * CR,  intent: 'buy',  status: 'New launch',         img: 'assets/p4.jpg',          added: 16 },
-			{ id: 6,  title: 'Hebbal Lake Heights',     type: 'apartment', city: 'bangalore', area: 'Hebbal',          bhk: 3, sqft: 1650, baths: 3, price: 1.35 * CR, intent: 'buy',  status: 'Ready to move',      img: 'assets/p5.jpg',          added: 15 },
-			{ id: 7,  title: 'Jubilee Hills Duplex',    type: 'villa',     city: 'hyderabad', area: 'Jubilee Hills',   bhk: 4, sqft: 4200, baths: 5, price: 5.5 * CR,  intent: 'buy',  status: 'Resale',             img: 'assets/p6.jpg',          added: 14 },
-			{ id: 8,  title: 'Tellapur Meadows',        type: 'apartment', city: 'hyderabad', area: 'Tellapur',        bhk: 2, sqft: 1150, baths: 2, price: 62 * L,    intent: 'buy',  status: 'Possession 2027',    img: 'assets/p7.jpg',          added: 13 },
-			{ id: 9,  title: 'Indiranagar Studio',      type: 'apartment', city: 'bangalore', area: 'Indiranagar',     bhk: 1, sqft: 720,  baths: 1, price: 48 * L,    intent: 'buy',  status: 'Ready to move',      img: 'assets/p8.jpg',          added: 12 },
-			{ id: 10, title: 'Manikonda Residency',     type: 'apartment', city: 'hyderabad', area: 'Manikonda',       bhk: 3, sqft: 1580, baths: 3, price: 42000,     intent: 'rent', status: 'Available now',      img: 'assets/p9.jpg',          added: 11 },
-			{ id: 11, title: 'Electronic City Suites',  type: 'apartment', city: 'bangalore', area: 'Electronic City', bhk: 2, sqft: 1080, baths: 2, price: 28000,     intent: 'rent', status: 'Available 1 Dec',    img: 'assets/p2.jpg',          added: 10 },
-			{ id: 12, title: 'Banjara Hills Penthouse', type: 'apartment', city: 'hyderabad', area: 'Banjara Hills',   bhk: 4, sqft: 3900, baths: 4, price: 1.6 * L,   intent: 'rent', status: 'Available now',      img: 'assets/house-small.jpg', added: 9 },
-		];
+		const listings = LISTINGS;
 		const budgets = { '0-50l': [0, 50 * L], '50l-1cr': [50 * L, 1 * CR], '1cr-2cr': [1 * CR, 2 * CR], '2cr-': [2 * CR, Infinity] };
 		const typeLabel = { apartment: 'Apartments', villa: 'Villas', plot: 'Plots', commercial: 'Commercial spaces' };
-		const cityLabel = { hyderabad: 'Hyderabad', bangalore: 'Bangalore' };
 		const PAGE = 6;
 
 		const form = $('[data-listing-filters]');
@@ -349,11 +356,6 @@
 		const more = $('[data-load-more]');
 		const tpl = $('#card-template');
 		let shown = PAGE;
-
-		const rupees = (n, rent) => {
-			const amount = n >= CR ? `₹${(n / CR).toFixed(n % CR ? 2 : 0).replace(/\.?0+$/, '')} Cr` : n >= L ? `₹${Math.round(n / L)} L` : `₹${n.toLocaleString('en-IN')}`;
-			return rent ? `${amount}/mo` : amount;
-		};
 
 		// 1. URL → form (deep link from the landing-page search)
 		const params = new URLSearchParams(location.search);
@@ -387,8 +389,8 @@
 				const img = $('.card__img', node);
 				img.src = p.img; img.alt = `${p.title}, ${p.area}`;
 				$('.card__status', node).textContent = p.status;
-				const link = $('.card__title a', node); link.textContent = p.title; link.href = `#property-${p.id}`;
-				$('.card__media', node).href = `#property-${p.id}`;
+				const link = $('.card__title a', node); link.textContent = p.title; link.href = `property.html?id=${p.id}`;
+				$('.card__media', node).href = `property.html?id=${p.id}`;
 				$('.card__place span', node).textContent = `${p.area}, ${cityLabel[p.city]}`;
 				$('[data-fact=area]', node).textContent = p.type === 'plot' ? `${p.sqft.toLocaleString('en-IN')} sq. yd` : `${p.sqft.toLocaleString('en-IN')} sq. ft`;
 				$('[data-fact=beds]', node).textContent = p.bhk ? `${p.bhk} BHK` : 'Plot';
@@ -434,6 +436,516 @@
 		$('[data-video-close]', modal).addEventListener('click', () => modal.close());
 		modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
 		modal.addEventListener('close', () => document.body.classList.remove('is-locked'));
+	}
+
+	/* ------------------------------------------------------------------
+	 * About: a pinned stage driven by one scroll progress value (0..1 over
+	 * the section's extra height). Words light up in reading order, each
+	 * side photo pops in once its threshold is crossed and pops out at the
+	 * next, and both the side photos and the inline pills drift toward the
+	 * cursor (pills while hovered, side photos when the cursor comes near).
+	 * → Interactivity API store with a scroll-derived "progress" state.
+	 * ------------------------------------------------------------------ */
+	const about = $('[data-about]');
+	if (about) {
+		const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const stage = $('.about__stage', about);
+		const statement = $('[data-reveal-words]', about);
+		[...statement.childNodes].forEach((node) => {
+			if (node.nodeType !== Node.TEXT_NODE) { node.classList.add('about__w'); return; }
+			const frag = document.createDocumentFragment();
+			node.textContent.split(/(\s+)/).forEach((part) => {
+				if (!part) return;
+				if (/^\s+$/.test(part)) { frag.append(' '); return; }
+				const w = document.createElement('span');
+				w.className = 'about__w';
+				w.textContent = part;
+				frag.append(w);
+			});
+			node.replaceWith(frag);
+		});
+		const words = $$('.about__w', statement);
+		const floats = $$('[data-float]', about).map((el) => ({
+			el, from: +el.dataset.in, out: el.dataset.out ? +el.dataset.out : null,
+			x: 0, y: 0, tx: 0, ty: 0, // magnetic drift: current and target offsets
+		}));
+		const clamp01 = (v) => Math.min(1, Math.max(0, v));
+		let lit = -1;
+		let last = -1;
+		const update = () => {
+			const travel = about.offsetHeight - stage.offsetHeight;
+			const p = reduced ? 1 : clamp01(-about.getBoundingClientRect().top / travel);
+			if (p === last) return;
+			last = p;
+			// words finish at 90% so the last line is lit a beat before the stage releases
+			const n = Math.round(clamp01(p / 0.9) * words.length);
+			if (n !== lit) {
+				lit = n;
+				words.forEach((w, i) => w.classList.toggle('is-on', i < n));
+			}
+			floats.forEach(({ el, from, out }) => el.classList.toggle('is-in', p >= from && (out === null || p < out)));
+		};
+		let ticking = false;
+		const onScroll = () => {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(() => { ticking = false; update(); });
+		};
+		update();
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', onScroll);
+
+		if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+			// side photos: pulled toward the cursor within a radius, eased each frame so the motion feels fluid
+			const RADIUS = 320;
+			const PULL = 26;
+			let raf = 0;
+			const settle = () => {
+				let moving = false;
+				floats.forEach((f) => {
+					f.x += (f.tx - f.x) * 0.1;
+					f.y += (f.ty - f.y) * 0.1;
+					if (Math.abs(f.tx - f.x) > 0.05 || Math.abs(f.ty - f.y) > 0.05) moving = true;
+					f.el.style.setProperty('--mx', `${f.x.toFixed(2)}px`);
+					f.el.style.setProperty('--my', `${f.y.toFixed(2)}px`);
+				});
+				raf = moving ? requestAnimationFrame(settle) : 0;
+			};
+			const aim = (cx, cy) => {
+				floats.forEach((f) => {
+					if (!f.el.classList.contains('is-in')) { f.tx = f.ty = 0; return; }
+					const r = f.el.getBoundingClientRect();
+					const dx = cx - (r.left + r.width / 2 - f.x);
+					const dy = cy - (r.top + r.height / 2 - f.y);
+					const d = Math.hypot(dx, dy);
+					const k = d < RADIUS ? (1 - d / RADIUS) * PULL / Math.max(d, 1) : 0;
+					f.tx = dx * k;
+					f.ty = dy * k;
+				});
+				if (!raf) raf = requestAnimationFrame(settle);
+			};
+			stage.addEventListener('pointermove', (e) => aim(e.clientX, e.clientY));
+			stage.addEventListener('pointerleave', () => aim(-9999, -9999));
+
+			const clamp = (v) => Math.max(-12, Math.min(12, v));
+			$$('.about__pill', statement).forEach((pill) => {
+				pill.addEventListener('pointermove', (e) => {
+					const r = pill.getBoundingClientRect();
+					pill.classList.add('is-magnet');
+					pill.style.setProperty('--mx', `${clamp((e.clientX - r.left - r.width / 2) * 0.25)}px`);
+					pill.style.setProperty('--my', `${clamp((e.clientY - r.top - r.height / 2) * 0.25)}px`);
+				});
+				pill.addEventListener('pointerleave', () => {
+					pill.classList.remove('is-magnet');
+					pill.style.setProperty('--mx', '0px');
+					pill.style.setProperty('--my', '0px');
+				});
+			});
+		}
+	}
+
+	/* ------------------------------------------------------------------
+	 * Property page. One listing (?id=) plus its detail record fills the
+	 * page; the gallery lightbox, chapter nav, floor-plan tabs, map, EMI,
+	 * enquiry form and compact bar are small independent behaviours.
+	 * → Interactivity API stores in the theme, data from the plugin.
+	 * ------------------------------------------------------------------ */
+	const propertyRoot = $('[data-property]');
+	if (propertyRoot) {
+		const id = Number(new URLSearchParams(location.search).get('id')) || 1;
+		const p = LISTINGS.find((l) => l.id === id) || LISTINGS[0];
+		const rent = p.intent === 'rent';
+		const isPlot = p.type === 'plot';
+		const unit = isPlot ? 'sq yd' : 'sq ft';
+		const fmt = (n) => Math.round(n).toLocaleString('en-IN');
+		const setAll = (sel, text) => $$(sel).forEach((el) => { el.textContent = text; });
+		const pool = ['assets/house-large.jpg', 'assets/p1.jpg', 'assets/p2.jpg', 'assets/p3.jpg', 'assets/p4.jpg', 'assets/p5.jpg', 'assets/p6.jpg', 'assets/p7.jpg', 'assets/p8.jpg', 'assets/p9.jpg', 'assets/house-small.jpg'];
+		const cityCode = { hyderabad: 'HYD', bangalore: 'BLR' };
+		const landmarksByCity = {
+			hyderabad: [
+				{ name: 'Raidurg Metro', type: 'metro', d: '2.1 km', t: '6 min' },
+				{ name: 'Financial District', type: 'work', d: '4.5 km', t: '10 min' },
+				{ name: 'Oakridge International School', type: 'school', d: '3.2 km', t: '8 min' },
+				{ name: 'Continental Hospitals', type: 'hospital', d: '3.8 km', t: '9 min' },
+				{ name: 'Inorbit Mall', type: 'shop', d: '5.6 km', t: '14 min' },
+				{ name: 'RGIA Airport', type: 'air', d: '31 km', t: '40 min' },
+			],
+			bangalore: [
+				{ name: 'Nearest Metro station', type: 'metro', d: '1.8 km', t: '5 min' },
+				{ name: 'Tech park cluster', type: 'work', d: '3.9 km', t: '12 min' },
+				{ name: 'International school', type: 'school', d: '2.7 km', t: '8 min' },
+				{ name: 'Multi-speciality hospital', type: 'hospital', d: '3.1 km', t: '9 min' },
+				{ name: 'Neighbourhood mall', type: 'shop', d: '4.4 km', t: '13 min' },
+				{ name: 'Kempegowda Airport', type: 'air', d: '38 km', t: '55 min' },
+			],
+		};
+		const DETAILS = {
+			1: {
+				ref: 'LAV-HYD-0231', updated: '3 days ago',
+				photos: ['assets/house-large.jpg', 'assets/p6.jpg', 'assets/p2.jpg', 'assets/p8.jpg', 'assets/house-small.jpg', 'assets/p4.jpg', 'assets/p9.jpg', 'assets/p5.jpg'],
+				highlights: ['Private 1,100 sq ft lawn', 'Lake-facing master bedroom', 'East facing, Vastu compliant', 'Gated community of 42 villas', '10 min to the Financial District'],
+				description: [
+					'Lakeview Villa sits at the quiet end of a 42-home gated community in Gachibowli, with its lawn opening onto the community green and the lake beyond. The house is built around light: a double-height living room, floor-to-ceiling glazing on the east and a courtyard that pulls morning sun into the dining space.',
+					'Downstairs holds the living and dining rooms, a modular kitchen with a separate utility, a guest bedroom and a two-car porch. Upstairs are three bedrooms including a master suite with a walk-in wardrobe and a lake-facing balcony, a family lounge and a 420 sq ft terrace laid out for evening gatherings.',
+					'Finishes are Italian marble downstairs, engineered oak upstairs, teak doors and windows, and concealed copper plumbing. The home is brand new, never occupied, with occupancy certificate in hand and immediate possession.',
+				],
+				carpet: 3650, builtup: 4015, superBuiltup: 4560,
+				specs: { Facing: 'East', Floors: 'G+1', 'Built in': '2025, never occupied', Parking: '2 covered + 1 open', Furnishing: 'Semi-furnished, modular kitchen', Water: 'Municipal + borewell', 'Power backup': '100% DG backup', Ownership: 'Freehold, single owner' },
+				amenities: ['Clubhouse', 'Swimming pool', 'Gym', "Children's play area", '24x7 security', 'Landscaped gardens', 'Jogging track', 'Indoor games', 'Rainwater harvesting', 'Solar water heating', 'Visitor parking', 'EV charging'],
+				rera: 'P02400001234', reraState: 'Telangana RERA', reraUrl: 'https://rera.telangana.gov.in',
+				approvals: ['Occupancy certificate received', 'HMDA approved layout', 'Clear title, EC verified', 'Vastu compliant'],
+				banks: ['SBI', 'HDFC', 'ICICI', 'Axis'],
+				advisor: { name: 'Priya Menon', meta: 'Senior advisor, Hyderabad West · RERA agent A02400001234', photo: 'assets/t2.jpg' },
+				lat: 17.4401, lng: 78.3489,
+			},
+		};
+		const generic = () => {
+			const seed = p.id;
+			const photos = [p.img, ...pool.filter((x) => x !== p.img).slice(seed % 5, seed % 5 + 5)];
+			const typeWord = isPlot ? 'plot' : p.type === 'villa' ? 'villa' : 'apartment';
+			return {
+				ref: `LAV-${cityCode[p.city]}-0${String(200 + seed * 7).padStart(3, '0')}`, updated: `${1 + (seed % 6)} days ago`,
+				photos,
+				highlights: isPlot
+					? ['Clear title, ready to register', 'Gated layout with 40 ft roads', 'Vastu-friendly orientation', 'Approved layout, all amenities']
+					: [`${p.bhk} BHK, ${p.baths} bath ${typeWord}`, `${p.area}, well connected`, p.status, 'Verified documents', p.type === 'villa' ? 'Private garden' : 'Covered parking'],
+				description: isPlot
+					? [`A ${fmt(p.sqft)} sq yd plot in an approved, gated layout in ${p.area}. Roads, drainage, water and power lines are in place, and the layout has clear title with encumbrance verified for the last 30 years.`,
+						`Build when you are ready: the layout allows G+2 construction, and the area is seeing steady appreciation on the back of new road and metro links.`]
+					: [`${p.title} is a ${p.bhk} BHK ${typeWord} in ${p.area}, ${cityLabel[p.city]}, with ${fmt(p.sqft)} sq ft of carpet area across well-proportioned rooms, good cross ventilation and a ${p.type === 'villa' ? 'private garden' : 'generous balcony'}.`,
+						`The home comes with ${p.baths} bathrooms, a modular kitchen with utility, covered parking and access to the community's clubhouse, pool and gym. Schools, hospitals and daily shopping are all within a short drive.`,
+						`Documents are verified by Lavenor: title, approvals and tax receipts are available on request, and possession is as listed.`],
+				carpet: p.sqft, builtup: Math.round(p.sqft * 1.1 / 5) * 5, superBuiltup: Math.round(p.sqft * 1.25 / 5) * 5,
+				specs: isPlot
+					? { Facing: ['East', 'North', 'West'][seed % 3], 'Plot size': `${fmt(p.sqft)} sq yd`, Approval: 'HMDA / DTCP', Roads: '40 ft internal', 'Boundary wall': 'Yes', Ownership: 'Freehold' }
+					: { Facing: ['East', 'North', 'West', 'South-east'][seed % 4], Floors: p.type === 'villa' ? 'G+1' : `${3 + (seed % 12)} of ${12 + (seed % 10)}`, 'Built in': `${2019 + (seed % 7)}`, Parking: p.bhk >= 3 ? '2 covered' : '1 covered', Furnishing: ['Unfurnished', 'Semi-furnished', 'Fully furnished'][seed % 3], Water: 'Municipal + borewell', 'Power backup': 'Full backup', Ownership: 'Freehold' },
+				amenities: isPlot
+					? ['24x7 security', 'Landscaped gardens', 'Jogging track', 'Rainwater harvesting', 'Street lighting', 'Underground drainage', "Children's play area", 'Clubhouse']
+					: ['Clubhouse', 'Swimming pool', 'Gym', "Children's play area", '24x7 security', 'Landscaped gardens', 'Jogging track', 'Indoor games', 'Rainwater harvesting', 'Visitor parking', 'Lift', 'Power backup'].slice(0, 8 + (seed % 5)),
+				rera: p.city === 'hyderabad' ? `P0240000${1000 + seed * 37}` : `PRM/KA/RERA/1251/446/PR/${100000 + seed * 911}`,
+				reraState: p.city === 'hyderabad' ? 'Telangana RERA' : 'Karnataka RERA',
+				reraUrl: p.city === 'hyderabad' ? 'https://rera.telangana.gov.in' : 'https://rera.karnataka.gov.in',
+				approvals: isPlot ? ['Approved layout', 'Clear title, EC verified', 'Ready to register'] : ['Clear title, EC verified', 'Approved plan', p.status === 'Ready to move' ? 'Occupancy certificate received' : 'Construction on schedule'],
+				banks: ['SBI', 'HDFC', 'ICICI', 'Axis', 'Kotak'].slice(0, 3 + (seed % 3)),
+				advisor: p.city === 'hyderabad'
+					? { name: 'Priya Menon', meta: 'Senior advisor, Hyderabad West · RERA agent A02400001234', photo: 'assets/t2.jpg' }
+					: { name: 'Arjun Rao', meta: 'Senior advisor, Bangalore East · RERA agent A02400001234', photo: 'assets/t1.jpg' },
+				lat: p.city === 'hyderabad' ? 17.44 : 12.97, lng: p.city === 'hyderabad' ? 78.35 : 77.64,
+			};
+		};
+		const d = DETAILS[p.id] || generic();
+		const psf = Math.round(p.price / p.sqft);
+		const waText = encodeURIComponent(`Hi, I'm interested in ${p.title} (${d.ref}) in ${p.area}. Can we arrange a visit?`);
+
+		/* --- text fields --- */
+		document.title = `${p.title}, ${p.area} — Lavenor Realty`;
+		setAll('[data-title]', p.title);
+		setAll('[data-place]', `${p.area}, ${cityLabel[p.city]}`);
+		setAll('[data-price]', rupees(p.price, rent));
+		setAll('[data-psf]', rent ? `${fmt(p.sqft)} ${unit} · deposit 2 months` : `₹${fmt(psf)} per ${unit}`);
+		setAll('[data-price-note]', rent ? 'Maintenance extra' : /possession|launch/i.test(p.status) ? 'Plus GST, as applicable' : 'All inclusive, no GST');
+		setAll('[data-status]', p.status);
+		setAll('[data-ref]', d.ref);
+		setAll('[data-updated]', d.updated);
+		const crumbCity = $('[data-crumb-city]'); crumbCity.textContent = cityLabel[p.city]; crumbCity.href = `properties.html?location=${p.city}`;
+		$('[data-crumb-title]').textContent = p.title;
+		const similarLink = $('[data-similar-link]'); similarLink.textContent = `See all in ${cityLabel[p.city]}`; similarLink.href = `properties.html?location=${p.city}`;
+		$$('[data-wa]').forEach((a) => { a.href = `https://wa.me/919876543210?text=${waText}`; });
+		$('[data-pill-img]').src = d.photos[2] || d.photos[0];
+
+		/* --- facts strip --- */
+		const facts = {
+			beds: p.bhk ? `${p.bhk} BHK` : 'Plot', baths: p.baths ? `${p.baths} Baths` : 'Gated layout',
+			area: `${fmt(p.sqft)} ${unit}`, 'area-label': isPlot ? 'Plot area' : 'Carpet area',
+			facing: `${d.specs.Facing} facing`, floors: d.specs.Floors || d.specs.Approval, parking: (d.specs.Parking || d.specs.Roads).split(' +')[0], possession: p.status,
+		};
+		Object.entries(facts).forEach(([k, v]) => { const el = $(`[data-fact="${k}"]`); if (el) el.textContent = v; });
+		if (isPlot) { $('[data-fact="floors"]').nextElementSibling.textContent = 'Approval'; $('[data-fact="parking"]').nextElementSibling.textContent = 'Roads'; }
+
+		/* --- gallery tiles + lightbox --- */
+		$$('[data-open-photo]').forEach((tile) => { const img = $('img', tile); if (img) img.src = d.photos[+tile.dataset.openPhoto] || d.photos[0]; });
+		$('[data-photo-count]').textContent = d.photos.length;
+		const lb = $('[data-lightbox]');
+		if (lb && typeof lb.showModal === 'function') {
+			const img = $('[data-lb-img]', lb);
+			const strip = $('[data-lb-strip]', lb);
+			const idxEl = $('[data-lb-index]', lb);
+			$('[data-lb-total]', lb).textContent = d.photos.length;
+			let i = 0;
+			d.photos.forEach((src, k) => {
+				const li = document.createElement('li');
+				const b = document.createElement('button');
+				b.type = 'button'; b.setAttribute('aria-label', `Photo ${k + 1}`);
+				b.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+				b.addEventListener('click', () => show(k));
+				li.append(b); strip.append(li);
+			});
+			const thumbs = $$('button', strip);
+			const show = (k) => {
+				i = (k + d.photos.length) % d.photos.length;
+				img.src = d.photos[i];
+				img.alt = `${p.title}, photo ${i + 1} of ${d.photos.length}`;
+				img.style.animation = 'none'; void img.offsetWidth; img.style.animation = '';
+				idxEl.textContent = i + 1;
+				thumbs.forEach((t, k2) => t.classList.toggle('is-active', k2 === i));
+				thumbs[i].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+			};
+			const open = (k) => { show(k); lb.showModal(); document.body.classList.add('is-locked'); };
+			$$('[data-open-photo]').forEach((t) => t.addEventListener('click', () => open(+t.dataset.openPhoto)));
+			$('[data-lb-close]', lb).addEventListener('click', () => lb.close());
+			$('[data-lb-prev]', lb).addEventListener('click', () => show(i - 1));
+			$('[data-lb-next]', lb).addEventListener('click', () => show(i + 1));
+			lb.addEventListener('close', () => document.body.classList.remove('is-locked'));
+			lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+			lb.addEventListener('keydown', (e) => {
+				if (e.key === 'ArrowRight') show(i + 1);
+				else if (e.key === 'ArrowLeft') show(i - 1);
+			});
+			// swipe
+			let x0 = null;
+			const stage = $('[data-lb-stage]', lb);
+			stage.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+			stage.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) show(e.clientX < x0 ? i + 1 : i - 1); x0 = null; });
+		}
+
+		/* --- overview --- */
+		$('[data-highlights]').innerHTML = d.highlights.map((h) => `<li>${h}</li>`).join('');
+		const prose = $('[data-description]');
+		prose.innerHTML = d.description.map((t) => `<p>${t}</p>`).join('');
+		const more = $('[data-read-more]');
+		if (d.description.join(' ').length > 420) {
+			prose.classList.add('is-clamped');
+			more.addEventListener('click', () => {
+				const open = prose.classList.toggle('is-clamped');
+				more.setAttribute('aria-expanded', String(!open));
+				more.textContent = open ? 'Read the full description' : 'Show less';
+			});
+		} else more.hidden = true;
+		const areas = { carpet: fmt(d.carpet), builtup: fmt(d.builtup), super: fmt(d.superBuiltup), loading: Math.round((d.superBuiltup / d.carpet - 1) * 100), psf: `₹${fmt(p.price / d.carpet)}` };
+		Object.entries(areas).forEach(([k, v]) => { $(`[data-area="${k}"]`).textContent = v; });
+		if (isPlot || rent) $('.area-card').hidden = true;
+		$('[data-specs]').innerHTML = Object.entries(d.specs).map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+
+		/* --- amenities --- */
+		const icon = (paths, extra = '') => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${extra}>${paths}</svg>`;
+		const amenityIcon = {
+			'Clubhouse': icon('<path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-6h6v6"/>'),
+			'Swimming pool': icon('<path d="M3 16c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0M3 20c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0M8 13V5a2 2 0 0 1 4 0M14 13V5a2 2 0 0 1 4 0"/>'),
+			'Gym': icon('<path d="M4 10v4M20 10v4M7 8v8M17 8v8M7 12h10"/>'),
+			"Children's play area": icon('<circle cx="12" cy="6" r="2.5"/><path d="M6 21l3-9h6l3 9M9 12l3-3 3 3"/>'),
+			'24x7 security': icon('<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/>'),
+			'Landscaped gardens': icon('<path d="M12 21v-8M12 13c-4 0-6-3-6-7 4 0 6 3 6 7zM12 13c4 0 6-3 6-7-4 0-6 3-6 7z"/>'),
+			'Jogging track': icon('<circle cx="14" cy="5" r="2"/><path d="M4 20l5-4 2-5 3 2 3-3M9 16l-1 4M13 13l3 7"/>'),
+			'Indoor games': icon('<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/>'),
+			'Rainwater harvesting': icon('<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>'),
+			'Solar water heating': icon('<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'),
+			'Visitor parking': icon('<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/>'),
+			'EV charging': icon('<path d="M6 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M6 21h10M16 9h2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2M12 7l-2 4h4l-2 4"/>'),
+			'Lift': icon('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 11l3-3 3 3M9 14l3 3 3-3"/>'),
+			'Power backup': icon('<path d="M13 2L5 14h6l-1 8 8-12h-6z"/>'),
+			'Street lighting': icon('<path d="M12 21V9M12 9a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 21h8"/>'),
+			'Underground drainage': icon('<path d="M3 8h18M3 16h18M7 8v8M17 8v8M12 8v8"/>'),
+		};
+		$('[data-amenities]').innerHTML = d.amenities.map((a) => `<li>${amenityIcon[a] || icon('<path d="M4 12.5l5 5L20 7"/>')}<span>${a}</span></li>`).join('');
+
+		/* --- floor plan: tabs + room highlight --- */
+		const planTabs = $$('[data-plan]');
+		const sheets = $$('[data-plan-sheet]');
+		const roomLists = $$('[data-plan-rooms]');
+		planTabs.forEach((tab) => tab.addEventListener('click', () => {
+			const key = tab.dataset.plan;
+			planTabs.forEach((t) => { const on = t === tab; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+			sheets.forEach((sh) => { sh.hidden = sh.dataset.planSheet !== key; });
+			roomLists.forEach((rl) => { rl.hidden = rl.dataset.planRooms !== key; });
+		}));
+		$('[data-plan-tabs]').addEventListener('keydown', (e) => {
+			const i = planTabs.indexOf(document.activeElement);
+			if (i < 0) return;
+			if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const n = planTabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + planTabs.length) % planTabs.length]; n.focus(); n.click(); }
+		});
+		const hot = (room, on) => $$(`[data-room="${room}"]`).forEach((el) => el.classList.toggle('is-hot', on));
+		$$('[data-room]').forEach((el) => {
+			el.addEventListener('pointerenter', () => hot(el.dataset.room, true));
+			el.addEventListener('pointerleave', () => hot(el.dataset.room, false));
+		});
+		if (isPlot) { $('#plan').hidden = true; $('.chapters a[href="#plan"]').parentElement.hidden = true; }
+		$('[data-brochure]').addEventListener('click', (e) => { e.preventDefault(); showToast(`Brochure for <b>${p.title}</b> would download here. <code>GET /wp-json/property-core/v1/brochure/${p.id}</code>`); });
+
+		/* --- location --- */
+		const landmarkIcon = {
+			metro: icon('<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 17l-2 4M15 17l2 4M9 7h6"/>'),
+			work: icon('<path d="M3 21h18M5 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16M15 10h3a1 1 0 0 1 1 1v10M8 8h2M8 12h2M8 16h2"/>'),
+			school: icon('<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/>'),
+			hospital: icon('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 8v8M8 12h8"/>'),
+			shop: icon('<path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/>'),
+			air: icon('<path d="M2 14l20-8-6 15-3-6-7-1z"/>'),
+		};
+		const lms = landmarksByCity[p.city];
+		$('[data-landmarks]').innerHTML = lms.map((l) => `<li><span class="landmarks__type">${landmarkIcon[l.type]}</span><span>${l.name}<small>${l.t} drive</small></span><b>${l.d}</b></li>`).join('');
+		const mapEl = $('[data-map]');
+		$('[data-map-load]').addEventListener('click', () => {
+			const dl = 0.012;
+			const bbox = `${d.lng - dl * 1.6},${d.lat - dl},${d.lng + dl * 1.6},${d.lat + dl}`;
+			const f = document.createElement('iframe');
+			f.title = `Map of ${p.area}`;
+			f.loading = 'lazy';
+			f.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${d.lat},${d.lng}`;
+			mapEl.append(f);
+			mapEl.classList.add('is-loaded');
+		});
+
+		/* --- EMI --- */
+		const emiForm = $('[data-emi]');
+		if (rent) { $('#pricing').hidden = true; $('.chapters a[href="#pricing"]').parentElement.hidden = true; }
+		else {
+			const out = (k) => $(`[data-emi-out="${k}"]`);
+			const tween = (el, to, format) => {
+				const from = Number(el.dataset.v || to);
+				el.dataset.v = to;
+				const t0 = performance.now();
+				const step = (t) => {
+					const k = Math.min(1, (t - t0) / 320);
+					const e = 1 - Math.pow(1 - k, 3);
+					el.textContent = format(from + (to - from) * e);
+					if (k < 1) requestAnimationFrame(step);
+				};
+				requestAnimationFrame(step);
+			};
+			const calc = () => {
+				const ltv = +emiForm.amount.value;
+				const rate = +emiForm.rate.value;
+				const years = +emiForm.years.value;
+				const loan = p.price * ltv / 100;
+				const r = rate / 1200;
+				const n = years * 12;
+				const emi = loan * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+				const duty = p.price * 0.06;
+				out('amount').textContent = rupees(loan);
+				out('rate').textContent = `${rate.toFixed(1)}%`;
+				out('years').textContent = `${years} years`;
+				$('[data-emi-ltv]').textContent = ltv;
+				tween($('[data-emi-value]'), emi, (v) => `₹${fmt(v)}`);
+				tween($('[data-emi-down]'), p.price - loan, (v) => rupees(Math.round(v)));
+				tween($('[data-emi-interest]'), emi * n - loan, (v) => rupees(Math.round(v)));
+				tween($('[data-emi-duty]'), duty, (v) => rupees(Math.round(v)));
+				tween($('[data-emi-total]'), p.price + duty + emi * n - loan, (v) => rupees(Math.round(v)));
+			};
+			emiForm.addEventListener('input', calc);
+			calc();
+		}
+
+		/* --- trust --- */
+		$('[data-rera]').textContent = d.rera;
+		const reraLink = $('[data-rera-link]'); reraLink.href = d.reraUrl; reraLink.previousSibling.textContent = `${d.reraState} `;
+		$('[data-approvals]').innerHTML = d.approvals.map((a) => `<li>${icon('<path d="M4 12.5l5 5L20 7"/>', ' width="14" height="14"')}${a}</li>`).join('');
+		$('[data-banks]').innerHTML = d.banks.map((b) => `<li>${b}</li>`).join('');
+		$('[data-advisor-name]').textContent = d.advisor.name;
+		$('[data-advisor-meta]').textContent = d.advisor.meta;
+		$('[data-advisor-photo]').src = d.advisor.photo;
+
+		/* --- similar homes: same city, closest price, same intent --- */
+		const similar = LISTINGS.filter((l) => l.id !== p.id && l.city === p.city && l.intent === p.intent)
+			.sort((a, b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price)).slice(0, 3);
+		const tpl = $('#card-template');
+		const simEl = $('[data-similar]');
+		similar.forEach((q) => {
+			const node = tpl.content.cloneNode(true);
+			const img = $('.card__img', node); img.src = q.img; img.alt = `${q.title}, ${q.area}`;
+			$('.card__status', node).textContent = q.status;
+			const link = $('.card__title a', node); link.textContent = q.title; link.href = `property.html?id=${q.id}`;
+			$('.card__media', node).href = `property.html?id=${q.id}`;
+			$('.card__foot .btn', node).href = `property.html?id=${q.id}`;
+			$('.card__place span', node).textContent = `${q.area}, ${cityLabel[q.city]}`;
+			$('[data-fact=area]', node).textContent = `${fmt(q.sqft)} ${q.type === 'plot' ? 'sq. yd' : 'sq. ft'}`;
+			$('[data-fact=beds]', node).textContent = q.bhk ? `${q.bhk} BHK` : 'Plot';
+			$('[data-fact=baths]', node).textContent = q.baths ? `${q.baths} Baths` : 'Gated';
+			$('.card__price', node).textContent = rupees(q.price, q.intent === 'rent');
+			simEl.append(node);
+		});
+		const canHover = matchMedia('(hover: hover)').matches;
+		$$('.card', simEl).forEach((card) => {
+			if (canHover) {
+				card.addEventListener('pointerenter', () => card.classList.add('is-open'));
+				card.addEventListener('pointerleave', () => card.classList.remove('is-open'));
+			}
+			card.addEventListener('focusin', () => card.classList.add('is-open'));
+			card.addEventListener('focusout', (e) => { if (!card.contains(e.relatedTarget)) card.classList.remove('is-open'); });
+		});
+
+		/* --- chapter nav: highlight the section in view --- */
+		const chapterLinks = $$('[data-chapters] a');
+		const sections = chapterLinks.map((a) => $(a.getAttribute('href'))).filter((s) => s && !s.hidden);
+		const setChapter = (sec) => chapterLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${sec.id}`));
+		const spy = () => {
+			const line = innerHeight * 0.32;
+			let cur = sections[0];
+			sections.forEach((s) => { if (s.getBoundingClientRect().top <= line) cur = s; });
+			setChapter(cur);
+		};
+		window.addEventListener('scroll', spy, { passive: true });
+		spy();
+
+		/* --- compact bar: after the gallery has scrolled away (mobile: always, via CSS) --- */
+		const bar = $('[data-prop-bar]');
+		const mosaic = $('[data-mosaic]');
+		const barWatch = () => {
+			const on = mosaic.getBoundingClientRect().bottom < 0 || matchMedia('(max-width: 720px)').matches;
+			bar.classList.toggle('is-visible', on);
+			bar.setAttribute('aria-hidden', String(!on));
+		};
+		window.addEventListener('scroll', barWatch, { passive: true });
+		window.addEventListener('resize', barWatch);
+		barWatch();
+		$('[data-bar-enquire]').addEventListener('click', (e) => {
+			e.preventDefault();
+			$('#enquire').scrollIntoView({ behavior: 'smooth', block: 'center' });
+			setTimeout(() => $('#enquire [name="name"]').focus({ preventScroll: true }), 600);
+		});
+
+		/* --- save / share --- */
+		const save = $('[data-save]');
+		const saved = new Set(JSON.parse(localStorage.getItem('lavenor:saved') || '[]'));
+		const paintSave = () => { const on = saved.has(p.id); save.setAttribute('aria-pressed', String(on)); $('[data-save-label]').textContent = on ? 'Saved' : 'Save'; };
+		save.addEventListener('click', () => {
+			saved.has(p.id) ? saved.delete(p.id) : saved.add(p.id);
+			localStorage.setItem('lavenor:saved', JSON.stringify([...saved]));
+			paintSave();
+			showToast(saved.has(p.id) ? `<b>${p.title}</b> saved to your shortlist.` : `<b>${p.title}</b> removed from your shortlist.`);
+		});
+		paintSave();
+		$('[data-share]').addEventListener('click', async () => {
+			const data = { title: document.title, text: `${p.title}, ${p.area}: ${rupees(p.price, rent)}`, url: location.href };
+			try {
+				if (navigator.share) await navigator.share(data);
+				else { await navigator.clipboard.writeText(location.href); showToast('Link copied to your clipboard.'); }
+			} catch { /* dismissed */ }
+		});
+
+		/* --- enquiry --- */
+		const enq = $('[data-enquire]');
+		enq.addEventListener('submit', (e) => {
+			e.preventDefault();
+			if (!enq.reportValidity()) return;
+			const f = new FormData(enq);
+			const payload = { property: p.id, ref: d.ref, name: f.get('name'), phone: `+91${f.get('phone')}`, want: f.get('want'), date: f.get('date') || null, source: location.pathname + location.search };
+			showToast(`Thanks ${payload.name.split(' ')[0]}, ${d.advisor.name.split(' ')[0]} will call you within the hour about <b>${p.title}</b>.<code>POST /wp-json/property-core/v1/leads ${JSON.stringify(payload)}</code>`);
+			enq.reset();
+			$$('select', enq).forEach((sel) => sel.dd?.sync());
+		});
+
+		/* --- structured data (RealEstateListing) --- */
+		const ld = $('[data-jsonld]');
+		if (ld) ld.textContent = JSON.stringify({
+			'@context': 'https://schema.org', '@type': 'RealEstateListing', name: p.title, url: location.href, datePosted: '2026-10-01',
+			image: d.photos, description: d.description[0],
+			about: { '@type': isPlot ? 'Place' : p.type === 'villa' ? 'House' : 'Apartment', numberOfBedrooms: p.bhk || undefined, numberOfBathroomsTotal: p.baths || undefined,
+				floorSize: { '@type': 'QuantitativeValue', value: p.sqft, unitCode: isPlot ? 'YDK' : 'FTK' },
+				address: { '@type': 'PostalAddress', addressLocality: p.area, addressRegion: cityLabel[p.city], addressCountry: 'IN' },
+				geo: { '@type': 'GeoCoordinates', latitude: d.lat, longitude: d.lng },
+				amenityFeature: d.amenities.map((a) => ({ '@type': 'LocationFeatureSpecification', name: a, value: true })) },
+			offers: { '@type': 'Offer', price: p.price, priceCurrency: 'INR', availability: 'https://schema.org/InStock', businessFunction: rent ? 'http://purl.org/goodrelations/v1#LeaseOut' : 'http://purl.org/goodrelations/v1#Sell',
+				...(rent ? { priceSpecification: { '@type': 'UnitPriceSpecification', price: p.price, priceCurrency: 'INR', unitText: 'MONTH' } } : {}) },
+		});
 	}
 
 	/* ------------------------------------------------------------------

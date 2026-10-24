@@ -5,3 +5,6 @@ dist/
 plugin/**/build/
 .DS_Store
 .playwright-mcp/
+
+# plugin-generated activity notes dropped into subfolders
+design/prototype/CLAUDE.md
