@@ -1057,6 +1057,25 @@
 	 * ------------------------------------------------------------------ */
 	const inquiry = $('[data-inquiry]');
 	if (inquiry) {
+		// Magnetic: when a scroll ends near the band while moving toward it, settle it flush
+		// to the viewport. Moving away never pulls back, so it is easy to leave.
+		const band = inquiry.closest('.inquiry');
+		const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		let lastGap = Infinity;
+		let settleTimer;
+		const settle = () => {
+			const top = band.getBoundingClientRect().top;
+			const gap = Math.abs(top);
+			const approaching = gap < lastGap;
+			lastGap = gap;
+			if (gap > 2 && gap < innerHeight * 0.22 && approaching) {
+				lastGap = 0;
+				scrollTo({ top: scrollY + top, behavior: reducedMotion ? 'instant' : 'smooth' });
+			}
+		};
+		if ('onscrollend' in window) window.addEventListener('scrollend', settle);
+		else window.addEventListener('scroll', () => { clearTimeout(settleTimer); settleTimer = setTimeout(settle, 140); }, { passive: true });
+
 		inquiry.addEventListener('submit', (e) => {
 			e.preventDefault();
 			if (!inquiry.reportValidity()) return;
