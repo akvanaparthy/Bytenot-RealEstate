@@ -488,19 +488,23 @@ legend { padding: 0; }
 }
 .spot__img {
 	position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center 45%;
-	opacity: 0; transform: scale(1.06); transition: opacity .6s ease;
+	opacity: 0; transform: scale(1.06); transition: opacity .4s ease;
 }
-.spot__img.is-on { opacity: 1; z-index: 1; animation: spot-settle 9s cubic-bezier(.2, .7, .2, 1) forwards; }
-@keyframes spot-settle { from { transform: scale(1.08); } to { transform: scale(1); } }
+.spot__img.is-on { opacity: 1; z-index: 1; animation: spot-settle 1.6s cubic-bezier(.2, .7, .2, 1) forwards; }
+@keyframes spot-settle { from { transform: scale(1.06); } to { transform: scale(1); } }
 .spot__shade {
 	position: absolute; inset: 0; z-index: 2;
 	background: linear-gradient(180deg, rgba(20, 47, 63, 0.28) 0%, rgba(20, 47, 63, 0) 32%, rgba(20, 47, 63, 0.08) 55%, rgba(20, 47, 63, 0.82) 100%);
 }
 .spot__why {
-	position: absolute; top: 24px; right: 24px; z-index: 3; display: inline-flex; align-items: center; height: 30px; margin: 0; padding: 0 12px;
-	border-radius: var(--wp--custom--radius--pill); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-	background: var(--wp--preset--gradient--brand-gold-soft); color: var(--wp--preset--color--contrast);
+	--tab-r: 16px;
+	position: absolute; top: 0; left: 0; z-index: 3; display: inline-flex; align-items: center; height: 36px; margin: 0; padding: 0 18px 4px 4px;
+	border-bottom-right-radius: var(--tab-r); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+	background: var(--wp--preset--color--base); color: var(--wp--preset--color--primary-dark);
 }
+.spot__why::before, .spot__why::after { content: ""; position: absolute; width: var(--tab-r); height: var(--tab-r); background: radial-gradient(circle at 100% 100%, transparent calc(var(--tab-r) - 0.5px), var(--wp--preset--color--base) var(--tab-r)); }
+.spot__why::before { top: 0; left: 100%; }
+.spot__why::after { top: 100%; left: 0; }
 .spot__info {
 	position: absolute; left: 32px; right: 240px; bottom: 32px; z-index: 3;
 	transition: opacity .22s ease, transform .22s ease;
@@ -1384,7 +1388,7 @@ legend { padding: 0; }
 
 	.spot { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
 	.spot__stage { min-height: 0; aspect-ratio: 4 / 5; }
-	.spot__why { top: 16px; right: 16px; }
+	.spot__why { --tab-r: 14px; height: 32px; padding-right: 14px; }
 	.spot__info { left: 18px; right: 18px; bottom: 96px; }
 	.spot__name { font-size: 28px; }
 	.spot__price { --notch: 16px; padding: 14px 16px 2px 18px; }
