@@ -509,7 +509,7 @@ legend { padding: 0; }
    photo's anti-aliased edge stays covered at any zoom. The script only fixes their width to the
    longest label. */
 .spot__why {
-	--rx: 26px; --r: 18px; --tab-h: 36px; --bleed: 3px;
+	--rx: 30px; --r: 18px; --tab-h: 36px; --bleed: 3px; /* rx : tab-h/2 = 1.67, the lean */
 	--tail: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Cpath d='M0 0H3C2.448 0 2 .448 2 1C2 1.552 1.552 2 1 2H0Z'/%3E%3C/svg%3E");
 	--foot: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 2' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1V1C.448 1 0 1.448 0 2Z'/%3E%3C/svg%3E");
 	position: absolute; top: calc(-1 * var(--bleed)); left: calc(-1 * var(--bleed)); z-index: 3; display: flex; align-items: center; margin: 0;
@@ -539,12 +539,12 @@ legend { padding: 0; }
 .btn--glass { background: rgba(255, 255, 255, 0.16); color: var(--wp--preset--color--base); border-color: rgba(255, 255, 255, 0.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .btn--glass:hover { background: rgba(255, 255, 255, 0.28); }
 .spot__price {
-	--rx: 30px; --r: 20px; --box-h: 70px; --bleed: 3px;
+	--rx: 50px; --r: 20px; --box-h: 64px; --bleed: 3px; /* rx : box-h/2 = 1.56, the lean */
 	--tail: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Cpath d='M3 0H2C1.448 0 1 .448 1 1C1 1.552 .552 2 0 2H3Z'/%3E%3C/svg%3E");
 	--cap: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 2' preserveAspectRatio='none'%3E%3Cpath d='M1 0C1 .552 .552 1 0 1V2H1Z'/%3E%3C/svg%3E");
 	position: absolute; right: calc(-1 * var(--bleed)); bottom: calc(-1 * var(--bleed)); z-index: 3; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; margin: 0;
 	box-sizing: border-box; height: calc(var(--r) + var(--box-h) + var(--bleed));
-	padding: var(--r) calc(22px + var(--bleed)) var(--bleed) calc(3 * var(--rx) - 2px);
+	padding: var(--r) calc(22px + var(--bleed)) var(--bleed) calc(2 * var(--rx) + 6px);
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); white-space: nowrap;
 	-webkit-mask: linear-gradient(#000, #000) right bottom / calc(100% - 2 * var(--rx)) calc(var(--box-h) + var(--bleed)) no-repeat,
 		var(--tail) left 0 top var(--r) / calc(3 * var(--rx)) var(--box-h) no-repeat,
@@ -1413,10 +1413,10 @@ legend { padding: 0; }
 
 	.spot { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
 	.spot__stage { min-height: 0; aspect-ratio: 4 / 5; }
-	.spot__why { --rx: 22px; --r: 16px; --tab-h: 32px; padding-right: calc(var(--rx) + 8px); }
+	.spot__why { --rx: 26px; --r: 16px; --tab-h: 32px; padding-right: calc(var(--rx) + 8px); }
 	.spot__info { left: 18px; right: 18px; bottom: 96px; }
 	.spot__name { font-size: 28px; }
-	.spot__price { --rx: 24px; --r: 16px; --box-h: 60px; padding-right: calc(16px + var(--bleed)); padding-left: calc(3 * var(--rx) - 6px); }
+	.spot__price { --rx: 42px; --r: 16px; --box-h: 56px; padding-right: calc(16px + var(--bleed)); padding-left: calc(2 * var(--rx) + 4px); }
 	.spot__price strong { font-size: 24px; }
 	.rail__row { min-height: 0; padding: 8px 12px 8px 8px; gap: 12px; grid-template-columns: 56px minmax(0, 1fr) auto; }
 	.rail__thumb { width: 56px; height: 56px; }
