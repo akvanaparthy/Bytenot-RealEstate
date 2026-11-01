@@ -277,14 +277,15 @@
 		const shapeCorners = () => {
 			const tab = el('tab'), rx = px(tab, '--rx'), r = px(tab, '--r');
 			widest(el('why'), FEATURED.map((p) => p.why));
-			let bw = tab.offsetWidth, bh = tab.offsetHeight, H = bh - r;
-			tab.style.clipPath = `path("M0 0H${bw}C${bw - rx} 0 ${bw - rx} ${H} ${bw - 2 * rx} ${H}H${r}C${0.45 * r} ${H} 0 ${H + 0.45 * r} 0 ${bh}Z")`;
+			// fractional sizes, and the path overshoots the outer edges by 2px so no edge pixel is ever clipped
+			let { width: bw, height: bh } = tab.getBoundingClientRect(); let H = bh - r;
+			tab.style.clipPath = `path("M-2 -2H${bw}V0C${bw - rx} 0 ${bw - rx} ${H} ${bw - 2 * rx} ${H}H${r}C${0.45 * r} ${H} 0 ${H + 0.45 * r} 0 ${bh}H-2Z")`;
 
 			const box = el('pricebox'), bx = px(box, '--rx'), br = px(box, '--r');
 			widest(el('price'), FEATURED.map((p) => rupees(p.price, p.intent === 'rent')));
 			widest(el('psf'), FEATURED.map(psf));
-			bw = box.offsetWidth; bh = box.offsetHeight;
-			box.style.clipPath = `path("M${bw} 0V${bh}H0C${bx} ${bh} ${bx} ${br} ${2 * bx} ${br}H${bw - br}C${bw - 0.45 * br} ${br} ${bw} ${br - 0.45 * br} ${bw} 0Z")`;
+			({ width: bw, height: bh } = box.getBoundingClientRect());
+			box.style.clipPath = `path("M${bw + 2} -2V${bh + 2}H0V${bh}C${bx} ${bh} ${bx} ${br} ${2 * bx} ${br}H${bw - br}C${bw - 0.45 * br} ${br} ${bw} ${br - 0.45 * br} ${bw} 0V-2Z")`;
 		};
 		shapeCorners();
 		document.fonts?.ready.then(shapeCorners);

@@ -503,8 +503,8 @@ legend { padding: 0; }
    JS fixes each box to its longest label, so the shape never changes with the content. */
 .spot__why {
 	--rx: 26px; --r: 18px; --tab-h: 36px;
-	position: absolute; top: 0; left: 0; z-index: 3; display: flex; align-items: center; margin: 0;
-	height: calc(var(--tab-h) + var(--r)); padding: 0 calc(2 * var(--rx) - 4px) var(--r) 6px;
+	position: absolute; top: -1px; left: -1px; z-index: 3; display: flex; align-items: center; margin: 0; /* 1px past the stage edge: no seam with the photo's edge */
+	height: calc(var(--tab-h) + var(--r) + 1px); padding: 1px calc(2 * var(--rx) - 4px) var(--r) 7px;
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--primary-dark);
 	font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
 }
@@ -524,8 +524,8 @@ legend { padding: 0; }
 .btn--glass:hover { background: rgba(255, 255, 255, 0.28); }
 .spot__price {
 	--rx: 30px; --r: 20px;
-	position: absolute; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; margin: 0;
-	padding: calc(var(--r) + 10px) 22px 2px calc(2 * var(--rx) - 2px);
+	position: absolute; right: -1px; bottom: -1px; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; margin: 0; /* 1px past the stage edge: no seam */
+	padding: calc(var(--r) + 10px) 23px 3px calc(2 * var(--rx) - 2px);
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); white-space: nowrap;
 }
 .spot__price strong { display: block; font-size: 30px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; text-align: right; }
@@ -1390,7 +1390,7 @@ legend { padding: 0; }
 	.spot__why { --rx: 22px; --r: 16px; --tab-h: 32px; }
 	.spot__info { left: 18px; right: 18px; bottom: 96px; }
 	.spot__name { font-size: 28px; }
-	.spot__price { --rx: 24px; --r: 16px; padding: calc(var(--r) + 6px) 16px 2px calc(2 * var(--rx) - 2px); }
+	.spot__price { --rx: 24px; --r: 16px; padding: calc(var(--r) + 6px) 17px 3px calc(2 * var(--rx) - 2px); }
 	.spot__price strong { font-size: 24px; }
 	.rail__row { min-height: 0; padding: 8px 12px 8px 8px; gap: 12px; grid-template-columns: 56px minmax(0, 1fr) auto; }
 	.rail__thumb { width: 56px; height: 56px; }
