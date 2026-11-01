@@ -31,6 +31,43 @@
 	};
 
 	/* ------------------------------------------------------------------
+	 * Site configuration. In WordPress this is Property Core > Setup: the
+	 * agency picks which property types and transactions it deals in, and
+	 * the option lists come from the CRM sync (Zoho picklists, synced
+	 * localities). An agency that only sells plots never shows "Apartment"
+	 * or a BHK filter. Prototype override for demos:
+	 *   ?types=plot,commercial&intents=buy
+	 * ------------------------------------------------------------------ */
+	const TYPES = { apartment: 'Apartment', villa: 'Villa', plot: 'Plot', commercial: 'Commercial' };
+	const INTENTS = { buy: 'Buy', rent: 'Rent', 'new-launch': 'New Launch', resale: 'Resale' };
+	const SITE = {
+		types: ['apartment', 'villa', 'plot', 'commercial'],
+		intents: ['buy', 'rent', 'new-launch', 'resale'],
+		budgets: [['0-50l', 'Under ₹50 L'], ['50l-1cr', '₹50 L – ₹1 Cr'], ['1cr-2cr', '₹1 Cr – ₹2 Cr'], ['2cr-', 'Above ₹2 Cr']],
+		configurations: [['1', '1 BHK'], ['2', '2 BHK'], ['3', '3 BHK'], ['4', '4 BHK+']],
+		locations: [...new Set(LISTINGS.map((p) => p.city))].map((c) => [c, cityLabel[c]]),
+	};
+	const demo = new URLSearchParams(location.search);
+	if (demo.has('types')) SITE.types = demo.get('types').split(',').filter((t) => TYPES[t]);
+	if (demo.has('intents')) SITE.intents = demo.get('intents').split(',').filter((i) => INTENTS[i]);
+	if (!SITE.types.length) SITE.types = Object.keys(TYPES);
+	if (!SITE.intents.length) SITE.intents = ['buy'];
+	SITE.hasConfig = SITE.types.some((t) => t === 'apartment' || t === 'villa'); // BHK only means something for homes
+	SITE.listings = LISTINGS.filter((p) => SITE.types.includes(p.type) && (p.intent === 'rent' ? SITE.intents.includes('rent') : SITE.intents.some((i) => i !== 'rent')));
+	const demoQuery = () => ['types', 'intents'].filter((k) => demo.has(k)).map((k) => `${k}=${demo.get(k)}`);
+
+	const fillSelect = (select, items, placeholder) => {
+		if (!select) return;
+		const keep = select.value;
+		select.innerHTML = '';
+		if (placeholder !== undefined) select.append(new Option(placeholder, ''));
+		items.forEach(([v, label]) => select.append(new Option(label, v)));
+		select.value = keep;
+		if (select.selectedIndex < 0) select.selectedIndex = 0;
+	};
+	$$('[data-listing-count]').forEach((el) => { const n = SITE.listings.length; el.textContent = `${n} ${n === 1 ? 'property' : 'properties'}`; });
+
+	/* ------------------------------------------------------------------
 	 * Header: transparent over the hero, frosted + compact after scroll.
 	 * ------------------------------------------------------------------ */
 	const header = $('[data-header]');
@@ -129,6 +166,34 @@
 	if (form) {
 		const typeField = $('#f-type', form);
 
+		// Fields and options come from the site configuration, never from markup.
+		fillSelect(typeField, SITE.types.map((t) => [t, TYPES[t]]), 'Enter type');
+		fillSelect($('#f-budget', form), SITE.budgets, 'Price range');
+		fillSelect($('#f-location', form), SITE.locations, 'Location');
+		fillSelect($('#f-bhk', form), SITE.configurations, 'Any');
+		if (!SITE.hasConfig) $('[data-field="bhk"]', form).hidden = true;
+		form.classList.toggle('search--three', !SITE.hasConfig);
+		const tagList = $('.tags');
+		if (tagList) {
+			tagList.innerHTML = '';
+			SITE.types.slice(0, 4).forEach((t) => {
+				const li = document.createElement('li');
+				li.innerHTML = `<button class="tag" type="button" data-type="${t}">${TYPES[t]}</button>`;
+				tagList.append(li);
+			});
+		}
+		const intentSet = $('.filters', form);
+		if (intentSet) {
+			$$('.chip', intentSet).forEach((c) => c.remove());
+			SITE.intents.forEach((k, i) => {
+				const l = document.createElement('label');
+				l.className = 'chip';
+				l.innerHTML = `<input type="radio" name="intent" value="${k}"${i === 0 ? ' checked' : ''}><span>${INTENTS[k]}</span>`;
+				intentSet.append(l);
+			});
+			intentSet.hidden = SITE.intents.length < 2;
+		}
+
 		$$('.tag[data-type]').forEach((tag) => tag.addEventListener('click', () => {
 			$$('.tag').forEach((t) => t.classList.toggle('is-active', t === tag));
 			typeField.value = tag.dataset.type;
@@ -146,119 +211,120 @@
 			e.preventDefault();
 			const params = new URLSearchParams();
 			new FormData(form).forEach((value, key) => { if (value) params.set(key, value); });
+			demoQuery().forEach((q) => { const [k, v] = q.split('='); params.set(k, v); });
 			// Same query the theme's search block will build; the listing page reads it.
 			window.location.href = `${form.getAttribute('action')}?${params.toString()}`;
 		});
 	}
 
 	/* ------------------------------------------------------------------
-	 * Featured properties carousel. `featured` mirrors what the plugin's
-	 * featured-properties query will return (title, excerpt, price, gallery).
+	 * Featured properties: one spotlight, a rail of the rest. `FEATURED`
+	 * mirrors the plugin's featured query: listings flagged in WordPress
+	 * with an editor-written reason; the facts come from the CRM mirror.
 	 * ------------------------------------------------------------------ */
-	const featured = [
-		{
-			id: 'lakeview-villa',
-			title: 'Great homes begin with the right guidance.',
-			blurb: 'From the first site visit to the final paperwork, our advisors walk with you, so the home you choose feels lavish today and wise tomorrow.',
-			price: '₹2.4 Cr',
-			note: 'Lakeview Villa, Gachibowli — a 4 BHK villa with a private lawn, ten minutes from the Financial District.',
-			gallery: ['assets/house-large.jpg', 'assets/p2.jpg', 'assets/p8.jpg'],
-			aside: 'assets/house-small.jpg',
-			alt: 'Contemporary two-storey villa with a landscaped garden',
-			url: 'property.html?id=1',
-		},
-		{
-			id: 'skyline-residences',
-			title: 'Big city views, quiet evenings.',
-			blurb: 'Skyline Residences pairs double-height living rooms with a rooftop garden and a five-minute walk to the metro.',
-			price: '₹95 L',
-			note: 'Skyline Residences, Whitefield — 2 and 3 BHK apartments ready for possession this year.',
-			gallery: ['assets/p1.jpg', 'assets/p6.jpg', 'assets/p9.jpg'],
-			aside: 'assets/p4.jpg',
-			alt: 'Modern apartment block lit at dusk under a large tree',
-			url: 'property.html?id=5',
-		},
-		{
-			id: 'courtyard-homes',
-			title: 'Space to grow into, land to hold.',
-			blurb: 'Courtyard Homes at Kokapet offers gated villa plots with approved layouts, so you can build when you are ready.',
-			price: '₹1.1 Cr',
-			note: 'Courtyard Homes, Kokapet — HMDA-approved villa plots from 200 sq. yd, inside a gated community.',
-			gallery: ['assets/p3.jpg', 'assets/p5.jpg', 'assets/p7.jpg'],
-			aside: 'assets/p1.jpg',
-			alt: 'Modern house with timber cladding and a courtyard entrance',
-			url: 'property.html?id=7',
-		},
-	];
+	const FEATURED = [
+		{ id: 1, why: "Advisor's pick" },
+		{ id: 5, why: 'New launch' },
+		{ id: 7, why: 'Price revised' },
+		{ id: 2, why: 'Metro in 5 min' },
+	].map((f) => ({ ...f, ...SITE.listings.find((p) => p.id === f.id) })).filter((p) => p.title);
+	// An agency whose configuration excludes the flagged homes still gets a rail: newest listings fill in.
+	SITE.listings.filter((p) => !FEATURED.some((f) => f.id === p.id)).slice(0, Math.max(0, 4 - FEATURED.length)).forEach((p) => FEATURED.push({ ...p, why: 'New this week' }));
 
-	const showcase = $('[data-showcase]');
-	if (showcase && featured.length) {
-		const mainImg = $('[data-main-img]', showcase);
-		const thumbs = $('[data-thumbs]', showcase);
-		const asideImg = $('[data-aside-img]', showcase);
-		const title = $('[data-title]', showcase);
-		const blurb = $('[data-blurb]', showcase);
-		const price = $('[data-price]', showcase);
-		const note = $('[data-note]', showcase);
-		const details = $('[data-details-link]', showcase);
-		const prev = $('[data-prev]', showcase);
-		const next = $('[data-next]', showcase);
+	const spot = $('[data-featured]');
+	if (spot && FEATURED.length) {
 		const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-		let index = 0;
+		const DWELL = 6500;
+		const layers = [$('[data-spot-img]', spot), $('[data-spot-img-next]', spot)];
+		const el = (k) => $(`[data-spot-${k}]`, spot);
+		const rail = $('[data-rail]', spot);
+		let index = 0, top = 0, timer;
+		const holds = new Set();
+		spot.style.setProperty('--dwell', `${DWELL}ms`);
 
-		// Preload every gallery image once so switching never flashes.
-		featured.forEach((p) => [...p.gallery, p.aside].forEach((src) => { const i = new Image(); i.src = src; }));
+		FEATURED.forEach((p) => { const i = new Image(); i.src = p.img; });
 
-		const renderThumbs = (property, activeIdx) => {
-			thumbs.innerHTML = '';
-			property.gallery.forEach((src, i) => {
-				const li = document.createElement('li');
-				const btn = document.createElement('button');
-				btn.type = 'button';
-				btn.className = 'thumb' + (i === activeIdx ? ' is-active' : '');
-				btn.setAttribute('aria-label', `Photo ${i + 1} of ${property.gallery.length}`);
-				btn.setAttribute('aria-pressed', String(i === activeIdx));
-				const img = document.createElement('img');
-				img.src = src; img.alt = ''; img.width = 48; img.height = 48;
-				btn.append(img);
-				btn.addEventListener('click', () => {
-					mainImg.src = src;
-					$$('.thumb', thumbs).forEach((t, j) => { t.classList.toggle('is-active', j === i); t.setAttribute('aria-pressed', String(j === i)); });
-				});
-				li.append(btn);
-				thumbs.append(li);
-			});
-		};
+		const n = (x) => x.toLocaleString('en-IN');
+		const facts = (p) => p.type === 'plot'
+			? `Plot · ${n(p.sqft)} sq yd · Gated layout`
+			: `${p.bhk} BHK ${p.type} · ${n(p.sqft)} sq ft · ${p.baths} bath${p.baths > 1 ? 's' : ''}`;
+		const psf = (p) => p.intent === 'rent' ? 'per month' : `₹${n(Math.round(p.price / p.sqft))} per sq ${p.type === 'plot' ? 'yd' : 'ft'}`;
 
-		const render = (i) => {
-			const p = featured[i];
-			mainImg.src = p.gallery[0];
-			mainImg.alt = p.alt;
-			asideImg.src = p.aside;
-			title.textContent = p.title;
-			blurb.textContent = p.blurb;
-			price.textContent = p.price;
-			note.textContent = p.note;
-			details.href = p.url;
-			renderThumbs(p, 0);
-			showcase.setAttribute('aria-label', `Featured properties, ${i + 1} of ${featured.length}`);
-		};
-
-		const go = (dir) => {
-			index = (index + dir + featured.length) % featured.length;
-			if (reduced) { render(index); return; }
-			showcase.classList.add('is-switching');
-			setTimeout(() => { render(index); showcase.classList.remove('is-switching'); }, 250);
-		};
-
-		prev.addEventListener('click', () => go(-1));
-		next.addEventListener('click', () => go(1));
-		showcase.addEventListener('keydown', (e) => {
-			if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-			if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+		FEATURED.forEach((p, i) => {
+			const li = document.createElement('li');
+			li.innerHTML = `<button class="rail__row" type="button" aria-pressed="false">
+				<img class="rail__thumb" src="${p.img}" alt="" width="72" height="72" loading="lazy">
+				<span class="rail__text"><span class="rail__name">${p.title}</span><span class="rail__meta">${p.area}, ${cityLabel[p.city]} · ${p.type === 'plot' ? `${n(p.sqft)} sq yd` : `${p.bhk} BHK`}</span></span>
+				<span class="rail__price">${rupees(p.price, p.intent === 'rent')}</span>
+				<span class="rail__bar" aria-hidden="true"><i></i></span></button>`;
+			li.firstElementChild.addEventListener('click', () => { if (i !== index) show(i); });
+			rail.append(li);
 		});
+		const rows = $$('.rail__row', rail);
+		if (FEATURED.length < 2) $('.spot__nav', spot).hidden = true;
 
-		render(0);
+		const swapImage = (p) => {
+			const incoming = layers[1 - top], outgoing = layers[top];
+			let done = false;
+			const reveal = () => {
+				if (done) return; done = true;
+				incoming.classList.add('is-on'); outgoing.classList.remove('is-on'); top = 1 - top;
+			};
+			incoming.alt = `${p.title}, ${p.area}`;
+			incoming.onload = reveal;
+			incoming.src = p.img;
+			if (incoming.complete && incoming.naturalWidth) reveal();
+		};
+		const fill = (p) => {
+			el('status').textContent = p.status;
+			el('why').textContent = p.why;
+			el('place').textContent = `${p.area}, ${cityLabel[p.city]}`;
+			el('title').textContent = p.title;
+			el('line').textContent = facts(p);
+			$$('[data-spot-link]', spot).forEach((a) => { a.href = `property.html?id=${p.id}`; });
+			el('visit').href = `property.html?id=${p.id}#visit`;
+			el('price').textContent = rupees(p.price, p.intent === 'rent');
+			el('psf').textContent = psf(p);
+			el('count').textContent = `${String(index + 1).padStart(2, '0')} / ${String(FEATURED.length).padStart(2, '0')}`;
+			rows.forEach((r, j) => { r.classList.toggle('is-active', j === index); r.setAttribute('aria-pressed', String(j === index)); });
+		};
+		const restartBar = () => { const r = rows[index]; r.classList.remove('is-active'); void r.offsetWidth; r.classList.add('is-active'); };
+		const arm = () => { clearTimeout(timer); if (!reduced && !holds.size) timer = setTimeout(() => show(index + 1), DWELL); };
+		const hold = (key, on) => {
+			const was = holds.size > 0;
+			on ? holds.add(key) : holds.delete(key);
+			const now = holds.size > 0;
+			if (now === was) return;
+			spot.classList.toggle('is-paused', now);
+			if (now) clearTimeout(timer); else { restartBar(); arm(); }
+		};
+		const show = (i) => {
+			index = (i + FEATURED.length) % FEATURED.length;
+			const p = FEATURED[index];
+			swapImage(p);
+			if (reduced) { fill(p); arm(); return; }
+			spot.classList.add('is-switching');
+			setTimeout(() => { fill(p); spot.classList.remove('is-switching'); }, 220);
+			arm();
+		};
+
+		$('[data-prev]', spot).addEventListener('click', () => show(index - 1));
+		$('[data-next]', spot).addEventListener('click', () => show(index + 1));
+		spot.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); }
+			if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
+		});
+		// autoplay only while visible, unhovered and unfocused
+		spot.addEventListener('pointerenter', () => hold('hover', true));
+		spot.addEventListener('pointerleave', () => hold('hover', false));
+		spot.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) hold('focus', true); }); // keyboard focus only; a mouse click must not stop the rotation
+		spot.addEventListener('focusout', (e) => { if (!spot.contains(e.relatedTarget)) hold('focus', false); });
+		document.addEventListener('visibilitychange', () => hold('hidden', document.hidden));
+		new IntersectionObserver(([e]) => hold('offscreen', !e.isIntersecting), { threshold: 0.35 }).observe(spot);
+
+		layers[0].src = FEATURED[0].img; layers[0].alt = `${FEATURED[0].title}, ${FEATURED[0].area}`; layers[0].classList.add('is-on');
+		fill(FEATURED[0]);
+		arm();
 	}
 
 	/* ------------------------------------------------------------------
@@ -354,7 +420,7 @@
 	 * ------------------------------------------------------------------ */
 	const cardsEl = $('[data-cards]');
 	if (cardsEl) {
-		const listings = LISTINGS;
+		const listings = SITE.listings;
 		const budgets = { '0-50l': [0, 50 * L], '50l-1cr': [50 * L, 1 * CR], '1cr-2cr': [1 * CR, 2 * CR], '2cr-': [2 * CR, Infinity] };
 		const typeLabel = { apartment: 'Apartments', villa: 'Villas', plot: 'Plots', commercial: 'Commercial spaces' };
 		const PAGE = 6;
@@ -367,6 +433,14 @@
 		const more = $('[data-load-more]');
 		const tpl = $('#card-template');
 		let shown = PAGE;
+
+		// 0. Fields and options from the site configuration
+		fillSelect($('select[name=type]', form), SITE.types.map((t) => [t, TYPES[t]]), 'Any type');
+		fillSelect($('select[name=location]', form), SITE.locations, 'Anywhere');
+		fillSelect($('select[name=budget]', form), SITE.budgets, 'Any budget');
+		fillSelect($('select[name=bhk]', form), SITE.configurations, 'Any');
+		fillSelect($('select[name=intent]', form), SITE.intents.map((i) => [i, INTENTS[i]]), 'Buy or rent');
+		if (!SITE.hasConfig) { $('[data-field="bhk"]', form).hidden = true; form.classList.add('filters-bar--four'); }
 
 		// 1. URL → form (deep link from the landing-page search)
 		const params = new URLSearchParams(location.search);
@@ -428,6 +502,7 @@
 			const q = new URLSearchParams();
 			Object.entries(f).forEach(([k, v]) => { if (v) q.set(k, v); });
 			if (sortEl.value !== 'featured') q.set('sort', sortEl.value);
+			demoQuery().forEach((d) => { const [k, v] = d.split('='); q.set(k, v); });
 			history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
 		};
 

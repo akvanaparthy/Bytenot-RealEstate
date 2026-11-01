@@ -45,7 +45,7 @@
 					<li><button type="button" role="menuitemradio" data-lang-code="ಕ" aria-checked="false">ಕನ್ನಡ</button></li>
 				</ul>
 			</div>
-			<a class="btn btn--accent" href="#contact">Sign Up</a>
+			<a class="btn btn--accent btn--cta" href="#inquiry"><span class="btn__long">Talk to an advisor</span><span class="btn__short">Enquire</span></a>
 			<button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer" data-drawer-open>
 				<span></span><span></span><span></span>
 			</button>
@@ -71,7 +71,7 @@
 				<li><a href="#inquiry">Contact Us</a></li>
 			</ul>
 		</nav>
-		<a class="btn btn--accent drawer__cta" href="#contact">Sign Up</a>
+		<a class="btn btn--accent drawer__cta" href="#inquiry">Talk to an advisor</a>
 	</div>
 </div>
 
@@ -138,7 +138,7 @@
 						</select>
 					</span>
 				</div>
-				<div class="field">
+				<div class="field" data-field="bhk">
 					<label class="field__label" for="f-bhk">Configuration</label>
 					<span class="field__select">
 						<select class="field__input" id="f-bhk" name="bhk">
@@ -224,48 +224,61 @@
 </section>
 
 <!-- ============ INTRO / FEATURED ============ -->
-<section class="intro" id="properties" aria-labelledby="intro-title">
+<section class="featured" id="properties" aria-labelledby="featured-title">
 	<div class="container">
-		<div class="intro__head">
-			<h2 class="intro__title" id="intro-title">A home you'll feel lavish in, <br>and honored to own.</h2>
+		<div class="featured__head">
+			<div>
+				<p class="eyebrow">Featured this week</p>
+				<h2 class="featured__title" id="featured-title">Hand-picked homes, <br><em>ready to visit.</em></h2>
+			</div>
 			<button class="video" type="button" data-video-open aria-haspopup="dialog">
 				<span class="video__thumb">
 					<img src="assets/video-thumb.jpg" alt="" width="136" height="78" loading="lazy">
 					<span class="video__play" aria-hidden="true"></span>
 				</span>
-				<span class="video__caption">Every listing is hand-picked for quality, location and long-term value.</span>
+				<span class="video__caption">How we pick: every home here was walked through by a Lavenor advisor before it was listed.</span>
 			</button>
 		</div>
 
-		<div class="showcase" data-showcase aria-roledescription="carousel" aria-label="Featured properties">
-			<figure class="showcase__hero">
-				<img class="showcase__img" data-main-img src="assets/house-large.jpg" alt="" width="900" height="660">
-				<ul class="thumbs" data-thumbs aria-label="Photos of this property"></ul>
-			</figure>
-
-			<div class="showcase__card" aria-live="polite">
-				<h3 class="showcase__card-title" data-title></h3>
-				<p data-blurb></p>
-				<a class="btn btn--outline" data-details-link href="#">Details</a>
+		<div class="spot" data-featured aria-roledescription="carousel" aria-label="Featured properties">
+			<div class="spot__stage">
+				<figure class="spot__media" aria-hidden="false">
+					<img class="spot__img" data-spot-img src="" alt="" width="1200" height="800">
+					<img class="spot__img" data-spot-img-next src="" alt="" width="1200" height="800" aria-hidden="true">
+					<div class="spot__shade"></div>
+				</figure>
+				<p class="spot__status"><span class="spot__status-dot" aria-hidden="true"></span><span data-spot-status></span></p>
+				<p class="spot__why" data-spot-why></p>
+				<div class="spot__info" data-spot-info aria-live="polite">
+					<p class="spot__place" data-spot-place></p>
+					<h3 class="spot__name"><a data-spot-link data-spot-title href="#"></a></h3>
+					<p class="spot__line" data-spot-line></p>
+					<div class="spot__actions">
+						<a class="btn btn--accent btn--sm" data-spot-link href="#">View home
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+						</a>
+						<a class="btn btn--glass btn--sm" data-spot-visit href="#">Book a visit</a>
+					</div>
+				</div>
+				<p class="spot__price" data-spot-pricebox><strong data-spot-price></strong><span data-spot-psf></span></p>
 			</div>
 
-			<div class="showcase__aside">
-				<img class="showcase__aside-img" data-aside-img src="assets/house-small.jpg" alt="" width="900" height="660" loading="lazy">
-				<p class="showcase__price"><span class="showcase__price-label">Pricing starts at</span> <span data-price></span></p>
-				<a class="btn btn--dark" href="properties.html">Explore Properties
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-				</a>
-			</div>
-
-			<p class="showcase__note" data-note></p>
-
-			<div class="showcase__nav">
-				<button class="arrow" type="button" aria-label="Previous property" data-prev>
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-				</button>
-				<button class="arrow is-active" type="button" aria-label="Next property" data-next>
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-				</button>
+			<div class="rail-wrap">
+				<ol class="rail" data-rail></ol>
+				<div class="rail__foot">
+					<div class="spot__nav">
+						<button class="arrow" type="button" aria-label="Previous property" data-prev>
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+						</button>
+						<span class="spot__count" data-spot-count aria-live="polite">01 / 04</span>
+						<button class="arrow is-active" type="button" aria-label="Next property" data-next>
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+						</button>
+					</div>
+					<a class="link-arrow rail__all" href="properties.html"><span>See all <span data-listing-count>12 properties</span></span>
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
