@@ -477,14 +477,15 @@ legend { padding: 0; }
 .video__play--lg::after { left: 26px; top: 20px; border-left-width: 18px; border-top-width: 12px; border-bottom-width: 12px; }
 .video__caption { font-size: var(--wp--preset--font-size--medium); line-height: 1.6; color: var(--wp--preset--color--ink-soft); }
 
-/* spotlight + rail. The stage crossfades two image layers; the rail row that is
-   active carries a thin gold progress line for the dwell time. */
+/* spotlight + rail. The photo layers crossfade inside the clipped figure; the stage itself
+   is not clipped, so the price bookmark can sit square in the corner with page-coloured
+   inverse curves (same trick as the listing card tab). Resting on a rail row previews it. */
 .spot { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: stretch; margin-top: 44px; }
-.spot__stage {
-	position: relative; min-height: 580px; border-radius: var(--wp--custom--radius--card); overflow: hidden; isolation: isolate;
-	background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base);
+.spot__stage { position: relative; min-height: 580px; isolation: isolate; color: var(--wp--preset--color--base); }
+.spot__media {
+	position: absolute; inset: 0; margin: 0; border-radius: var(--wp--custom--radius--card); overflow: hidden;
+	background: var(--wp--preset--color--contrast);
 }
-.spot__media { position: absolute; inset: 0; margin: 0; }
 .spot__img {
 	position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center 45%;
 	opacity: 0; transform: scale(1.06); transition: opacity .6s ease;
@@ -495,13 +496,11 @@ legend { padding: 0; }
 	position: absolute; inset: 0; z-index: 2;
 	background: linear-gradient(180deg, rgba(20, 47, 63, 0.28) 0%, rgba(20, 47, 63, 0) 32%, rgba(20, 47, 63, 0.08) 55%, rgba(20, 47, 63, 0.82) 100%);
 }
-.spot__status, .spot__why {
-	position: absolute; top: 24px; z-index: 3; display: inline-flex; align-items: center; gap: 8px; height: 30px; margin: 0; padding: 0 12px;
+.spot__why {
+	position: absolute; top: 24px; right: 24px; z-index: 3; display: inline-flex; align-items: center; height: 30px; margin: 0; padding: 0 12px;
 	border-radius: var(--wp--custom--radius--pill); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+	background: var(--wp--preset--gradient--brand-gold-soft); color: var(--wp--preset--color--contrast);
 }
-.spot__status { left: 24px; padding-left: 10px; background: rgba(255, 255, 255, 0.16); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.spot__status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--wp--preset--gradient--brand-gold); }
-.spot__why { right: 24px; background: var(--wp--preset--gradient--brand-gold-soft); color: var(--wp--preset--color--contrast); }
 .spot__info {
 	position: absolute; left: 32px; right: 240px; bottom: 32px; z-index: 3;
 	transition: opacity .22s ease, transform .22s ease;
@@ -516,12 +515,18 @@ legend { padding: 0; }
 .btn--glass:hover { background: rgba(255, 255, 255, 0.28); }
 .spot__price {
 	position: absolute; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; margin: 0;
-	padding: 18px 28px 20px 26px; border-radius: 20px 0 0 0;
+	--notch: 20px;
+	padding: 18px 22px 2px 24px; border-radius: var(--notch) 0 0 0;
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast);
 	transition: opacity .22s ease, transform .22s ease;
 }
+/* inverse curves where the bookmark meets the photo: above it on the right edge, left of it on the bottom edge */
+.spot__price::before, .spot__price::after { content: ""; position: absolute; width: var(--notch); height: var(--notch); background: radial-gradient(circle at 0 0, transparent calc(var(--notch) - 0.5px), var(--wp--preset--color--base) var(--notch)); }
+.spot__price::before { right: 0; bottom: 100%; }
+.spot__price::after { left: calc(-1 * var(--notch)); bottom: 0; }
 .spot__price strong { font-size: 30px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
 .spot__price span { margin-top: 6px; font-size: 12px; color: var(--wp--preset--color--ink-muted); }
+.spot__price > * { margin-right: 4px; }
 
 .rail-wrap { display: flex; flex-direction: column; }
 .rail { display: flex; flex-direction: column; flex: 1; gap: 4px; margin: 0; padding: 0; list-style: none; counter-reset: rail; }
@@ -534,14 +539,10 @@ legend { padding: 0; }
 .rail__row:hover, .rail__row.is-active { background: var(--wp--preset--color--surface); }
 .rail__thumb { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; }
 .rail__name { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; }
-.rail__meta { display: block; margin-top: 4px; font-size: 13px; color: var(--wp--preset--color--ink-muted); }
-.rail__price { font-size: 15px; font-weight: 600; white-space: nowrap; }
-.rail__bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: rgba(20, 47, 63, 0.08); opacity: 0; transition: opacity .2s ease; }
-.rail__row.is-active .rail__bar { opacity: 1; }
-.rail__bar i { display: block; width: 0; height: 100%; background: var(--wp--preset--gradient--brand-gold); }
-.rail__row.is-active .rail__bar i { animation: rail-progress var(--dwell, 6.5s) linear forwards; }
-.spot.is-paused .rail__bar i { animation-play-state: paused; }
-@keyframes rail-progress { to { width: 100%; } }
+.rail__meta { display: block; margin-top: 4px; font-size: 13px; color: var(--wp--preset--color--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rail__price { display: flex; flex-direction: column; align-items: flex-end; font-size: 15px; font-weight: 600; white-space: nowrap; }
+.rail__why { margin-top: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp--preset--color--primary-dark); opacity: 0; transform: translateY(3px); transition: opacity .25s ease, transform .25s ease; }
+.rail__row.is-active .rail__why { opacity: 1; transform: none; }
 .rail__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 10px; padding: 14px 10px 0; border-top: 1px solid var(--wp--preset--color--border); }
 .spot__nav { display: flex; align-items: center; gap: 12px; }
 .spot__count { min-width: 64px; font-size: 13px; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; color: var(--wp--preset--color--ink-muted); text-align: center; }
@@ -1379,12 +1380,10 @@ legend { padding: 0; }
 
 	.spot { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
 	.spot__stage { min-height: 0; aspect-ratio: 4 / 5; }
-	.spot__status, .spot__why { top: 16px; }
-	.spot__status { left: 16px; }
-	.spot__why { right: 16px; }
+	.spot__why { top: 16px; right: 16px; }
 	.spot__info { left: 18px; right: 18px; bottom: 96px; }
 	.spot__name { font-size: 28px; }
-	.spot__price { padding: 14px 18px 16px 18px; border-radius: 16px 0 0 0; }
+	.spot__price { --notch: 16px; padding: 14px 16px 2px 18px; }
 	.spot__price strong { font-size: 24px; }
 	.rail__row { min-height: 0; padding: 8px 12px 8px 8px; gap: 12px; grid-template-columns: 56px minmax(0, 1fr) auto; }
 	.rail__thumb { width: 56px; height: 56px; }

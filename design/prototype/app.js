@@ -234,20 +234,18 @@
 	const spot = $('[data-featured]');
 	if (spot && FEATURED.length) {
 		const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-		const DWELL = 6500;
+		const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
 		const layers = [$('[data-spot-img]', spot), $('[data-spot-img-next]', spot)];
 		const el = (k) => $(`[data-spot-${k}]`, spot);
 		const rail = $('[data-rail]', spot);
-		let index = 0, top = 0, timer;
-		const holds = new Set();
-		spot.style.setProperty('--dwell', `${DWELL}ms`);
+		let index = 0, top = 0, hoverTimer;
 
 		FEATURED.forEach((p) => { const i = new Image(); i.src = p.img; });
 
 		const n = (x) => x.toLocaleString('en-IN');
 		const facts = (p) => p.type === 'plot'
 			? `Plot · ${n(p.sqft)} sq yd · Gated layout`
-			: `${p.bhk} BHK ${p.type} · ${n(p.sqft)} sq ft · ${p.baths} bath${p.baths > 1 ? 's' : ''}`;
+			: `${p.bhk} BHK ${p.type} · ${n(p.sqft)} sq ft · ${p.status}`;
 		const psf = (p) => p.intent === 'rent' ? 'per month' : `₹${n(Math.round(p.price / p.sqft))} per sq ${p.type === 'plot' ? 'yd' : 'ft'}`;
 
 		FEATURED.forEach((p, i) => {
@@ -255,9 +253,14 @@
 			li.innerHTML = `<button class="rail__row" type="button" aria-pressed="false">
 				<img class="rail__thumb" src="${p.img}" alt="" width="72" height="72" loading="lazy">
 				<span class="rail__text"><span class="rail__name">${p.title}</span><span class="rail__meta">${p.area}, ${cityLabel[p.city]} · ${p.type === 'plot' ? `${n(p.sqft)} sq yd` : `${p.bhk} BHK`}</span></span>
-				<span class="rail__price">${rupees(p.price, p.intent === 'rent')}</span>
-				<span class="rail__bar" aria-hidden="true"><i></i></span></button>`;
-			li.firstElementChild.addEventListener('click', () => { if (i !== index) show(i); });
+				<span class="rail__price">${rupees(p.price, p.intent === 'rent')}<span class="rail__why">${p.why}</span></span></button>`;
+			const row = li.firstElementChild;
+			// Desktop: resting on a row previews it in the stage. Touch and keyboard: tap or Enter.
+			row.addEventListener('click', () => { if (i !== index) show(i); });
+			if (canHover) {
+				row.addEventListener('pointerenter', () => { clearTimeout(hoverTimer); if (i !== index) hoverTimer = setTimeout(() => show(i), 140); });
+				row.addEventListener('pointerleave', () => clearTimeout(hoverTimer));
+			}
 			rail.append(li);
 		});
 		const rows = $$('.rail__row', rail);
@@ -276,7 +279,6 @@
 			if (incoming.complete && incoming.naturalWidth) reveal();
 		};
 		const fill = (p) => {
-			el('status').textContent = p.status;
 			el('why').textContent = p.why;
 			el('place').textContent = `${p.area}, ${cityLabel[p.city]}`;
 			el('title').textContent = p.title;
@@ -288,24 +290,13 @@
 			el('count').textContent = `${String(index + 1).padStart(2, '0')} / ${String(FEATURED.length).padStart(2, '0')}`;
 			rows.forEach((r, j) => { r.classList.toggle('is-active', j === index); r.setAttribute('aria-pressed', String(j === index)); });
 		};
-		const restartBar = () => { const r = rows[index]; r.classList.remove('is-active'); void r.offsetWidth; r.classList.add('is-active'); };
-		const arm = () => { clearTimeout(timer); if (!reduced && !holds.size) timer = setTimeout(() => show(index + 1), DWELL); };
-		const hold = (key, on) => {
-			const was = holds.size > 0;
-			on ? holds.add(key) : holds.delete(key);
-			const now = holds.size > 0;
-			if (now === was) return;
-			spot.classList.toggle('is-paused', now);
-			if (now) clearTimeout(timer); else { restartBar(); arm(); }
-		};
 		const show = (i) => {
 			index = (i + FEATURED.length) % FEATURED.length;
 			const p = FEATURED[index];
 			swapImage(p);
-			if (reduced) { fill(p); arm(); return; }
+			if (reduced) { fill(p); return; }
 			spot.classList.add('is-switching');
 			setTimeout(() => { fill(p); spot.classList.remove('is-switching'); }, 220);
-			arm();
 		};
 
 		$('[data-prev]', spot).addEventListener('click', () => show(index - 1));
@@ -314,17 +305,9 @@
 			if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1); }
 			if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
 		});
-		// autoplay only while visible, unhovered and unfocused
-		spot.addEventListener('pointerenter', () => hold('hover', true));
-		spot.addEventListener('pointerleave', () => hold('hover', false));
-		spot.addEventListener('focusin', (e) => { if (e.target.matches(':focus-visible')) hold('focus', true); }); // keyboard focus only; a mouse click must not stop the rotation
-		spot.addEventListener('focusout', (e) => { if (!spot.contains(e.relatedTarget)) hold('focus', false); });
-		document.addEventListener('visibilitychange', () => hold('hidden', document.hidden));
-		new IntersectionObserver(([e]) => hold('offscreen', !e.isIntersecting), { threshold: 0.35 }).observe(spot);
 
 		layers[0].src = FEATURED[0].img; layers[0].alt = `${FEATURED[0].title}, ${FEATURED[0].area}`; layers[0].classList.add('is-on');
 		fill(FEATURED[0]);
-		arm();
 	}
 
 	/* ------------------------------------------------------------------
