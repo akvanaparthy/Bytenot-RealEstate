@@ -403,7 +403,8 @@ legend { padding: 0; }
 	text-wrap: pretty;
 }
 .about__w { color: var(--wp--preset--color--ink-muted); opacity: 0.55; transition: color .45s ease, opacity .45s ease; }
-.about__w.is-on { color: var(--wp--preset--color--contrast); opacity: 1; }
+.about__w.is-on { color: var(--wp--preset--color--contrast); opacity: 1; animation: word-lit .9s ease both; } /* passes through brand gold on the way to navy */
+@keyframes word-lit { 0% { color: var(--wp--preset--color--ink-muted); opacity: 0.55; } 40% { color: var(--wp--preset--color--primary-dark); opacity: 1; } 100% { color: var(--wp--preset--color--contrast); opacity: 1; } }
 /* a pill never dims as a whole (the grown photo would show the text through it); its photo layer dims instead */
 .about__pill.about__w { opacity: 1; }
 .about__pill:not(.is-on) .about__pill-img { opacity: 0.55; filter: saturate(0.3); }
@@ -497,12 +498,12 @@ legend { padding: 0; }
 	background: linear-gradient(180deg, rgba(20, 47, 63, 0.28) 0%, rgba(20, 47, 63, 0) 32%, rgba(20, 47, 63, 0.08) 55%, rgba(20, 47, 63, 0.82) 100%);
 }
 .spot__why {
-	--tab-r: 16px;
-	position: absolute; top: 0; left: 0; z-index: 3; display: inline-flex; align-items: center; height: 36px; margin: 0; padding: 0 18px 4px 4px;
-	border-bottom-right-radius: var(--tab-r); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+	--rx: 30px; --ry: 18px; /* elliptical: the curve is as tall as the tab, so the edge reads as a slant */
+	position: absolute; top: 0; left: 0; z-index: 3; display: inline-flex; align-items: center; height: 36px; margin: 0; padding: 0 22px 4px 4px;
+	border-bottom-right-radius: var(--rx) var(--ry); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--primary-dark);
 }
-.spot__why::before, .spot__why::after { content: ""; position: absolute; width: var(--tab-r); height: var(--tab-r); background: radial-gradient(circle at 100% 100%, transparent calc(var(--tab-r) - 0.5px), var(--wp--preset--color--base) var(--tab-r)); }
+.spot__why::before, .spot__why::after { content: ""; position: absolute; width: var(--rx); height: var(--ry); background: radial-gradient(var(--rx) var(--ry) at 100% 100%, transparent 99.2%, var(--wp--preset--color--base) 100%); }
 .spot__why::before { top: 0; left: 100%; }
 .spot__why::after { top: 100%; left: 0; }
 .spot__info {
@@ -520,14 +521,14 @@ legend { padding: 0; }
 .btn--glass:hover { background: rgba(255, 255, 255, 0.28); }
 .spot__price {
 	position: absolute; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; margin: 0;
-	--notch: 20px;
-	padding: 18px 22px 2px 24px; border-radius: var(--notch) 0 0 0;
+	--rx: 34px; --ry: 22px;
+	padding: 18px 22px 2px 28px; border-top-left-radius: var(--rx) var(--ry);
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast);
 }
 /* inverse curves where the bookmark meets the photo: above it on the right edge, left of it on the bottom edge */
-.spot__price::before, .spot__price::after { content: ""; position: absolute; width: var(--notch); height: var(--notch); background: radial-gradient(circle at 0 0, transparent calc(var(--notch) - 0.5px), var(--wp--preset--color--base) var(--notch)); }
+.spot__price::before, .spot__price::after { content: ""; position: absolute; width: var(--rx); height: var(--ry); background: radial-gradient(var(--rx) var(--ry) at 0 0, transparent 99.2%, var(--wp--preset--color--base) 100%); }
 .spot__price::before { right: 0; bottom: 100%; }
-.spot__price::after { left: calc(-1 * var(--notch)); bottom: 0; }
+.spot__price::after { left: calc(-1 * var(--rx)); bottom: 0; }
 .spot__price strong { font-size: 30px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
 .spot__price span { margin-top: 6px; font-size: 12px; color: var(--wp--preset--color--ink-muted); }
 .spot__price > * { margin-right: 4px; }
@@ -1388,10 +1389,10 @@ legend { padding: 0; }
 
 	.spot { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
 	.spot__stage { min-height: 0; aspect-ratio: 4 / 5; }
-	.spot__why { --tab-r: 14px; height: 32px; padding-right: 14px; }
+	.spot__why { --rx: 24px; --ry: 16px; height: 32px; padding-right: 16px; }
 	.spot__info { left: 18px; right: 18px; bottom: 96px; }
 	.spot__name { font-size: 28px; }
-	.spot__price { --notch: 16px; padding: 14px 16px 2px 18px; }
+	.spot__price { --rx: 26px; --ry: 16px; padding: 14px 16px 2px 20px; }
 	.spot__price strong { font-size: 24px; }
 	.rail__row { min-height: 0; padding: 8px 12px 8px 8px; gap: 12px; grid-template-columns: 56px minmax(0, 1fr) auto; }
 	.rail__thumb { width: 56px; height: 56px; }
