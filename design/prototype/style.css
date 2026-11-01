@@ -401,10 +401,12 @@ legend { padding: 0; }
 	max-width: 840px;
 	font-size: clamp(26px, 2.8vw, 40px); font-weight: 400; line-height: 1.32; letter-spacing: -0.012em;
 	text-wrap: pretty;
+	color: var(--word-off); /* the unlit colour; words inherit it, so nothing shifts when the script wraps them */
+	--word-off: color-mix(in srgb, var(--wp--preset--color--ink-muted) 55%, var(--wp--preset--color--base));
 }
-.about__w { color: var(--wp--preset--color--ink-muted); opacity: 0.55; transition: color .45s ease, opacity .45s ease; }
-.about__w.is-on { color: var(--wp--preset--color--contrast); opacity: 1; animation: word-lit .9s ease both; } /* passes through brand gold on the way to navy */
-@keyframes word-lit { 0% { color: var(--wp--preset--color--ink-muted); opacity: 0.55; } 40% { color: var(--wp--preset--color--primary-dark); opacity: 1; } 100% { color: var(--wp--preset--color--contrast); opacity: 1; } }
+.about__w { color: var(--word-off); transition: color .45s ease; }
+.about__w.is-on { color: var(--wp--preset--color--contrast); animation: word-lit .9s ease both; } /* passes through brand gold on the way to navy */
+@keyframes word-lit { 0% { color: var(--word-off); } 40% { color: var(--wp--preset--color--primary-dark); } 100% { color: var(--wp--preset--color--contrast); } }
 /* a pill never dims as a whole (the grown photo would show the text through it); its photo layer dims instead */
 .about__pill.about__w { opacity: 1; }
 .about__pill:not(.is-on) .about__pill-img { opacity: 0.55; filter: saturate(0.3); }
@@ -501,14 +503,38 @@ legend { padding: 0; }
    curves (built in JS from the box size, so the S-curves are exact and tangent-continuous).
    Padding reserves the curve zones: --rx on the leaning side, --r on the fillet side.
    JS fixes each box to its longest label, so the shape never changes with the content. */
+/* corner tab and price bookmark, drawn in CSS alone so the first paint is already right.
+   Each is a body with an elliptical convex corner plus two concave fillets: pseudo-elements
+   masked with a quarter-ellipse SVG (vector, so the curve is exact) plus a solid strip over a 2px
+   overlap with the body. The script then swaps this for one exact clip path (see app.js). The convex and concave
+   radii are each half the height, so the leaning edge is one continuous S. Both boxes sit
+   1px past the stage edge for the same reason. The script only fixes their width to the
+   longest label. */
 .spot__why {
 	--rx: 26px; --r: 18px; --tab-h: 36px;
-	position: absolute; top: -1px; left: -1px; z-index: 3; display: flex; align-items: center; margin: 0; /* 1px past the stage edge: no seam with the photo's edge */
-	height: calc(var(--tab-h) + var(--r) + 1px); padding: 1px calc(2 * var(--rx) - 4px) var(--r) 7px;
+	--fillet: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1C.448 0 0 .448 0 1Z'/%3E%3C/svg%3E");
+	position: absolute; top: -1px; left: -1px; z-index: 3; display: flex; align-items: center; margin: 0;
+	height: calc(var(--tab-h) + 1px); padding: 1px 10px 0 7px;
+	border-bottom-right-radius: var(--rx) calc(var(--tab-h) / 2);
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--primary-dark);
 	font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
 }
 .spot__why-text { display: inline-block; }
+/* once the script has applied the exact clip path, the fillets become plain rectangles and the
+   clip carves body and fillets as one edge */
+.spot__why.is-clipped, .spot__price.is-clipped { border-radius: 0; }
+.spot__why.is-clipped::before, .spot__why.is-clipped::after, .spot__price.is-clipped::before, .spot__price.is-clipped::after { -webkit-mask: none; mask: none; }
+.spot__why::before, .spot__why::after { content: ""; position: absolute; background: var(--wp--preset--color--base); }
+.spot__why::before { /* right fillet, on the stage's top edge */
+	top: 1px; left: calc(100% - 2px); width: calc(var(--rx) + 2px); height: calc(var(--tab-h) / 2);
+	-webkit-mask: var(--fillet) right 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) left 0 / 2px 100% no-repeat;
+	mask: var(--fillet) right 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) left 0 / 2px 100% no-repeat;
+}
+.spot__why::after { /* bottom fillet, on the stage's left edge */
+	left: 0; top: calc(100% - 2px); width: var(--r); height: calc(var(--r) + 2px);
+	-webkit-mask: var(--fillet) 0 bottom / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 0 / 100% 2px no-repeat;
+	mask: var(--fillet) 0 bottom / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 0 / 100% 2px no-repeat;
+}
 .spot__info {
 	position: absolute; left: 32px; right: 240px; bottom: 32px; z-index: 3;
 	transition: opacity .22s ease, transform .22s ease;
@@ -523,10 +549,23 @@ legend { padding: 0; }
 .btn--glass { background: rgba(255, 255, 255, 0.16); color: var(--wp--preset--color--base); border-color: rgba(255, 255, 255, 0.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .btn--glass:hover { background: rgba(255, 255, 255, 0.28); }
 .spot__price {
-	--rx: 30px; --r: 20px;
-	position: absolute; right: -1px; bottom: -1px; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; margin: 0; /* 1px past the stage edge: no seam */
-	padding: calc(var(--r) + 10px) 23px 3px calc(2 * var(--rx) - 2px);
+	--rx: 30px; --r: 20px; --box-h: 70px;
+	--fillet: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cpath d='M1 1H0C.552 1 1 .552 1 0Z'/%3E%3C/svg%3E");
+	position: absolute; right: -1px; bottom: -1px; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; margin: 0;
+	height: calc(var(--box-h) + 1px); padding: 0 23px 1px 14px;
+	border-top-left-radius: var(--rx) calc(var(--box-h) / 2);
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); white-space: nowrap;
+}
+.spot__price::before, .spot__price::after { content: ""; position: absolute; background: var(--wp--preset--color--base); }
+.spot__price::before { /* top fillet, on the stage's right edge */
+	right: 0; bottom: calc(100% - 2px); width: var(--r); height: calc(var(--r) + 2px);
+	-webkit-mask: var(--fillet) 0 0 / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 bottom / 100% 2px no-repeat;
+	mask: var(--fillet) 0 0 / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 bottom / 100% 2px no-repeat;
+}
+.spot__price::after { /* left fillet, on the stage's bottom edge */
+	bottom: 1px; right: calc(100% - 2px); width: calc(var(--rx) + 2px); height: calc(var(--box-h) / 2);
+	-webkit-mask: var(--fillet) left 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) right 0 / 2px 100% no-repeat;
+	mask: var(--fillet) left 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) right 0 / 2px 100% no-repeat;
 }
 .spot__price strong { display: block; font-size: 30px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; text-align: right; }
 .spot__price span { display: block; margin-top: 6px; font-size: 12px; color: var(--wp--preset--color--ink-muted); text-align: right; }
@@ -542,6 +581,7 @@ legend { padding: 0; }
 	transition: background-color .2s ease;
 }
 .rail__row:hover { background: rgba(20, 47, 63, 0.03); }
+.rail:not(.is-placed) .rail__row.is-active { background: var(--wp--preset--color--surface); } /* before the script places the sliding highlight */
 .rail__thumb { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; }
 .rail__name { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; }
 .rail__meta { display: block; margin-top: 4px; font-size: 13px; color: var(--wp--preset--color--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1387,10 +1427,10 @@ legend { padding: 0; }
 
 	.spot { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
 	.spot__stage { min-height: 0; aspect-ratio: 4 / 5; }
-	.spot__why { --rx: 22px; --r: 16px; --tab-h: 32px; }
+	.spot__why { --rx: 22px; --r: 16px; --tab-h: 32px; padding-right: 8px; }
 	.spot__info { left: 18px; right: 18px; bottom: 96px; }
 	.spot__name { font-size: 28px; }
-	.spot__price { --rx: 24px; --r: 16px; padding: calc(var(--r) + 6px) 17px 3px calc(2 * var(--rx) - 2px); }
+	.spot__price { --rx: 24px; --r: 16px; --box-h: 60px; padding: 0 17px 1px 10px; }
 	.spot__price strong { font-size: 24px; }
 	.rail__row { min-height: 0; padding: 8px 12px 8px 8px; gap: 12px; grid-template-columns: 56px minmax(0, 1fr) auto; }
 	.rail__thumb { width: 56px; height: 56px; }

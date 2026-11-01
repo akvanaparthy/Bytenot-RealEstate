@@ -243,27 +243,45 @@
 		<div class="spot" data-featured aria-roledescription="carousel" aria-label="Featured properties">
 			<div class="spot__stage">
 				<figure class="spot__media" aria-hidden="false">
-					<img class="spot__img" data-spot-img src="" alt="" width="1200" height="800">
+					<img class="spot__img is-on" data-spot-img src="assets/house-large.jpg" alt="Lakeview Villa, Gachibowli" width="1200" height="800">
 					<img class="spot__img" data-spot-img-next src="" alt="" width="1200" height="800" aria-hidden="true">
 					<div class="spot__shade"></div>
 				</figure>
-				<p class="spot__why" data-spot-tab><span class="spot__why-text" data-spot-why></span></p>
+				<p class="spot__why" data-spot-tab><span class="spot__why-text" data-spot-why>Advisor's pick</span></p>
 				<div class="spot__info" data-spot-info aria-live="polite">
-					<p class="spot__place" data-spot-place></p>
-					<h3 class="spot__name"><a data-spot-link data-spot-title href="#"></a></h3>
-					<p class="spot__line" data-spot-line></p>
+					<p class="spot__place" data-spot-place>Gachibowli, Hyderabad</p>
+					<h3 class="spot__name"><a data-spot-link data-spot-title href="property.html?id=1">Lakeview Villa</a></h3>
+					<p class="spot__line" data-spot-line>4 BHK villa · 3,650 sq ft · Ready to move</p>
 					<div class="spot__actions">
-						<a class="btn btn--accent btn--sm" data-spot-link href="#">View
+						<a class="btn btn--accent btn--sm" data-spot-link href="property.html?id=1">View
 							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
 						</a>
-						<a class="btn btn--glass btn--sm" data-spot-visit href="#">Book a visit</a>
+						<a class="btn btn--glass btn--sm" data-spot-visit href="property.html?id=1#visit">Book a visit</a>
 					</div>
 				</div>
-				<p class="spot__price" data-spot-pricebox><strong data-spot-price></strong><span data-spot-psf></span></p>
+				<p class="spot__price" data-spot-pricebox><strong data-spot-price>₹2.4 Cr</strong><span data-spot-psf>₹6,575 per sq ft</span></p>
 			</div>
 
 			<div class="rail-wrap">
-				<ol class="rail" data-rail><div class="rail__hl" data-rail-hl aria-hidden="true"></div></ol>
+				<!-- the first four rows are the server-rendered state; the script rebuilds them from data -->
+				<ol class="rail" data-rail><div class="rail__hl" data-rail-hl aria-hidden="true"></div>
+					<li><button class="rail__row is-active" type="button" aria-pressed="true">
+						<img class="rail__thumb" src="assets/house-large.jpg" alt="" width="72" height="72" loading="lazy">
+						<span class="rail__text"><span class="rail__name">Lakeview Villa</span><span class="rail__meta">Gachibowli, Hyderabad · 4 BHK</span></span>
+						<span class="rail__price">₹2.4 Cr<span class="rail__why">Advisor's pick</span></span></button></li>
+					<li><button class="rail__row" type="button" aria-pressed="false">
+						<img class="rail__thumb" src="assets/p4.jpg" alt="" width="72" height="72" loading="lazy">
+						<span class="rail__text"><span class="rail__name">Aralia Garden Villa</span><span class="rail__meta">Sarjapur Road, Bangalore · 4 BHK</span></span>
+						<span class="rail__price">₹3.2 Cr<span class="rail__why">New launch</span></span></button></li>
+					<li><button class="rail__row" type="button" aria-pressed="false">
+						<img class="rail__thumb" src="assets/p6.jpg" alt="" width="72" height="72" loading="lazy">
+						<span class="rail__text"><span class="rail__name">Jubilee Hills Duplex</span><span class="rail__meta">Jubilee Hills, Hyderabad · 4 BHK</span></span>
+						<span class="rail__price">₹5.5 Cr<span class="rail__why">Price revised</span></span></button></li>
+					<li><button class="rail__row" type="button" aria-pressed="false">
+						<img class="rail__thumb" src="assets/p1.jpg" alt="" width="72" height="72" loading="lazy">
+						<span class="rail__text"><span class="rail__name">Skyline Residences</span><span class="rail__meta">Whitefield, Bangalore · 3 BHK</span></span>
+						<span class="rail__price">₹95 L<span class="rail__why">Metro in 5 min</span></span></button></li>
+				</ol>
 				<div class="rail__foot">
 					<div class="spot__nav">
 						<button class="arrow" type="button" aria-label="Previous property" data-prev>

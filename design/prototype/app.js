@@ -248,6 +248,7 @@
 			: `${p.bhk} BHK ${p.type} · ${n(p.sqft)} sq ft · ${p.status}`;
 		const psf = (p) => p.intent === 'rent' ? 'per month' : `₹${n(Math.round(p.price / p.sqft))} per sq ${p.type === 'plot' ? 'yd' : 'ft'}`;
 
+		$$('li', rail).forEach((li) => li.remove()); // the server-rendered rows; rebuilt identically from data
 		FEATURED.forEach((p, i) => {
 			const li = document.createElement('li');
 			li.innerHTML = `<button class="rail__row" type="button" aria-pressed="false">
@@ -265,34 +266,52 @@
 		});
 		const rows = $$('.rail__row', rail);
 
-		/* Corner shapes. Each box is sized to its longest label, then clipped with a path:
-		   tab = top edge, leaning S down to the tab's bottom edge, fillet into the stage's left
-		   edge; bookmark = the mirror of that in the bottom-right corner. */
-		const px = (el, prop) => parseFloat(getComputedStyle(el).getPropertyValue(prop));
+		/* The corner tab and the price bookmark are shaped in CSS; the script only fixes their width to
+		   the longest label so the shape never changes with the content. */
 		const widest = (node, labels) => {
 			const keep = node.textContent; let w = 0;
+			node.style.minWidth = '0';
 			labels.forEach((t) => { node.textContent = t; w = Math.max(w, node.getBoundingClientRect().width); });
 			node.textContent = keep; node.style.minWidth = `${Math.ceil(w)}px`;
 		};
-		const shapeCorners = () => {
-			const tab = el('tab'), rx = px(tab, '--rx'), r = px(tab, '--r');
-			widest(el('why'), FEATURED.map((p) => p.why));
-			// fractional sizes, and the path overshoots the outer edges by 2px so no edge pixel is ever clipped
-			let { width: bw, height: bh } = tab.getBoundingClientRect(); let H = bh - r;
-			tab.style.clipPath = `path("M-2 -2H${bw}V0C${bw - rx} 0 ${bw - rx} ${H} ${bw - 2 * rx} ${H}H${r}C${0.45 * r} ${H} 0 ${H + 0.45 * r} 0 ${bh}H-2Z")`;
+		// Then replace the CSS fillets (two mask layers, which always meet in one faintly
+		// anti-aliased column) with a single exact clip path over body and fillets together,
+		// so the whole silhouette is one edge. Same geometry as the CSS, so nothing visibly
+		// changes when it applies. K is the cubic constant for a quarter ellipse.
+		const K = 0.5523;
+		const px = (node, prop) => parseFloat(getComputedStyle(node).getPropertyValue(prop));
+		const clipShapes = () => {
+			const tab = el('tab');
+			let rx = px(tab, '--rx'), r = px(tab, '--r'), ry = px(tab, '--tab-h') / 2;
+			let { width: W, height: Hb } = tab.getBoundingClientRect(); // Hb = tab-h + 1 (the 1px bleed above the stage)
+			tab.style.clipPath = `path("M-2 -2H${W + rx + 2}V1H${W + rx}C${W + rx - K * rx} 1 ${W} ${1 + ry - K * ry} ${W} ${1 + ry}C${W} ${1 + ry + K * ry} ${W - rx + K * rx} ${Hb} ${W - rx} ${Hb}H${r}C${r - K * r} ${Hb} 0 ${Hb + r - K * r} 0 ${Hb + r}H-2Z")`;
+			tab.classList.add('is-clipped');
 
-			const box = el('pricebox'), bx = px(box, '--rx'), br = px(box, '--r');
+			const box = el('pricebox');
+			rx = px(box, '--rx'); r = px(box, '--r'); ry = px(box, '--box-h') / 2;
+			({ width: W, height: Hb } = box.getBoundingClientRect()); // Hb = box-h + 1 (bleed below the stage); stage bottom at Hb - 1
+			const sb = Hb - 1;
+			box.style.clipPath = `path("M${W + 2} ${-r - 2}V${Hb + 2}H${-rx - 2}V${sb}H${-rx}C${-rx + K * rx} ${sb} 0 ${ry + K * ry} 0 ${ry}C0 ${ry - K * ry} ${rx - K * rx} 0 ${rx} 0H${W - r}C${W - r + K * r} 0 ${W} ${-r + K * r} ${W} ${-r}V${-r - 2}Z")`;
+			box.classList.add('is-clipped');
+		};
+		const fixWidths = () => {
+			widest(el('why'), FEATURED.map((p) => p.why));
 			widest(el('price'), FEATURED.map((p) => rupees(p.price, p.intent === 'rent')));
 			widest(el('psf'), FEATURED.map(psf));
-			({ width: bw, height: bh } = box.getBoundingClientRect());
-			box.style.clipPath = `path("M${bw + 2} -2V${bh + 2}H0V${bh}C${bx} ${bh} ${bx} ${br} ${2 * bx} ${br}H${bw - br}C${bw - 0.45 * br} ${br} ${bw} ${br - 0.45 * br} ${bw} 0V-2Z")`;
+			clipShapes();
 		};
-		shapeCorners();
-		document.fonts?.ready.then(shapeCorners);
-		let shapeTimer; addEventListener('resize', () => { clearTimeout(shapeTimer); shapeTimer = setTimeout(shapeCorners, 150); });
+		fixWidths();
+		document.fonts?.ready.then(fixWidths);
+		let widthTimer; addEventListener('resize', () => { clearTimeout(widthTimer); widthTimer = setTimeout(fixWidths, 150); });
 
 		const hl = $('[data-rail-hl]', rail);
-		const moveHl = () => { const li = rows[index].parentElement; rail.style.setProperty('--hl-top', `${li.offsetTop}px`); rail.style.setProperty('--hl-h', `${li.offsetHeight}px`); };
+		let hlPlaced = false;
+		const moveHl = () => {
+			const li = rows[index].parentElement;
+			if (!hlPlaced) hl.style.transition = 'none'; // first placement is instant: no grow-in on load
+			rail.style.setProperty('--hl-top', `${li.offsetTop}px`); rail.style.setProperty('--hl-h', `${li.offsetHeight}px`);
+			if (!hlPlaced) { void hl.offsetHeight; hl.style.transition = ''; hlPlaced = true; rail.classList.add('is-placed'); }
+		};
 		addEventListener('resize', moveHl);
 		if (FEATURED.length < 2) $('.spot__nav', spot).hidden = true;
 
