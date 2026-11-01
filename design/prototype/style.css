@@ -505,7 +505,8 @@ legend { padding: 0; }
 	position: absolute; left: 32px; right: 240px; bottom: 32px; z-index: 3;
 	transition: opacity .22s ease, transform .22s ease;
 }
-.spot.is-switching .spot__info, .spot.is-switching .spot__price { opacity: 0; transform: translateY(8px); }
+.spot__price > * { transition: opacity .22s ease, transform .22s ease; }
+.spot.is-switching .spot__info, .spot.is-switching .spot__price > * { opacity: 0; transform: translateY(8px); }
 .spot__place { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.82; }
 .spot__name { margin-top: 8px; font-size: clamp(28px, 2.8vw, 42px); font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
 .spot__name a:hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
@@ -518,7 +519,6 @@ legend { padding: 0; }
 	--notch: 20px;
 	padding: 18px 22px 2px 24px; border-radius: var(--notch) 0 0 0;
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast);
-	transition: opacity .22s ease, transform .22s ease;
 }
 /* inverse curves where the bookmark meets the photo: above it on the right edge, left of it on the bottom edge */
 .spot__price::before, .spot__price::after { content: ""; position: absolute; width: var(--notch); height: var(--notch); background: radial-gradient(circle at 0 0, transparent calc(var(--notch) - 0.5px), var(--wp--preset--color--base) var(--notch)); }
@@ -529,14 +529,16 @@ legend { padding: 0; }
 .spot__price > * { margin-right: 4px; }
 
 .rail-wrap { display: flex; flex-direction: column; }
-.rail { display: flex; flex-direction: column; flex: 1; gap: 4px; margin: 0; padding: 0; list-style: none; counter-reset: rail; }
+.rail { position: relative; display: flex; flex-direction: column; flex: 1; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.rail__hl { position: absolute; left: 0; right: 0; top: var(--hl-top, 0px); height: var(--hl-h, 0px); z-index: 0; border-radius: 18px; background: var(--wp--preset--color--surface); pointer-events: none; transition: top .45s cubic-bezier(.3, .9, .3, 1), height .45s cubic-bezier(.3, .9, .3, 1); }
+.rail li { position: relative; z-index: 1; }
 .rail li { display: flex; flex: 1 1 auto; max-height: 128px; } /* rows share the stage height, but a short rail does not balloon */
 .rail__row {
 	position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 16px; align-items: center; width: 100%; min-height: 92px;
 	padding: 10px 16px 10px 10px; border: 0; border-radius: 18px; background: none; text-align: left; overflow: hidden;
 	transition: background-color .2s ease;
 }
-.rail__row:hover, .rail__row.is-active { background: var(--wp--preset--color--surface); }
+.rail__row:hover { background: rgba(20, 47, 63, 0.03); }
 .rail__thumb { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; }
 .rail__name { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; }
 .rail__meta { display: block; margin-top: 4px; font-size: 13px; color: var(--wp--preset--color--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -545,6 +547,8 @@ legend { padding: 0; }
 .rail__row.is-active .rail__why { opacity: 1; transform: none; }
 .rail__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 10px; padding: 14px 10px 0; border-top: 1px solid var(--wp--preset--color--border); }
 .spot__nav { display: flex; align-items: center; gap: 12px; }
+.spot__nav .arrow { border-color: var(--wp--preset--color--contrast); color: var(--wp--preset--color--contrast); }
+.spot__nav .arrow:hover { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
 .spot__count { min-width: 64px; font-size: 13px; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; color: var(--wp--preset--color--ink-muted); text-align: center; }
 .rail__all { margin-top: 0; }
 .arrow {

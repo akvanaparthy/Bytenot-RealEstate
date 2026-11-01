@@ -264,6 +264,9 @@
 			rail.append(li);
 		});
 		const rows = $$('.rail__row', rail);
+		const hl = $('[data-rail-hl]', rail);
+		const moveHl = () => { const li = rows[index].parentElement; rail.style.setProperty('--hl-top', `${li.offsetTop}px`); rail.style.setProperty('--hl-h', `${li.offsetHeight}px`); };
+		addEventListener('resize', moveHl);
 		if (FEATURED.length < 2) $('.spot__nav', spot).hidden = true;
 
 		const swapImage = (p) => {
@@ -289,12 +292,15 @@
 			el('psf').textContent = psf(p);
 			el('count').textContent = `${String(index + 1).padStart(2, '0')} / ${String(FEATURED.length).padStart(2, '0')}`;
 			rows.forEach((r, j) => { r.classList.toggle('is-active', j === index); r.setAttribute('aria-pressed', String(j === index)); });
+			moveHl();
 		};
 		const show = (i) => {
 			index = (i + FEATURED.length) % FEATURED.length;
 			const p = FEATURED[index];
 			swapImage(p);
 			if (reduced) { fill(p); return; }
+			rows.forEach((r, j) => { r.classList.toggle('is-active', j === index); r.setAttribute('aria-pressed', String(j === index)); });
+			moveHl();
 			spot.classList.add('is-switching');
 			setTimeout(() => { fill(p); spot.classList.remove('is-switching'); }, 220);
 		};
