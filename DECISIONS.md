@@ -2,6 +2,18 @@
 
 Short log of choices that are expensive to reverse. Newest first.
 
+## 2026-11-01 — Theme port: URLs, lifecycle, localities, languages
+
+**Status:** assumed defaults, taken when the owner said "proceed" without answering; overturn any of them before content is entered.
+
+- **URLs.** `/properties/{slug}/`, `/projects/{slug}/`, `/advisors/{slug}/`, `/localities/{slug}/`. Property type, status, amenity and possession terms are filters, not landing pages (`/type/`, `/status/`, `/amenity/`, `/possession/` exist but are not linked from navigation).
+- **Localities are a taxonomy, not a post type.** `location` is hierarchical (City › Locality) and attached to properties, projects and advisors. Each term is a page with its own description and term meta, rendered by `taxonomy-location.html`. One entity instead of a post type plus a term kept in sync.
+- **Sold, let and withdrawn listings keep their page.** They leave archives, locality pages, search and sitemaps; the page stays published, marked, with `noindex, follow`; nothing is deleted or redirected to the home page. `pc_sold_at` is stamped automatically when the status changes.
+- **What an agency offers is a setting.** Property types, transactions (sale, rent), budget bands, phone, WhatsApp, RERA, EMI defaults and the lead destination live in Properties › Setup. Search forms and filters build from it; a plots-only agency never shows a BHK filter.
+- **Leads are stored first, pushed second.** Every form posts to `property-core/v1/leads`; the enquiry is saved as a private post, emailed at once, then pushed to the CRM through a provider interface in the background with three retries. Providers shipped: email, generic webhook. A direct Zoho CRM provider implements the same interface later.
+- **No multilingual plugin assumed.** The prototype's language switcher is not in the theme. If Hindi and Telugu are wanted, Polylang or WPML supplies the switcher and translated URLs.
+- **Figtree is bundled, not loaded from Google.** Two variable WOFF2 files under `assets/fonts/`; the theme falls back to the system sans-serif until they are added.
+
 ## 2026-10-23 — Property data: Zoho owns the facts, WordPress owns the presentation
 
 **Status:** proposed, to be confirmed with the owner. Not yet implemented.

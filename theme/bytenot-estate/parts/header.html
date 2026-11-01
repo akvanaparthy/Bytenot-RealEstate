@@ -1,8 +1,33 @@
-<!-- wp:group {"layout":{"type":"constrained"}} -->
-<div class="wp-block-group">
-	<!-- wp:site-title /-->
-	<!-- wp:paragraph -->
-	<p>Header placeholder</p>
-	<!-- /wp:paragraph -->
+<!-- wp:group {"tagName":"div","className":"site-header","layout":{"type":"default"},"metadata":{"name":"Site header"}} -->
+<div class="wp-block-group site-header">
+	<!-- wp:group {"className":"site-header__inner","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"center"}} -->
+	<div class="wp-block-group site-header__inner">
+		<!-- wp:group {"className":"brand","layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
+		<div class="wp-block-group brand">
+			<!-- wp:site-logo {"width":42,"shouldSyncIcon":true,"className":"brand__mark"} /-->
+			<!-- wp:group {"className":"brand__text","layout":{"type":"flex","orientation":"vertical"}} -->
+			<div class="wp-block-group brand__text">
+				<!-- wp:site-title {"level":0,"className":"brand__name"} /-->
+				<!-- wp:site-tagline {"className":"brand__sub"} /-->
+			</div>
+			<!-- /wp:group -->
+		</div>
+		<!-- /wp:group -->
+
+		<!-- wp:navigation {"className":"nav","overlayMenu":"mobile","icon":"menu","layout":{"type":"flex","justifyContent":"center"},"metadata":{"name":"Primary menu"}} /-->
+
+		<!-- wp:group {"className":"site-header__right","layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
+		<div class="wp-block-group site-header__right">
+			<!-- wp:buttons {"className":"site-header__cta"} -->
+			<div class="wp-block-buttons site-header__cta">
+				<!-- wp:button {"className":"is-style-accent"} -->
+				<div class="wp-block-button is-style-accent"><a class="wp-block-button__link wp-element-button" href="#inquiry">Talk to an advisor</a></div>
+				<!-- /wp:button -->
+			</div>
+			<!-- /wp:buttons -->
+		</div>
+		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
 </div>
 <!-- /wp:group -->
