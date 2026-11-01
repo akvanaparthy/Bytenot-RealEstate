@@ -8,3 +8,6 @@ plugin/**/build/
 
 # plugin-generated activity notes dropped into subfolders
 design/prototype/CLAUDE.md
+
+# brand guidelines PDF stays local (45 MB)
+/Lavenor Realty - Brand Guidelines.pdf
