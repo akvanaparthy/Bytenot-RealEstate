@@ -103,8 +103,21 @@ legend { padding: 0; }
 	transition: background-color var(--wp--custom--transition), color var(--wp--custom--transition), border-color var(--wp--custom--transition), transform var(--wp--custom--transition);
 }
 .btn:active { transform: translateY(1px); }
-.btn--accent { background: var(--wp--preset--gradient--brand-gold-soft); color: var(--wp--preset--color--contrast); padding: 0 29px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45); }
-.btn--accent:hover { background: var(--wp--preset--gradient--brand-gold); }
+/* gold gradient: origin on the border box, or the tile repeats under the transparent border and
+   shows the dark end of the gradient as a sliver on the left edge. The hover gradient sits on a
+   pseudo-element so it can fade in (gradients themselves do not transition). */
+.btn--accent {
+	position: relative; isolation: isolate; overflow: hidden;
+	background: var(--wp--preset--gradient--brand-gold-soft); background-origin: border-box;
+	color: var(--wp--preset--color--contrast); padding: 0 29px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+.btn--accent::before {
+	content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; /* covers the border strip too */
+	background: var(--wp--preset--gradient--brand-gold);
+	opacity: 0; transition: opacity var(--wp--custom--transition);
+}
+.btn--accent:hover::before { opacity: 1; }
 .btn--dark { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
 .btn--dark:hover { background: var(--wp--preset--color--contrast-hover); }
 .btn--outline { background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); border-color: var(--wp--preset--color--border); }

@@ -54,10 +54,21 @@
 		const close = (refocus = false) => { menu.hidden = true; button.setAttribute('aria-expanded', 'false'); if (refocus) button.focus(); };
 
 		button.addEventListener('click', () => (menu.hidden ? open() : close()));
+		/* Prototype only: the real switcher is rendered by the multilingual plugin and links to the
+		   translated URL (/hi/, /te/). Here the choice is remembered and reflected on <html lang>. */
+		const LANGS = { Eng: 'en', 'हिं': 'hi', 'తె': 'te' };
+		const apply = (code) => {
+			items.forEach((i) => i.setAttribute('aria-checked', String(i.dataset.langCode === code)));
+			label.textContent = code;
+			document.documentElement.lang = LANGS[code] || 'en';
+		};
+		try { const saved = localStorage.getItem('lavenor-lang'); if (saved && LANGS[saved]) apply(saved); } catch (e) { /* storage blocked */ }
 		items.forEach((item) => item.addEventListener('click', () => {
-			items.forEach((i) => i.setAttribute('aria-checked', String(i === item)));
-			label.textContent = item.dataset.langCode;
+			const code = item.dataset.langCode;
+			apply(code);
+			try { localStorage.setItem('lavenor-lang', code); } catch (e) { /* storage blocked */ }
 			close(true);
+			if (code !== 'Eng') showToast(`${item.textContent} selected. Translated pages appear here once the multilingual plugin and translations are in place.`);
 		}));
 		document.addEventListener('click', (e) => { if (!lang.contains(e.target)) close(); });
 		lang.addEventListener('keydown', (e) => {
