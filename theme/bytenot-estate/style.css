@@ -63,6 +63,7 @@ img { height: auto; }
 .brand { display: inline-flex; align-items: center; gap: 12px; line-height: 1; }
 .brand__mark, .brand__mark img { width: 42px; height: auto; }
 .brand__text { display: inline-flex; flex-direction: column; justify-content: center; gap: 3px; }
+.brand__name, .brand__sub { white-space: nowrap; }
 .brand__sub { opacity: 0.9; }
 
 /* ---------- header ----------
@@ -70,15 +71,25 @@ img { height: auto; }
    right-hand group become white "bookmark" cards stuck to the viewport edges and the menu
    pill floats between them. The script toggles .is-scrolled; without it the header simply
    stays in its resting state. */
+.site-header__sentinel { position: absolute; top: 0; left: 0; width: 1px; height: 40px; pointer-events: none; }
 .site-header {
 	--header-edge: max(var(--wp--custom--layout--gutter), calc((100% - var(--wp--custom--layout--content-size)) / 2));
 	position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-	color: var(--wp--preset--color--base);
+	color: var(--wp--preset--color--contrast);
 	pointer-events: none; /* the page shows through between the pieces */
 	transition: color 0.25s ease;
 }
-.site-header.is-scrolled, .site-header--dark { color: var(--wp--preset--color--contrast); }
+/* over a hero photo the resting header is white; .is-scrolled wins */
+body:has(.site-main > .hero:first-child) .site-header:not(.is-scrolled) { color: var(--wp--preset--color--base); }
+body:has(.site-main > .hero:first-child) .site-header:not(.is-scrolled) .nav .wp-block-navigation__container { background: var(--wp--preset--color--glass); }
+body:has(.site-main > .hero:first-child) .site-header:not(.is-scrolled) .nav .wp-block-navigation-item__content:hover { background: rgba(255, 255, 255, 0.18); }
+body:has(.site-main > .hero:first-child) .site-header:not(.is-scrolled) .wp-block-navigation__responsive-container-open { background: rgba(255, 255, 255, 0.16); }
 .site-header .brand, .site-header .nav, .site-header .site-header__right { pointer-events: auto; }
+/* the menu block sits in the right bookmark in the markup (so its mobile button lands there) but is
+   fixed to the viewport centre on desktop; its inner wrappers are forced back into normal flow */
+/* element selector on purpose: core copies the block's class names onto the inner <ul> as well */
+.site-header nav.nav { position: fixed; left: 50%; top: calc((var(--wp--custom--header--height) - 48px) / 2); height: 48px; margin: 0; transform: translateX(-50%); transition: top 0.25s ease; }
+.site-header.is-scrolled nav.nav { top: calc((var(--wp--custom--header--height-compact) - 48px) / 2); }
 .site-header__inner { height: var(--wp--custom--header--height); transition: height 0.25s ease; }
 .site-header.is-scrolled .site-header__inner { height: var(--wp--custom--header--height-compact); }
 
@@ -100,32 +111,30 @@ img { height: auto; }
 .site-header .nav .wp-block-navigation__container {
 	display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 4px;
 	border-radius: var(--wp--custom--radius--pill);
-	background: var(--wp--preset--color--glass);
+	background: rgba(20, 47, 63, 0.05);
 	-webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
 	transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
-.site-header--dark:not(.is-scrolled) .nav .wp-block-navigation__container { background: rgba(0, 0, 0, 0.05); }
 .site-header.is-scrolled .nav .wp-block-navigation__container {
 	background: rgba(255, 255, 255, 0.78);
 	box-shadow: 0 0 0 1px rgba(20, 47, 63, 0.06), 0 10px 30px rgba(20, 47, 63, 0.12);
 }
+.site-header .nav .wp-block-navigation-item { background: transparent; } /* core gives items background-color: inherit, which boxes the pill */
 .site-header .nav .wp-block-navigation-item__content {
 	display: inline-flex; align-items: center; height: 40px; padding: 0 18px;
 	border-radius: var(--wp--custom--radius--pill); text-decoration: none;
 	transition: background-color var(--wp--custom--transition), color var(--wp--custom--transition);
 }
-.site-header .nav .wp-block-navigation-item__content:hover { background: rgba(255, 255, 255, 0.18); text-decoration: none; }
-.site-header.is-scrolled .nav .wp-block-navigation-item__content:hover, .site-header--dark .nav .wp-block-navigation-item__content:hover { background: rgba(20, 47, 63, 0.06); }
-.site-header .nav .current-menu-item > .wp-block-navigation-item__content { background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); }
-.site-header.is-scrolled .nav .current-menu-item > .wp-block-navigation-item__content, .site-header--dark .nav .current-menu-item > .wp-block-navigation-item__content { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
+.site-header .nav .wp-block-navigation-item__content:hover { background: rgba(20, 47, 63, 0.06); text-decoration: none; }
+.site-header .nav .current-menu-item > .wp-block-navigation-item__content { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
+body:has(.site-main > .hero:first-child) .site-header:not(.is-scrolled) .nav .current-menu-item > .wp-block-navigation-item__content { background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); }
 
 /* the core mobile menu button, styled as the round toggle */
 .site-header .wp-block-navigation__responsive-container-open {
 	display: none; width: 44px; height: 44px; align-items: center; justify-content: center;
-	border-radius: 50%; background: rgba(255, 255, 255, 0.16); color: inherit;
+	border-radius: 50%; background: rgba(20, 47, 63, 0.06); color: inherit;
 	-webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
-.site-header.is-scrolled .wp-block-navigation__responsive-container-open, .site-header--dark .wp-block-navigation__responsive-container-open { background: rgba(20, 47, 63, 0.06); }
 .site-header .wp-block-navigation__responsive-container.is-menu-open { color: var(--wp--preset--color--ink); }
 .site-header__cta .wp-block-button__link { padding-top: 0; padding-bottom: 0; height: 48px; }
 
@@ -169,7 +178,8 @@ img { height: auto; }
 .site-footer__contact { align-items: center; gap: 14px; text-align: center; }
 .site-footer__phone, .site-footer__email { margin: 0; font-size: clamp(24px, 2.3vw, 34px); font-weight: 600; line-height: 1.1; letter-spacing: -0.01em; }
 .site-footer .social { margin-top: 14px; padding: 5px; gap: 6px; border-radius: var(--wp--custom--radius--pill); background: rgba(255, 255, 255, 0.16); }
-.site-footer .social .wp-social-link { transition: background-color var(--wp--custom--transition), transform var(--wp--custom--transition); }
+.site-footer .social .wp-social-link { background-color: var(--wp--preset--color--base) !important; color: var(--wp--preset--color--contrast) !important; transition: background-color var(--wp--custom--transition), transform var(--wp--custom--transition); }
+.site-footer .social .wp-social-link a { color: inherit; }
 .site-footer .social .wp-social-link:hover { background-color: var(--wp--preset--color--primary) !important; transform: translateY(-2px); }
 
 .site-footer__legal { display: grid !important; grid-template-columns: 1fr 1.5fr 1fr; gap: 40px; margin-top: 36px; padding-top: 26px; border-top: 1px solid rgba(255, 255, 255, 0.18); }
@@ -181,7 +191,7 @@ img { height: auto; }
 
 /* giant wordmark: real text, so it stays editable and translatable; sized by the container width */
 .site-footer__wordmark {
-	--wordmark-size: calc((100cqw - 2 * var(--wp--custom--layout--gutter)) / 5.05);
+	--wordmark-size: calc((100cqw - 2 * var(--wp--custom--layout--gutter)) / (var(--bytenot-title-chars, 7) * 0.72)); /* 0.72em per capital, so any title length fills the width */
 	display: block; margin: 40px 0 0; padding: 0 var(--wp--custom--layout--gutter); text-align: center;
 	font-size: var(--wordmark-size); font-weight: 700; line-height: 0.9; letter-spacing: -0.01em; text-transform: uppercase;
 	color: var(--wp--preset--color--base);
@@ -203,14 +213,17 @@ img { height: auto; }
 @media (max-width: 720px) {
 	.site-header { --wp--custom--header--height: 72px; --wp--custom--header--piece: 52px; --wp--custom--layout--gutter: 16px; }
 	.site-header.is-scrolled .site-header__inner { height: 64px; }
+	.site-header nav.nav { position: static; height: auto; transform: none; }
 	.site-header .nav .wp-block-navigation__container { display: none; }
 	.site-header .wp-block-navigation__responsive-container-open { display: flex; }
 	.site-header .brand { left: calc(var(--header-edge) - 14px); padding: 0 14px; }
 	.site-header__right { right: calc(var(--header-edge) - 10px); padding: 0 10px; gap: 12px; }
 	.site-header.is-scrolled .brand { padding: 0 16px 0 14px; }
 	.site-header.is-scrolled .site-header__right { padding: 0 8px 0 12px; gap: 10px; }
-	.site-header__cta .wp-block-button__link { height: 44px; padding-left: 20px; padding-right: 20px; font-size: 14px; }
+	.site-header__cta .wp-block-button__link { height: 42px; padding-left: 14px; padding-right: 14px; font-size: 13px; }
+	.site-header .brand__name { font-size: 18px; }
 	.brand__mark, .brand__mark img { width: 36px; }
+	.brand__name { max-width: calc(100vw - 260px); overflow: hidden; text-overflow: ellipsis; } /* leaves room for the menu button and the CTA */
 
 	.site-main--padded { padding-top: calc(72px + var(--wp--preset--spacing--50)); }
 	.site-footer { padding-top: 56px; border-radius: 24px 24px 0 0; }

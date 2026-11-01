@@ -33,6 +33,12 @@ function bytenot_estate_enqueue_styles() {
 		array(),
 		wp_get_theme()->get( 'Version' )
 	);
+	// The brand motif (faint logomark on dark panels) is the site icon, so it is content, not code.
+	$icon = get_site_icon_url( 512 );
+	$vars = $icon ? '--bytenot-motif:url("' . esc_url( $icon ) . '");' : '';
+	// The footer wordmark fills the width whatever the site title's length.
+	$vars .= '--bytenot-title-chars:' . max( 3, mb_strlen( wp_strip_all_tags( get_bloginfo( 'name' ) ) ) ) . ';';
+	wp_add_inline_style( 'bytenot-estate-style', ':root{' . $vars . '}' );
 }
 add_action( 'wp_enqueue_scripts', 'bytenot_estate_enqueue_styles' );
 
