@@ -499,42 +499,32 @@ legend { padding: 0; }
 	position: absolute; inset: 0; z-index: 2;
 	background: linear-gradient(180deg, rgba(20, 47, 63, 0.28) 0%, rgba(20, 47, 63, 0) 32%, rgba(20, 47, 63, 0.08) 55%, rgba(20, 47, 63, 0.82) 100%);
 }
-/* corner tab and price bookmark: one element each, cut with a clip-path of real Bézier
-   curves (built in JS from the box size, so the S-curves are exact and tangent-continuous).
-   Padding reserves the curve zones: --rx on the leaning side, --r on the fillet side.
-   JS fixes each box to its longest label, so the shape never changes with the content. */
-/* corner tab and price bookmark, drawn in CSS alone so the first paint is already right.
-   Each is a body with an elliptical convex corner plus two concave fillets: pseudo-elements
-   masked with a quarter-ellipse SVG (vector, so the curve is exact) plus a solid strip over a 2px
-   overlap with the body. The script then swaps this for one exact clip path (see app.js). The convex and concave
-   radii are each half the height, so the leaning edge is one continuous S. Both boxes sit
-   1px past the stage edge for the same reason. The script only fixes their width to the
+/* corner tab and price bookmark, drawn in CSS alone, so the first paint is already final.
+   Each is one element whose box includes the fillet zones, masked by three layers: a solid
+   rectangle for the body, an SVG "tail" holding the convex-then-concave S on the leaning side,
+   and an SVG fillet on the other side. The SVGs stretch to --rx / --r so the quarter ellipses
+   are exact, and every layer overlaps its neighbour by a full solid zone, so no two edges ever
+   share a pixel and nothing can seam. The convex and concave radii are each half the height,
+   so the leaning edge is one continuous S. Both boxes bleed 3px past the stage edge, so the
+   photo's anti-aliased edge stays covered at any zoom. The script only fixes their width to the
    longest label. */
 .spot__why {
-	--rx: 26px; --r: 18px; --tab-h: 36px;
-	--fillet: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1C.448 0 0 .448 0 1Z'/%3E%3C/svg%3E");
-	position: absolute; top: -1px; left: -1px; z-index: 3; display: flex; align-items: center; margin: 0;
-	height: calc(var(--tab-h) + 1px); padding: 1px 10px 0 7px;
-	border-bottom-right-radius: var(--rx) calc(var(--tab-h) / 2);
+	--rx: 26px; --r: 18px; --tab-h: 36px; --bleed: 3px;
+	--tail: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Cpath d='M0 0H3C2.448 0 2 .448 2 1C2 1.552 1.552 2 1 2H0Z'/%3E%3C/svg%3E");
+	--foot: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 2' preserveAspectRatio='none'%3E%3Cpath d='M0 0H1V1C.448 1 0 1.448 0 2Z'/%3E%3C/svg%3E");
+	position: absolute; top: calc(-1 * var(--bleed)); left: calc(-1 * var(--bleed)); z-index: 3; display: flex; align-items: center; margin: 0;
+	box-sizing: border-box; height: calc(var(--bleed) + var(--tab-h) + var(--r));
+	padding: var(--bleed) calc(var(--rx) + 12px) var(--r) calc(var(--bleed) + 6px);
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--primary-dark);
 	font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
+	-webkit-mask: linear-gradient(#000, #000) 0 0 / calc(100% - 2 * var(--rx)) calc(var(--bleed) + var(--tab-h)) no-repeat,
+		var(--tail) right 0 top var(--bleed) / calc(3 * var(--rx)) var(--tab-h) no-repeat,
+		var(--foot) left var(--bleed) bottom 0 / var(--r) calc(2 * var(--r)) no-repeat;
+	mask: linear-gradient(#000, #000) 0 0 / calc(100% - 2 * var(--rx)) calc(var(--bleed) + var(--tab-h)) no-repeat,
+		var(--tail) right 0 top var(--bleed) / calc(3 * var(--rx)) var(--tab-h) no-repeat,
+		var(--foot) left var(--bleed) bottom 0 / var(--r) calc(2 * var(--r)) no-repeat;
 }
 .spot__why-text { display: inline-block; }
-/* once the script has applied the exact clip path, the fillets become plain rectangles and the
-   clip carves body and fillets as one edge */
-.spot__why.is-clipped, .spot__price.is-clipped { border-radius: 0; }
-.spot__why.is-clipped::before, .spot__why.is-clipped::after, .spot__price.is-clipped::before, .spot__price.is-clipped::after { -webkit-mask: none; mask: none; }
-.spot__why::before, .spot__why::after { content: ""; position: absolute; background: var(--wp--preset--color--base); }
-.spot__why::before { /* right fillet, on the stage's top edge */
-	top: 1px; left: calc(100% - 2px); width: calc(var(--rx) + 2px); height: calc(var(--tab-h) / 2);
-	-webkit-mask: var(--fillet) right 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) left 0 / 2px 100% no-repeat;
-	mask: var(--fillet) right 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) left 0 / 2px 100% no-repeat;
-}
-.spot__why::after { /* bottom fillet, on the stage's left edge */
-	left: 0; top: calc(100% - 2px); width: var(--r); height: calc(var(--r) + 2px);
-	-webkit-mask: var(--fillet) 0 bottom / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 0 / 100% 2px no-repeat;
-	mask: var(--fillet) 0 bottom / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 0 / 100% 2px no-repeat;
-}
 .spot__info {
 	position: absolute; left: 32px; right: 240px; bottom: 32px; z-index: 3;
 	transition: opacity .22s ease, transform .22s ease;
@@ -549,23 +539,19 @@ legend { padding: 0; }
 .btn--glass { background: rgba(255, 255, 255, 0.16); color: var(--wp--preset--color--base); border-color: rgba(255, 255, 255, 0.35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .btn--glass:hover { background: rgba(255, 255, 255, 0.28); }
 .spot__price {
-	--rx: 30px; --r: 20px; --box-h: 70px;
-	--fillet: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1' preserveAspectRatio='none'%3E%3Cpath d='M1 1H0C.552 1 1 .552 1 0Z'/%3E%3C/svg%3E");
-	position: absolute; right: -1px; bottom: -1px; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; margin: 0;
-	height: calc(var(--box-h) + 1px); padding: 0 23px 1px 14px;
-	border-top-left-radius: var(--rx) calc(var(--box-h) / 2);
+	--rx: 30px; --r: 20px; --box-h: 70px; --bleed: 3px;
+	--tail: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2' preserveAspectRatio='none'%3E%3Cpath d='M3 0H2C1.448 0 1 .448 1 1C1 1.552 .552 2 0 2H3Z'/%3E%3C/svg%3E");
+	--cap: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 2' preserveAspectRatio='none'%3E%3Cpath d='M1 0C1 .552 .552 1 0 1V2H1Z'/%3E%3C/svg%3E");
+	position: absolute; right: calc(-1 * var(--bleed)); bottom: calc(-1 * var(--bleed)); z-index: 3; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; margin: 0;
+	box-sizing: border-box; height: calc(var(--r) + var(--box-h) + var(--bleed));
+	padding: var(--r) calc(22px + var(--bleed)) var(--bleed) calc(3 * var(--rx) - 2px);
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); white-space: nowrap;
-}
-.spot__price::before, .spot__price::after { content: ""; position: absolute; background: var(--wp--preset--color--base); }
-.spot__price::before { /* top fillet, on the stage's right edge */
-	right: 0; bottom: calc(100% - 2px); width: var(--r); height: calc(var(--r) + 2px);
-	-webkit-mask: var(--fillet) 0 0 / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 bottom / 100% 2px no-repeat;
-	mask: var(--fillet) 0 0 / 100% var(--r) no-repeat, linear-gradient(#000, #000) 0 bottom / 100% 2px no-repeat;
-}
-.spot__price::after { /* left fillet, on the stage's bottom edge */
-	bottom: 1px; right: calc(100% - 2px); width: calc(var(--rx) + 2px); height: calc(var(--box-h) / 2);
-	-webkit-mask: var(--fillet) left 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) right 0 / 2px 100% no-repeat;
-	mask: var(--fillet) left 0 / var(--rx) 100% no-repeat, linear-gradient(#000, #000) right 0 / 2px 100% no-repeat;
+	-webkit-mask: linear-gradient(#000, #000) right bottom / calc(100% - 2 * var(--rx)) calc(var(--box-h) + var(--bleed)) no-repeat,
+		var(--tail) left 0 top var(--r) / calc(3 * var(--rx)) var(--box-h) no-repeat,
+		var(--cap) right var(--bleed) top 0 / var(--r) calc(2 * var(--r)) no-repeat;
+	mask: linear-gradient(#000, #000) right bottom / calc(100% - 2 * var(--rx)) calc(var(--box-h) + var(--bleed)) no-repeat,
+		var(--tail) left 0 top var(--r) / calc(3 * var(--rx)) var(--box-h) no-repeat,
+		var(--cap) right var(--bleed) top 0 / var(--r) calc(2 * var(--r)) no-repeat;
 }
 .spot__price strong { display: block; font-size: 30px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; text-align: right; }
 .spot__price span { display: block; margin-top: 6px; font-size: 12px; color: var(--wp--preset--color--ink-muted); text-align: right; }
@@ -1427,10 +1413,10 @@ legend { padding: 0; }
 
 	.spot { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
 	.spot__stage { min-height: 0; aspect-ratio: 4 / 5; }
-	.spot__why { --rx: 22px; --r: 16px; --tab-h: 32px; padding-right: 8px; }
+	.spot__why { --rx: 22px; --r: 16px; --tab-h: 32px; padding-right: calc(var(--rx) + 8px); }
 	.spot__info { left: 18px; right: 18px; bottom: 96px; }
 	.spot__name { font-size: 28px; }
-	.spot__price { --rx: 24px; --r: 16px; --box-h: 60px; padding: 0 17px 1px 10px; }
+	.spot__price { --rx: 24px; --r: 16px; --box-h: 60px; padding-right: calc(16px + var(--bleed)); padding-left: calc(3 * var(--rx) - 6px); }
 	.spot__price strong { font-size: 24px; }
 	.rail__row { min-height: 0; padding: 8px 12px 8px 8px; gap: 12px; grid-template-columns: 56px minmax(0, 1fr) auto; }
 	.rail__thumb { width: 56px; height: 56px; }

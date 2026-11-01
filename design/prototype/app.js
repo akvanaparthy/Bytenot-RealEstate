@@ -266,39 +266,18 @@
 		});
 		const rows = $$('.rail__row', rail);
 
-		/* The corner tab and the price bookmark are shaped in CSS; the script only fixes their width to
-		   the longest label so the shape never changes with the content. */
+		/* The corner tab and the price bookmark are shaped entirely in CSS; the script only fixes their
+		   width to the longest label so the shape never changes with the content. */
 		const widest = (node, labels) => {
 			const keep = node.textContent; let w = 0;
 			node.style.minWidth = '0';
 			labels.forEach((t) => { node.textContent = t; w = Math.max(w, node.getBoundingClientRect().width); });
 			node.textContent = keep; node.style.minWidth = `${Math.ceil(w)}px`;
 		};
-		// Then replace the CSS fillets (two mask layers, which always meet in one faintly
-		// anti-aliased column) with a single exact clip path over body and fillets together,
-		// so the whole silhouette is one edge. Same geometry as the CSS, so nothing visibly
-		// changes when it applies. K is the cubic constant for a quarter ellipse.
-		const K = 0.5523;
-		const px = (node, prop) => parseFloat(getComputedStyle(node).getPropertyValue(prop));
-		const clipShapes = () => {
-			const tab = el('tab');
-			let rx = px(tab, '--rx'), r = px(tab, '--r'), ry = px(tab, '--tab-h') / 2;
-			let { width: W, height: Hb } = tab.getBoundingClientRect(); // Hb = tab-h + 1 (the 1px bleed above the stage)
-			tab.style.clipPath = `path("M-2 -2H${W + rx + 2}V1H${W + rx}C${W + rx - K * rx} 1 ${W} ${1 + ry - K * ry} ${W} ${1 + ry}C${W} ${1 + ry + K * ry} ${W - rx + K * rx} ${Hb} ${W - rx} ${Hb}H${r}C${r - K * r} ${Hb} 0 ${Hb + r - K * r} 0 ${Hb + r}H-2Z")`;
-			tab.classList.add('is-clipped');
-
-			const box = el('pricebox');
-			rx = px(box, '--rx'); r = px(box, '--r'); ry = px(box, '--box-h') / 2;
-			({ width: W, height: Hb } = box.getBoundingClientRect()); // Hb = box-h + 1 (bleed below the stage); stage bottom at Hb - 1
-			const sb = Hb - 1;
-			box.style.clipPath = `path("M${W + 2} ${-r - 2}V${Hb + 2}H${-rx - 2}V${sb}H${-rx}C${-rx + K * rx} ${sb} 0 ${ry + K * ry} 0 ${ry}C0 ${ry - K * ry} ${rx - K * rx} 0 ${rx} 0H${W - r}C${W - r + K * r} 0 ${W} ${-r + K * r} ${W} ${-r}V${-r - 2}Z")`;
-			box.classList.add('is-clipped');
-		};
 		const fixWidths = () => {
 			widest(el('why'), FEATURED.map((p) => p.why));
 			widest(el('price'), FEATURED.map((p) => rupees(p.price, p.intent === 'rent')));
 			widest(el('psf'), FEATURED.map(psf));
-			clipShapes();
 		};
 		fixWidths();
 		document.fonts?.ready.then(fixWidths);
