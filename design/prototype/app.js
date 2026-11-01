@@ -264,6 +264,32 @@
 			rail.append(li);
 		});
 		const rows = $$('.rail__row', rail);
+
+		/* Corner shapes. Each box is sized to its longest label, then clipped with a path:
+		   tab = top edge, leaning S down to the tab's bottom edge, fillet into the stage's left
+		   edge; bookmark = the mirror of that in the bottom-right corner. */
+		const px = (el, prop) => parseFloat(getComputedStyle(el).getPropertyValue(prop));
+		const widest = (node, labels) => {
+			const keep = node.textContent; let w = 0;
+			labels.forEach((t) => { node.textContent = t; w = Math.max(w, node.getBoundingClientRect().width); });
+			node.textContent = keep; node.style.minWidth = `${Math.ceil(w)}px`;
+		};
+		const shapeCorners = () => {
+			const tab = el('tab'), rx = px(tab, '--rx'), r = px(tab, '--r');
+			widest(el('why'), FEATURED.map((p) => p.why));
+			let bw = tab.offsetWidth, bh = tab.offsetHeight, H = bh - r;
+			tab.style.clipPath = `path("M0 0H${bw}C${bw - rx} 0 ${bw - rx} ${H} ${bw - 2 * rx} ${H}H${r}C${0.45 * r} ${H} 0 ${H + 0.45 * r} 0 ${bh}Z")`;
+
+			const box = el('pricebox'), bx = px(box, '--rx'), br = px(box, '--r');
+			widest(el('price'), FEATURED.map((p) => rupees(p.price, p.intent === 'rent')));
+			widest(el('psf'), FEATURED.map(psf));
+			bw = box.offsetWidth; bh = box.offsetHeight;
+			box.style.clipPath = `path("M${bw} 0V${bh}H0C${bx} ${bh} ${bx} ${br} ${2 * bx} ${br}H${bw - br}C${bw - 0.45 * br} ${br} ${bw} ${br - 0.45 * br} ${bw} 0Z")`;
+		};
+		shapeCorners();
+		document.fonts?.ready.then(shapeCorners);
+		let shapeTimer; addEventListener('resize', () => { clearTimeout(shapeTimer); shapeTimer = setTimeout(shapeCorners, 150); });
+
 		const hl = $('[data-rail-hl]', rail);
 		const moveHl = () => { const li = rows[index].parentElement; rail.style.setProperty('--hl-top', `${li.offsetTop}px`); rail.style.setProperty('--hl-h', `${li.offsetHeight}px`); };
 		addEventListener('resize', moveHl);
