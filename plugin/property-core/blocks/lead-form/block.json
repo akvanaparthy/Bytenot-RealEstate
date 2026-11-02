@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "property-core/lead-form",
+	"title": "Lead form",
+	"category": "widgets",
+	"icon": "email",
+	"description": "Enquiry or book-a-visit form. Posts to the Property Core leads endpoint; the lead is stored, emailed and pushed to the CRM.",
+	"textdomain": "property-core",
+	"attributes": {
+		"variant": { "type": "string", "default": "inquiry", "enum": [ "inquiry", "visit" ] },
+		"lede": { "type": "string", "default": "" }
+	},
+	"usesContext": [ "postId" ],
+	"supports": { "html": false, "customClassName": true },
+	"editorScript": "file:./index.js",
+	"style": [ "property-core-fields", "file:./style.css" ],
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php"
+}

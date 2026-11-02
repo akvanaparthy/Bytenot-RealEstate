@@ -26,6 +26,18 @@ img { height: auto; }
 :focus-visible { outline: 2px solid var(--wp--preset--color--contrast); outline-offset: 3px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 
+/* container: the prototype's content frame (content width plus one gutter each side) */
+.container { width: 100%; max-width: calc(var(--wp--custom--layout--content-size) + 2 * var(--wp--custom--layout--gutter)); margin: 0 auto; padding: 0 var(--wp--custom--layout--gutter); }
+/* root padding follows the gutter on phones; alignfull blocks use these variables for their negative margins */
+@media (max-width: 720px) { :root { --wp--style--root--padding-left: 16px; --wp--style--root--padding-right: 16px; --wp--custom--layout--gutter: 16px; --wp--custom--header--height: 72px; } }
+/* eyebrow and section titles as plain classes too, for pattern markup */
+.eyebrow { margin-bottom: 14px; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wp--preset--color--primary-dark); }
+.fig-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wp--preset--color--ink-muted); }
+.link-arrow { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--wp--preset--color--ink); text-decoration: underline; text-underline-offset: 5px; text-decoration-color: rgba(20, 47, 63, 0.25); }
+.link-arrow:hover { text-decoration-color: currentColor; }
+.link-arrow svg { transition: transform .2s ease; }
+.link-arrow:hover svg { transform: translateX(3px); }
+
 /* page shell: the fixed header floats over the first section, so padded pages reserve room for it */
 .site-main--padded { padding-top: calc(var(--wp--custom--header--height) + var(--wp--preset--spacing--60)); padding-bottom: var(--wp--preset--spacing--70); }
 .page-title { margin-bottom: var(--wp--preset--spacing--40); }

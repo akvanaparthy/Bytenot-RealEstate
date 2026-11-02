@@ -33,6 +33,9 @@ require_once PROPERTY_CORE_DIR . 'includes/crm/interface-provider.php';
 require_once PROPERTY_CORE_DIR . 'includes/crm/class-email-provider.php';
 require_once PROPERTY_CORE_DIR . 'includes/crm/class-webhook-provider.php';
 require_once PROPERTY_CORE_DIR . 'includes/leads.php';
+require_once PROPERTY_CORE_DIR . 'includes/query.php';
+require_once PROPERTY_CORE_DIR . 'includes/blocks.php';
+require_once PROPERTY_CORE_DIR . 'includes/demo.php';
 
 /**
  * Flush rewrite rules once the post types exist.

@@ -203,6 +203,7 @@ function property_core_settings_page() {
 			</table>
 			<?php submit_button(); ?>
 		</form>
+		<?php do_action( 'property_core_settings_after' ); ?>
 	</div>
 	<?php
 }

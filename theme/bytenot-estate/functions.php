@@ -53,8 +53,21 @@ function bytenot_estate_enqueue_scripts() {
 		array(),
 		wp_get_theme()->get( 'Version' )
 	);
+	// Home sections: statement reveal, testimonial arrows, inquiry settle. Only where those patterns can appear.
+	if ( is_front_page() || is_page() ) {
+		wp_enqueue_style( 'bytenot-estate-home', get_theme_file_uri( 'assets/css/home.css' ), array( 'bytenot-estate-style' ), wp_get_theme()->get( 'Version' ) );
+		wp_enqueue_script_module( 'bytenot-estate-home', get_theme_file_uri( 'assets/js/home.js' ), array(), wp_get_theme()->get( 'Version' ) );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'bytenot_estate_enqueue_scripts' );
+
+/**
+ * The home stylesheet in the editor too, so patterns preview correctly.
+ */
+function bytenot_estate_editor_assets() {
+	add_editor_style( 'assets/css/home.css' );
+}
+add_action( 'after_setup_theme', 'bytenot_estate_editor_assets' );
 
 /**
  * Pattern categories.
