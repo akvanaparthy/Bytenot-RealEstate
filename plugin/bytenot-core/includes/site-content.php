@@ -16,7 +16,7 @@ function bytenot_core_register_site_content() {
 		'public'              => false,
 		'show_ui'             => true,
 		'show_in_rest'        => true,
-		'show_in_menu'        => 'edit.php?post_type=property',
+		'show_in_menu'        => 'bytenot',
 		'exclude_from_search' => true,
 		'rewrite'             => false,
 		'has_archive'         => false,

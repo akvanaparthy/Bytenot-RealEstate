@@ -204,28 +204,7 @@ function bytenot_core_demo_admin_action() {
 	}
 	check_admin_referer( 'bytenot_core_install_demo' );
 	$counts = bytenot_core_install_demo();
-	wp_safe_redirect( add_query_arg( array( 'page' => 'bytenot-core', 'demo' => $counts['properties'] ), admin_url( 'edit.php?post_type=property' ) ) );
+	wp_safe_redirect( add_query_arg( array( 'page' => 'bytenot-tools', 'bn_msg' => 'demo', 'bn_ok' => 1, 'bn_text' => rawurlencode( sprintf( /* translators: %d: properties. */ __( '%d properties, advisors, localities, testimonials, FAQs, partners, menus and the home page texts.', 'bytenot-core' ), $counts['properties'] ) ) ), admin_url( 'admin.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_bytenot_core_install_demo', 'bytenot_core_demo_admin_action' );
-
-/**
- * The button and the result notice on the Setup page.
- */
-function bytenot_core_demo_box() {
-	if ( isset( $_GET['demo'] ) && isset( $_GET['page'] ) && 'bytenot-core' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		/* translators: %d: number of properties. */
-		echo '<div class="notice notice-success"><p>' . esc_html( sprintf( __( 'Demo content installed: %d properties, advisors, localities, testimonials, FAQs, partners, menus and the home page texts.', 'bytenot-core' ), absint( $_GET['demo'] ) ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	}
-	?>
-	<hr>
-	<h2><?php esc_html_e( 'Demo content', 'bytenot-core' ); ?></h2>
-	<p><?php esc_html_e( 'Installs twelve sample listings with photos, two advisors, the localities, testimonials, FAQs, partner logos, the menus and the home page texts and photos, so the site looks like the design. Running it again updates the same records.', 'bytenot-core' ); ?></p>
-	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-		<input type="hidden" name="action" value="bytenot_core_install_demo">
-		<?php wp_nonce_field( 'bytenot_core_install_demo' ); ?>
-		<?php submit_button( get_option( 'bytenot_core_demo_installed' ) ? __( 'Reinstall demo content', 'bytenot-core' ) : __( 'Install demo content', 'bytenot-core' ), 'secondary', 'submit', false ); ?>
-	</form>
-	<?php
-}
-add_action( 'bytenot_core_settings_after', 'bytenot_core_demo_box' );

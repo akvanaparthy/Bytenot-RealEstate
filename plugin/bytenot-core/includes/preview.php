@@ -202,8 +202,8 @@ function bytenot_core_preview_admin_bar( $bar ) {
 		array(
 			'id'    => 'pc-preview',
 			'title' => '<span style="color:#f9ebb2">● ' . esc_html__( 'Private preview on', 'bytenot-core' ) . '</span>',
-			'href'  => admin_url( 'edit.php?post_type=property&page=bytenot-core' ),
-			'meta'  => array( 'title' => __( 'Only logged-in users can see the site. Switch off under Properties › Setup.', 'bytenot-core' ) ),
+			'href'  => admin_url( 'admin.php?page=bytenot-tools' ),
+			'meta'  => array( 'title' => __( 'Only logged-in users can see the site. Switch off under Bytenot › Tools.', 'bytenot-core' ) ),
 		)
 	);
 }
@@ -216,6 +216,6 @@ function bytenot_core_preview_notice() {
 	if ( ! bytenot_core_preview_on() || ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	echo '<div class="notice notice-warning"><p>' . esc_html__( 'Private preview is on: visitors see a holding page and search engines index nothing. Switch it off under Properties › Setup when you launch.', 'bytenot-core' ) . '</p></div>';
+	echo '<div class="notice notice-warning"><p>' . esc_html__( 'Private preview is on: visitors see a holding page and search engines index nothing. Switch it off under Bytenot › Tools when you launch.', 'bytenot-core' ) . '</p></div>';
 }
 add_action( 'admin_notices', 'bytenot_core_preview_notice' );

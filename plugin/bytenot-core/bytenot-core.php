@@ -40,6 +40,9 @@ require_once BYTENOT_CORE_DIR . 'includes/schema.php';
 require_once BYTENOT_CORE_DIR . 'includes/preview.php';
 require_once BYTENOT_CORE_DIR . 'includes/demo.php';
 require_once BYTENOT_CORE_DIR . 'includes/demo-site.php';
+if ( is_admin() ) {
+	require_once BYTENOT_CORE_DIR . 'includes/admin/admin.php';
+}
 
 /**
  * Flush rewrite rules once the post types exist.
