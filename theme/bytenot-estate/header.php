@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 					'theme_location' => 'primary',
 					'container'      => false,
 					'menu_class'     => 'nav__list',
-					'items_wrap'     => '<ul class="%2$s">%3$s</ul>',
+					'items_wrap'     => '<ul class="%2$s"><li class="nav__hl" aria-hidden="true"></li>%3$s</ul>',
 					'depth'          => 1,
 					'fallback_cb'    => 'bytenot_menu_fallback',
 				)

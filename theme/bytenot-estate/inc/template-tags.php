@@ -133,7 +133,7 @@ function bytenot_menu_fallback( $args ) {
 		array( __( 'Contact Us', 'bytenot-estate' ), $home . '#inquiry', false ),
 	);
 	$nav = 'nav__list' === $args['menu_class'];
-	echo '<ul class="' . esc_attr( $args['menu_class'] ) . '">';
+	echo '<ul class="' . esc_attr( $args['menu_class'] ) . '">' . ( $nav ? '<li class="nav__hl" aria-hidden="true"></li>' : '' );
 	foreach ( $items as $item ) {
 		printf(
 			'<li><a%1$s href="%2$s"%3$s>%4$s</a></li>',

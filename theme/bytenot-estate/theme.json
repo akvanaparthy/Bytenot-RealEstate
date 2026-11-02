@@ -13,23 +13,23 @@
 			"defaultGradients": false,
 			"defaultDuotone": false,
 			"palette": [
-				{ "slug": "base", "name": "Base", "color": "#ffffff" },
-				{ "slug": "contrast", "name": "Contrast", "color": "#142f3f" },
-				{ "slug": "contrast-hover", "name": "Contrast hover", "color": "#1d3f54" },
-				{ "slug": "primary", "name": "Accent light", "color": "#f9ebb2" },
-				{ "slug": "primary-hover", "name": "Accent light hover", "color": "#fbf1c7" },
-				{ "slug": "primary-dark", "name": "Accent dark", "color": "#897749" },
-				{ "slug": "ink", "name": "Ink", "color": "#142f3f" },
-				{ "slug": "ink-soft", "name": "Ink soft", "color": "#3f5465" },
-				{ "slug": "ink-muted", "name": "Ink muted", "color": "#6b7f8c" },
+				{ "slug": "base", "name": "White", "color": "#ffffff" },
+				{ "slug": "contrast", "name": "Navy", "color": "#142f3f" },
+				{ "slug": "contrast-hover", "name": "Navy light", "color": "#1d3f54" },
+				{ "slug": "primary", "name": "Gold", "color": "#f9ebb2" },
+				{ "slug": "primary-hover", "name": "Gold light", "color": "#fbf1c7" },
+				{ "slug": "primary-dark", "name": "Gold dark", "color": "#897749" },
+				{ "slug": "ink", "name": "Text", "color": "#142f3f" },
+				{ "slug": "ink-soft", "name": "Text soft", "color": "#3f5465" },
+				{ "slug": "ink-muted", "name": "Text muted", "color": "#6b7f8c" },
 				{ "slug": "surface", "name": "Surface", "color": "#f3f6f7" },
 				{ "slug": "input", "name": "Input", "color": "#f0f3f5" },
 				{ "slug": "border", "name": "Border", "color": "#dfe6ea" },
 				{ "slug": "glass", "name": "Glass", "color": "rgba(255, 255, 255, 0.22)" }
 			],
 			"gradients": [
-				{ "slug": "brand-gold", "name": "Accent gradient", "gradient": "linear-gradient(135deg, #f9ebb2 0%, #897749 100%)" },
-				{ "slug": "brand-gold-soft", "name": "Accent gradient, soft", "gradient": "linear-gradient(135deg, #f9ebb2 0%, #cdb97a 100%)" }
+				{ "slug": "brand-gold", "name": "Gold gradient", "gradient": "linear-gradient(135deg, #f9ebb2 0%, #897749 100%)" },
+				{ "slug": "brand-gold-soft", "name": "Gold gradient, soft", "gradient": "linear-gradient(135deg, #f9ebb2 0%, #cdb97a 100%)" }
 			]
 		},
 		"typography": {

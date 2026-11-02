@@ -86,6 +86,21 @@
 	const sameHash = (a) => { const h = a.getAttribute('href') || ''; const u = new URL(a.href, location.href); return u.pathname === location.pathname && u.hash && u.hash !== '#' ? u.hash : (h === '#' || (u.pathname === location.pathname && !u.hash) ? '' : null); };
 	const spy = spyLinks.map((a) => ({ a, hash: sameHash(a) })).filter((l) => l.hash !== null);
 	const spyTargets = [...new Set(spy.map((l) => l.hash).filter(Boolean))].map((hash) => ({ hash, el: $(hash) })).filter((t) => t.el);
+	const navList = $('.nav__list');
+	const navHl = navList && $('.nav__hl', navList);
+	let hlPlaced = false;
+	const placeNavHl = () => {
+		if (!navHl) return;
+		const on = $('.nav__link.is-active', navList);
+		if (!on) { navList.classList.remove('is-placed'); hlPlaced = false; return; }
+		if (!hlPlaced) navHl.style.transition = 'none';
+		navList.style.setProperty('--hl-x', `${on.offsetLeft}px`);
+		navList.style.setProperty('--hl-w', `${on.offsetWidth}px`);
+		if (!hlPlaced) { void navHl.offsetWidth; navHl.style.transition = ''; hlPlaced = true; navList.classList.add('is-placed'); }
+	};
+	placeNavHl();
+	document.fonts?.ready.then(placeNavHl);
+	addEventListener('resize', placeNavHl);
 	if (spyTargets.length) {
 		let current = null;
 		const paint = () => {
@@ -99,6 +114,7 @@
 				l.a.classList.toggle('is-active', active && l.a.classList.contains('nav__link'));
 				if (active) l.a.setAttribute('aria-current', 'page'); else l.a.removeAttribute('aria-current');
 			});
+			placeNavHl();
 		};
 		let spyTick = false;
 		addEventListener('scroll', () => { if (!spyTick) { spyTick = true; requestAnimationFrame(() => { spyTick = false; paint(); }); } }, { passive: true });
