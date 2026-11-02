@@ -36,21 +36,11 @@ function bytenot_core_admin_screens() {
 }
 
 /**
- * Menu icon: the house mark, monochrome so WordPress can tint it.
- *
- * @return string
- */
-function bytenot_core_menu_icon() {
-	$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250"><path fill="#a7aaad" d="M200 18 30 158h46v74h92v-66h64v66h92v-74h46L200 18zm0 40 92 76v18h-20v-36H128v36h-20v-18l92-76z"/></svg>';
-	return 'data:image/svg+xml;base64,' . base64_encode( $svg ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- data URI.
-}
-
-/**
  * Register the menu and the screens.
  */
 function bytenot_core_admin_menu() {
 	$screens = bytenot_core_admin_screens();
-	add_menu_page( __( 'Bytenot', 'bytenot-core' ), __( 'Bytenot', 'bytenot-core' ), 'edit_posts', BYTENOT_CORE_MENU, $screens['bytenot'][2], bytenot_core_menu_icon(), 3 );
+	add_menu_page( __( 'Bytenot', 'bytenot-core' ), __( 'Bytenot', 'bytenot-core' ), 'edit_posts', BYTENOT_CORE_MENU, $screens['bytenot'][2], 'dashicons-admin-home', 3 );
 	foreach ( $screens as $slug => $screen ) {
 		add_submenu_page( BYTENOT_CORE_MENU, $screen[0], $screen[0], $screen[1], $slug, $screen[2] );
 	}
@@ -109,46 +99,133 @@ add_action( 'admin_enqueue_scripts', 'bytenot_core_admin_assets' );
 /* ---------- layout helpers ---------- */
 
 /**
- * Open a screen: the brand header, status pills and the tab row.
+ * The tab row: the plugin's screens and the content types, in one place.
+ *
+ * @return array<int, array{slug:string,label:string,url:string,match:string[]}>
+ */
+function bytenot_core_admin_tabs() {
+	$t = static fn( $slug, $label, $url, $match ) => array( 'slug' => $slug, 'label' => $label, 'url' => $url, 'match' => $match );
+	return array(
+		$t( 'bytenot', __( 'Dashboard', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot' ), array( 'page:bytenot' ) ),
+		$t( 'listings', __( 'Listings', 'bytenot-core' ), admin_url( 'edit.php?post_type=property' ), array( 'type:property' ) ),
+		$t( 'content', __( 'Content', 'bytenot-core' ), admin_url( 'edit.php?post_type=partner' ), array( 'type:project', 'type:agent', 'type:testimonial', 'type:faq', 'type:partner' ) ),
+		$t( 'bytenot-leads', __( 'Enquiries', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot-leads' ), array( 'page:bytenot-leads' ) ),
+		$t( 'bytenot-setup', __( 'Setup', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot-setup' ), array( 'page:bytenot-setup' ) ),
+		$t( 'bytenot-integrations', __( 'Integrations', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot-integrations' ), array( 'page:bytenot-integrations' ) ),
+		$t( 'bytenot-tools', __( 'Tools', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot-tools' ), array( 'page:bytenot-tools' ) ),
+	);
+}
+
+/**
+ * The content types shown as a second row under the Content tab.
+ *
+ * @return array<string, string> post type => label.
+ */
+function bytenot_core_admin_content_types() {
+	return array(
+		'partner'     => __( 'Partners', 'bytenot-core' ),
+		'testimonial' => __( 'Testimonials', 'bytenot-core' ),
+		'faq'         => __( 'FAQs', 'bytenot-core' ),
+		'agent'       => __( 'Advisors', 'bytenot-core' ),
+		'project'     => __( 'Projects', 'bytenot-core' ),
+	);
+}
+
+/**
+ * The brand header and the tab row. Used by the plugin's screens and, above the
+ * list tables, by the content types.
+ *
+ * @param string $current "page:slug" or "type:post_type".
+ */
+function bytenot_core_admin_header( $current ) {
+	$theme  = wp_get_theme();
+	$status = array(
+		array( 'ok', sprintf( /* translators: %s: theme name. */ __( '%s theme', 'bytenot-core' ), $theme->get( 'Name' ) ) ),
+		bytenot_core_preview_on() ? array( 'warn', __( 'Private preview on', 'bytenot-core' ) ) : array( 'ok', __( 'Site public', 'bytenot-core' ) ),
+		'webhook' === bytenot_core_setting( 'crm_provider' ) ? array( 'ok', __( 'Leads by email and webhook', 'bytenot-core' ) ) : array( 'muted', __( 'Leads by email', 'bytenot-core' ) ),
+	);
+	$type = 0 === strpos( $current, 'type:' ) ? substr( $current, 5 ) : '';
+	?>
+	<header class="bn-head">
+		<div class="bn-head__brand">
+			<svg class="bn-head__mark" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bn-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9ebb2"/><stop offset="1" stop-color="#897749"/></linearGradient></defs><path fill="url(#bn-gold)" d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg>
+			<div>
+				<p class="bn-head__name"><?php esc_html_e( 'Bytenot Core', 'bytenot-core' ); ?> <span class="bn-head__ver"><?php echo esc_html( BYTENOT_CORE_VERSION ); ?></span></p>
+				<p class="bn-head__sub"><?php echo esc_html( get_bloginfo( 'name' ) ); ?> · <a href="<?php echo esc_url( home_url( '/' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View site', 'bytenot-core' ); ?></a></p>
+			</div>
+		</div>
+		<ul class="bn-status" aria-label="<?php esc_attr_e( 'Status', 'bytenot-core' ); ?>">
+			<?php foreach ( $status as $st ) : ?>
+			<li class="bn-status__item bn-status__item--<?php echo esc_attr( $st[0] ); ?>"><?php echo esc_html( $st[1] ); ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</header>
+	<nav class="bn-tabs" aria-label="<?php esc_attr_e( 'Bytenot screens', 'bytenot-core' ); ?>">
+		<?php
+		$screens = bytenot_core_admin_screens();
+		foreach ( bytenot_core_admin_tabs() as $tab ) :
+			if ( isset( $screens[ $tab['slug'] ] ) && ! current_user_can( $screens[ $tab['slug'] ][1] ) ) {
+				continue;
+			}
+			$on = in_array( $current, $tab['match'], true );
+			?>
+		<a class="bn-tab<?php echo $on ? ' is-active' : ''; ?>" href="<?php echo esc_url( $tab['url'] ); ?>"<?php echo $on ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $tab['label'] ); ?></a>
+		<?php endforeach; ?>
+	</nav>
+	<?php if ( $type && isset( bytenot_core_admin_content_types()[ $type ] ) ) : ?>
+	<nav class="bn-subtabs bn-subtabs--content" aria-label="<?php esc_attr_e( 'Content types', 'bytenot-core' ); ?>">
+		<?php foreach ( bytenot_core_admin_content_types() as $pt => $label ) : ?>
+		<a class="bn-subtab<?php echo $pt === $type ? ' is-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . $pt ) ); ?>"><?php echo esc_html( $label ); ?></a>
+		<?php endforeach; ?>
+	</nav>
+	<?php endif; ?>
+	<?php
+}
+
+/**
+ * Open a screen: the header, the flash and the body.
  *
  * @param string $slug Current screen slug.
  */
 function bytenot_core_admin_open( $slug ) {
 	$screens = bytenot_core_admin_screens();
-	$theme   = wp_get_theme();
-	$pills   = array();
-	$pills[] = array( 'ok', sprintf( /* translators: %s: theme name. */ __( 'Theme: %s', 'bytenot-core' ), $theme->get( 'Name' ) ) );
-	$pills[] = bytenot_core_preview_on() ? array( 'warn', __( 'Private preview on', 'bytenot-core' ) ) : array( 'ok', __( 'Site public', 'bytenot-core' ) );
-	$crm     = bytenot_core_setting( 'crm_provider' );
-	$pills[] = array( 'webhook' === $crm ? 'ok' : 'muted', 'webhook' === $crm ? __( 'Leads: email + webhook', 'bytenot-core' ) : __( 'Leads: email only', 'bytenot-core' ) );
 	?>
 	<div class="wrap bn">
 		<h1 class="screen-reader-text"><?php echo esc_html( $screens[ $slug ][0] ); ?></h1>
-		<header class="bn-head">
-			<div class="bn-head__brand">
-				<svg class="bn-head__mark" viewBox="0 0 400 250" aria-hidden="true"><defs><linearGradient id="bn-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9ebb2"/><stop offset="1" stop-color="#897749"/></linearGradient></defs><path fill="url(#bn-gold)" d="M200 18 30 158h46v74h92v-66h64v66h92v-74h46L200 18zm0 40 92 76v18h-20v-36H128v36h-20v-18l92-76z"/></svg>
-				<div>
-					<p class="bn-head__name"><?php esc_html_e( 'Bytenot Core', 'bytenot-core' ); ?> <span class="bn-head__ver"><?php echo esc_html( BYTENOT_CORE_VERSION ); ?></span></p>
-					<p class="bn-head__sub"><?php echo esc_html( get_bloginfo( 'name' ) ); ?> · <a href="<?php echo esc_url( home_url( '/' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View site', 'bytenot-core' ); ?></a></p>
-				</div>
-			</div>
-			<ul class="bn-pills" aria-label="<?php esc_attr_e( 'Status', 'bytenot-core' ); ?>">
-				<?php foreach ( $pills as $pill ) : ?>
-				<li class="bn-pill bn-pill--<?php echo esc_attr( $pill[0] ); ?>"><?php echo esc_html( $pill[1] ); ?></li>
-				<?php endforeach; ?>
-			</ul>
-		</header>
-		<nav class="bn-tabs" aria-label="<?php esc_attr_e( 'Bytenot screens', 'bytenot-core' ); ?>">
-			<?php foreach ( $screens as $s => $screen ) : ?>
-				<?php if ( current_user_can( $screen[1] ) ) : ?>
-				<a class="bn-tab<?php echo $s === $slug ? ' is-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=' . $s ) ); ?>"<?php echo $s === $slug ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $screen[0] ); ?></a>
-				<?php endif; ?>
-			<?php endforeach; ?>
-		</nav>
+		<?php bytenot_core_admin_header( 'page:' . $slug ); ?>
 		<?php bytenot_core_admin_flash(); ?>
 		<div class="bn-body">
 	<?php
 }
+
+/**
+ * The header above the content types' list tables, so they are part of the same admin.
+ */
+function bytenot_core_admin_list_header() {
+	$screen = get_current_screen();
+	if ( ! $screen || 'edit' !== $screen->base || ! in_array( $screen->post_type, array( 'property', 'project', 'agent', 'testimonial', 'faq', 'partner' ), true ) ) {
+		return;
+	}
+	echo '<div class="bn bn--bar">';
+	bytenot_core_admin_header( 'type:' . $screen->post_type );
+	echo '</div>';
+}
+add_action( 'all_admin_notices', 'bytenot_core_admin_list_header', 1 );
+
+/**
+ * A body class on those list screens, for the list table styling.
+ *
+ * @param string $classes Body classes.
+ * @return string
+ */
+function bytenot_core_admin_body_class( $classes ) {
+	$screen = get_current_screen();
+	if ( $screen && 'edit' === $screen->base && in_array( $screen->post_type, array( 'property', 'project', 'agent', 'testimonial', 'faq', 'partner' ), true ) ) {
+		$classes .= ' bn-list-screen';
+	}
+	return $classes;
+}
+add_filter( 'admin_body_class', 'bytenot_core_admin_body_class' );
 
 /**
  * Close a screen.

@@ -16,15 +16,17 @@
 /* header */
 .bn-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 26px; border-radius: 20px; background: var(--navy); color: var(--white); box-shadow: 0 16px 40px rgba(20, 47, 63, .18); }
 .bn-head__brand { display: flex; align-items: center; gap: 16px; }
-.bn-head__mark { width: 52px; height: 32px; flex: none; }
+.bn-head__mark { width: 40px; height: 40px; flex: none; }
 .bn-head__name { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; line-height: 1.1; }
 .bn-head__ver { margin-left: 8px; font-size: 11px; font-weight: 500; letter-spacing: .12em; color: var(--gold); vertical-align: 2px; }
 .bn-head__sub { margin: 4px 0 0; font-size: 13px; color: rgba(255, 255, 255, .7); }
 .bn-head__sub a { color: var(--gold); }
-.bn-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.bn-pill { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .02em; background: rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .85); }
-.bn-pill--ok { background: rgba(249, 235, 178, .16); color: var(--gold); }
-.bn-pill--warn { background: #f9ebb2; color: var(--navy); }
+.bn-status { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 0; padding: 0; list-style: none; }
+.bn-status__item { position: relative; padding-left: 16px; font-size: 13px; color: rgba(255, 255, 255, .72); }
+.bn-status__item::before { content: ""; position: absolute; left: 0; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: rgba(255, 255, 255, .35); }
+.bn-status__item--ok::before { background: #8fd3a7; }
+.bn-status__item--warn { color: var(--gold); }
+.bn-status__item--warn::before { background: var(--gold); box-shadow: 0 0 0 3px rgba(249, 235, 178, .25); }
 
 /* tabs */
 .bn-tabs { display: inline-flex; gap: 4px; margin: 18px 0 20px; padding: 4px; border-radius: 999px; background: var(--white); box-shadow: 0 0 0 1px rgba(20, 47, 63, .06), 0 6px 20px rgba(20, 47, 63, .08); }
@@ -195,3 +197,23 @@
 .block-editor-page #bytenot_listing { border-radius: 12px; overflow: hidden; }
 
 .bn [hidden] { display: none !important; }
+
+/* ---------- the content types' list screens ---------- */
+.bn--bar { margin-bottom: 0; }
+.bn--bar .bn-tabs { margin-bottom: 8px; }
+.bn-subtabs--content { margin: 0 0 6px; }
+.bn-list-screen #wpbody-content > .wrap { max-width: 1360px; margin: 10px 24px 0 4px; font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; }
+.bn-list-screen .wrap > h1.wp-heading-inline { font-family: "Figtree", system-ui, sans-serif; font-size: 22px; font-weight: 600; color: #142f3f; letter-spacing: -.01em; }
+.bn-list-screen .wrap .page-title-action { display: inline-flex; align-items: center; height: 36px; margin-left: 10px; padding: 0 16px; border: 0; border-radius: 999px; background: linear-gradient(135deg, #f9ebb2 0%, #cdb97a 100%); color: #142f3f; font-family: "Figtree", system-ui, sans-serif; font-size: 13px; font-weight: 500; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45); }
+.bn-list-screen .wrap .page-title-action:hover { background: linear-gradient(135deg, #f9ebb2 0%, #897749 100%); color: #142f3f; }
+.bn-list-screen .wrap .subsubsub { font-family: "Figtree", system-ui, sans-serif; font-size: 13px; }
+.bn-list-screen .wp-list-table { border: 0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(20, 47, 63, .04), 0 12px 32px rgba(20, 47, 63, .06); font-family: "Figtree", system-ui, sans-serif; }
+.bn-list-screen .wp-list-table thead th, .bn-list-screen .wp-list-table tfoot th { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6b7f8c; border-color: #dfe6ea; padding: 12px 10px; }
+.bn-list-screen .wp-list-table tfoot { display: none; }
+.bn-list-screen .wp-list-table tbody td, .bn-list-screen .wp-list-table tbody th { padding: 12px 10px; border-color: #dfe6ea; font-size: 14px; vertical-align: middle; }
+.bn-list-screen .wp-list-table tbody tr:hover > * { background: #f3f6f7; }
+.bn-list-screen .wp-list-table .row-title { color: #142f3f; font-weight: 600; }
+.bn-list-screen .wp-list-table .column-thumbnail img { border-radius: 8px; }
+.bn-list-screen .tablenav { font-family: "Figtree", system-ui, sans-serif; }
+.bn-list-screen .tablenav .button, .bn-list-screen .tablenav select { border-radius: 999px; border-color: #dfe6ea; font-family: inherit; }
+.bn-list-screen .search-box input[type="search"] { border-radius: 999px; border-color: #dfe6ea; font-family: inherit; }

@@ -118,7 +118,7 @@ function bytenot_core_preview_page() {
 	html { height: 100%; }
 	body { min-height: 100%; margin: 0; display: grid; place-items: center; padding: 24px; box-sizing: border-box; background: #142f3f; color: #fff; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
 	.card { text-align: center; max-width: 560px; }
-	.mark { width: 56px; height: 56px; margin: 0 auto 28px; border-radius: 50%; background: linear-gradient(135deg, #f9ebb2, #897749); }
+	.mark { width: 56px; height: 56px; margin: 0 auto 28px; }
 	h1 { margin: 0; font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 	.tag { margin: 6px 0 0; font-size: 12px; letter-spacing: .34em; text-transform: uppercase; color: #f9ebb2; }
 	p.lede { margin: 32px 0 0; font-size: 17px; color: rgba(255, 255, 255, .78); }
@@ -127,7 +127,7 @@ function bytenot_core_preview_page() {
 </head>
 <body>
 	<div class="card">
-		<div class="mark" aria-hidden="true"></div>
+		<svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9ebb2"/><stop offset="1" stop-color="#897749"/></linearGradient></defs><path fill="url(#g)" d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg>
 		<h1><?php echo esc_html( $name ); ?></h1>
 		<?php if ( $tag ) : ?><p class="tag"><?php echo esc_html( $tag ); ?></p><?php endif; ?>
 		<p class="lede"><?php esc_html_e( 'We are putting the finishing touches on our new home. Back very soon.', 'bytenot-core' ); ?></p>
