@@ -217,3 +217,27 @@
 .bn-list-screen .tablenav { font-family: "Figtree", system-ui, sans-serif; }
 .bn-list-screen .tablenav .button, .bn-list-screen .tablenav select { border-radius: 999px; border-color: #dfe6ea; font-family: inherit; }
 .bn-list-screen .search-box input[type="search"] { border-radius: 999px; border-color: #dfe6ea; font-family: inherit; }
+
+/* ---------- no WordPress blue inside the plugin's screens ---------- */
+/* focus: nothing on mouse clicks, a navy ring for keyboard users */
+.bn a:focus, .bn button:focus, .bn input:focus, .bn select:focus, .bn textarea:focus,
+.bn-list-screen .wrap a:focus, .bn-list-screen .wrap button:focus, .bn-list-screen .wrap input:focus, .bn-list-screen .wrap select:focus { outline: none; box-shadow: none; }
+.bn a:focus-visible, .bn button:focus-visible, .bn-list-screen .wrap a:focus-visible, .bn-list-screen .wrap button:focus-visible { outline: 2px solid var(--navy, #142f3f); outline-offset: 2px; }
+.bn .bn-input:focus-visible, .bn-list-screen .wrap input:focus-visible, .bn-list-screen .wrap select:focus-visible { border-color: #142f3f; box-shadow: 0 0 0 3px rgba(20, 47, 63, .1); }
+/* links, buttons, checkboxes, sort arrows on the list screens */
+.bn-list-screen .wrap a { color: #142f3f; }
+.bn-list-screen .wrap .subsubsub a { color: #3f5465; }
+.bn-list-screen .wrap .subsubsub .current { color: #142f3f; font-weight: 600; }
+.bn-list-screen .wrap .row-actions a { color: #6b7f8c; }
+.bn-list-screen .wrap .row-actions a:hover { color: #142f3f; }
+.bn-list-screen .wrap .row-actions .trash a, .bn-list-screen .wrap .row-actions .delete a { color: #8f1f27; }
+.bn-list-screen .wrap .button, .bn-list-screen .wrap .button-secondary { color: #142f3f; border-color: #dfe6ea; background: #fff; box-shadow: none; }
+.bn-list-screen .wrap .button:hover { border-color: #142f3f; color: #142f3f; background: #fff; }
+.bn-list-screen .wrap .button-primary, .bn-list-screen .wrap .button-primary:hover { background: #142f3f; border-color: #142f3f; color: #fff; }
+.bn-list-screen .wrap input[type="checkbox"], .bn input[type="checkbox"], .bn input[type="radio"] { accent-color: #142f3f; }
+.bn-list-screen .wrap input[type="checkbox"]:checked::before { filter: grayscale(1) brightness(.35); }
+.bn-list-screen .wp-list-table thead .sorted a, .bn-list-screen .wp-list-table thead .sortable a, .bn-list-screen .wp-list-table thead a:hover { color: #142f3f; }
+.bn-list-screen .wp-list-table .sorting-indicators::before, .bn-list-screen .wp-list-table .sorting-indicator::before { color: #6b7f8c; }
+.bn-list-screen .wrap .displaying-num { color: #6b7f8c; }
+.bn-list-screen .wrap .tablenav-pages a, .bn-list-screen .wrap .tablenav-pages .tablenav-pages-navspan { border-radius: 999px; border-color: #dfe6ea; color: #142f3f; background: #fff; }
+.bn-list-screen .wrap .tablenav-pages a:hover { border-color: #142f3f; background: #fff; color: #142f3f; }
