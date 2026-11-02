@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 get_header();
 
-$bytenot_opts  = property_core_search_options();
+$bytenot_opts  = bytenot_core_search_options();
 $bytenot_q     = static fn( $k ) => sanitize_text_field( (string) get_query_var( $k ) );
 $bytenot_label = $bytenot_q( 'type' ) && isset( $bytenot_opts['types'][ $bytenot_q( 'type' ) ] ) ? bytenot_type_plurals( array( $bytenot_q( 'type' ) ) )[ $bytenot_q( 'type' ) ] : __( 'All properties', 'bytenot-estate' );
 if ( $bytenot_q( 'location' ) && isset( $bytenot_opts['locations'][ $bytenot_q( 'location' ) ] ) ) {

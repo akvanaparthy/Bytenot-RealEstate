@@ -18,7 +18,7 @@ const distDir = join(root, 'dist');
 
 const packages = [
 	{ dir: join(root, 'build', 'bytenot-estate'), versionFile: 'style.css' }, // the production build (see build.mjs)
-	{ dir: join(root, 'plugin', 'property-core'), versionFile: 'property-core.php' },
+	{ dir: join(root, 'plugin', 'bytenot-core'), versionFile: 'bytenot-core.php' },
 ];
 
 // Folders and files that never ship.

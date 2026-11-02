@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "bytenot/featured",
+	"title": "Featured properties",
+	"category": "widgets",
+	"icon": "star-filled",
+	"description": "One spotlight and a rail of the properties flagged as featured, with the editor's reason for each. Newest listings fill in when fewer are flagged.",
+	"textdomain": "bytenot-core",
+	"attributes": {
+		"count": { "type": "integer", "default": 4 }
+	},
+	"supports": { "html": false, "customClassName": true },
+	"editorScript": "file:./index.js",
+	"style": "file:./style.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php"
+}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Everything the property page shows, assembled from Property Core's fields.
+ * Everything the property page shows, assembled from Bytenot Core's fields.
  *
  * @package bytenot-estate
  */
@@ -43,11 +43,11 @@ function bytenot_chapters_from_content( $html ) {
  */
 function bytenot_property( $id ) {
 	$p    = bytenot_listing( $id );
-	$get  = static fn( $k ) => property_core_get( $id, $k );
+	$get  = static fn( $k ) => bytenot_core_get( $id, $k );
 	$rent = 'rent' === $p['intent'];
 	$plot = 'plot' === $p['type'];
 	$unit = 'sqyd' === $p['unit'] ? __( 'sq yd', 'bytenot-estate' ) : ( 'sqm' === $p['unit'] ? __( 'sq m', 'bytenot-estate' ) : __( 'sq ft', 'bytenot-estate' ) );
-	$fmt  = static fn( $n ) => property_core_format_indian( $n );
+	$fmt  = static fn( $n ) => bytenot_core_format_indian( $n );
 	$site = get_bloginfo( 'name' );
 
 	// photos: featured image first, then the gallery
@@ -162,13 +162,13 @@ function bytenot_property( $id ) {
 	$brochure = (int) $get( 'brochure_id' ) ? wp_get_attachment_url( (int) $get( 'brochure_id' ) ) : '';
 
 	// numbers
-	$duty_pct = (float) ( function_exists( 'property_core_setting' ) ? property_core_setting( 'stamp_duty' ) : 6 );
+	$duty_pct = (float) ( function_exists( 'bytenot_core_setting' ) ? bytenot_core_setting( 'stamp_duty' ) : 6 );
 	$duty     = round( $p['price'] * $duty_pct / 100 );
 	$deal     = array();
 	if ( $rent ) {
-		$deal[] = array( __( 'Monthly rent', 'bytenot-estate' ), property_core_format_price( $p['price'] ) );
+		$deal[] = array( __( 'Monthly rent', 'bytenot-estate' ), bytenot_core_format_price( $p['price'] ) );
 		if ( (int) $get( 'deposit' ) ) {
-			$deal[] = array( __( 'Deposit', 'bytenot-estate' ), property_core_format_price( (int) $get( 'deposit' ) ) );
+			$deal[] = array( __( 'Deposit', 'bytenot-estate' ), bytenot_core_format_price( (int) $get( 'deposit' ) ) );
 		}
 		if ( (int) $get( 'maintenance' ) ) {
 			$deal[] = array( __( 'Maintenance', 'bytenot-estate' ), '₹' . $fmt( (int) $get( 'maintenance' ) ) . '<small>' . esc_html__( '/ month', 'bytenot-estate' ) . '</small>' );
@@ -184,8 +184,8 @@ function bytenot_property( $id ) {
 		if ( $psf ) {
 			$deal[] = array( sprintf( __( 'Per %s', 'bytenot-estate' ), $unit ), $psf );
 		}
-		$deal[] = array( __( 'Stamp duty & registration', 'bytenot-estate' ), property_core_format_price( $duty ) );
-		$deal[] = array( __( 'All-in', 'bytenot-estate' ), property_core_format_price( $p['price'] + $duty ), 'accent' );
+		$deal[] = array( __( 'Stamp duty & registration', 'bytenot-estate' ), bytenot_core_format_price( $duty ) );
+		$deal[] = array( __( 'All-in', 'bytenot-estate' ), bytenot_core_format_price( $p['price'] + $duty ), 'accent' );
 	} else {
 		$deal[] = array( $area_label, $area_html );
 		$secondary = (float) $get( 'area_secondary' );
@@ -195,15 +195,15 @@ function bytenot_property( $id ) {
 				$deal[] = array( __( 'Loading', 'bytenot-estate' ), round( ( $secondary / $p['sqft'] - 1 ) * 100 ) . '<small>%</small>' );
 			}
 		}
-		$deal[] = array( __( 'Stamp duty & registration', 'bytenot-estate' ), property_core_format_price( $duty ) );
-		$deal[] = array( __( 'All-in, before loan', 'bytenot-estate' ), property_core_format_price( $p['price'] + $duty ), 'accent' );
+		$deal[] = array( __( 'Stamp duty & registration', 'bytenot-estate' ), bytenot_core_format_price( $duty ) );
+		$deal[] = array( __( 'All-in, before loan', 'bytenot-estate' ), bytenot_core_format_price( $p['price'] + $duty ), 'accent' );
 	}
 	$deal = array_values( array_filter( $deal, static fn( $r ) => '' !== $r[1] ) );
 	$emi  = ! $rent && $p['price'] ? array(
 		'price' => $p['price'],
-		'rate'  => (float) property_core_setting( 'emi_rate' ),
-		'years' => (int) property_core_setting( 'emi_years' ),
-		'ltv'   => (int) property_core_setting( 'emi_ltv' ),
+		'rate'  => (float) bytenot_core_setting( 'emi_rate' ),
+		'years' => (int) bytenot_core_setting( 'emi_years' ),
+		'ltv'   => (int) bytenot_core_setting( 'emi_ltv' ),
 	) : null;
 
 	// the place
@@ -283,7 +283,7 @@ function bytenot_property( $id ) {
 			'unit_label'  => $unit,
 			'photos'      => $photos,
 			'oneline'     => implode( ' · ', array_filter( $line ) ),
-			'psf_long'    => $rent ? ( $p['sqft'] ? $fmt( $p['sqft'] ) . ' ' . $unit . ( (int) $get( 'deposit' ) ? ' · ' . sprintf( /* translators: %s: deposit. */ __( 'deposit %s', 'bytenot-estate' ), property_core_format_price( (int) $get( 'deposit' ) ) ) : '' ) : __( 'per month', 'bytenot-estate' ) ) : ( $psf ? sprintf( /* translators: 1: price, 2: unit. */ __( '%1$s per %2$s', 'bytenot-estate' ), $psf, $unit ) : '' ),
+			'psf_long'    => $rent ? ( $p['sqft'] ? $fmt( $p['sqft'] ) . ' ' . $unit . ( (int) $get( 'deposit' ) ? ' · ' . sprintf( /* translators: %s: deposit. */ __( 'deposit %s', 'bytenot-estate' ), bytenot_core_format_price( (int) $get( 'deposit' ) ) ) : '' ) : __( 'per month', 'bytenot-estate' ) ) : ( $psf ? sprintf( /* translators: 1: price, 2: unit. */ __( '%1$s per %2$s', 'bytenot-estate' ), $psf, $unit ) : '' ),
 			'psf_carpet'  => $rent ? __( 'per month, maintenance extra', 'bytenot-estate' ) : ( $psf ? sprintf( __( '%1$s per %2$s', 'bytenot-estate' ), $psf, $plot ? $unit : sprintf( /* translators: %s: unit. */ __( 'carpet %s', 'bytenot-estate' ), $unit ) ) : '' ),
 			'ref_text'    => $p['ref'] ?: '#' . $id,
 			/* translators: %s: human time. */

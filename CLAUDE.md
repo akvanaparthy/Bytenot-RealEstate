@@ -6,7 +6,7 @@ Load `seo-aeo-geo` when work touches metadata, schema, sitemaps or page structur
 
 ## What this is
 - Block theme `bytenot-estate` in `theme/bytenot-estate`. Text domain `bytenot-estate`.
-- Companion plugin `property-core` in `plugin/property-core` for custom post types /
+- Companion plugin `bytenot-core` in `plugin/bytenot-core` for custom post types /
   fields / blocks (listings, projects, localities, leads).
 - Target WordPress `7.1.3` / PHP `8.1`.
 - Audience / purpose: real-estate company website (listings, projects, localities, leads)
@@ -22,7 +22,7 @@ Load `seo-aeo-geo` when work touches metadata, schema, sitemaps or page structur
   Claude cannot run `wp` directly; it gives the commands or writes `demo/seed.php`.
 - Live reload: browser-sync proxy on `http://localhost:3000` (`npm run dev`).
 - Screenshots: Playwright MCP against `http://localhost:3000` at ~1440px and ~390px.
-- Validator: `node %USERPROFILE%\.claude\skills\wordpress-skill\scripts\validate_theme.mjs theme\bytenot-estate --plugin plugin\property-core`.
+- Validator: `node %USERPROFILE%\.claude\skills\wordpress-skill\scripts\validate_theme.mjs theme\bytenot-estate --plugin plugin\bytenot-core`.
 
 ## Design input
 - Reference images live in `design/references/`. Treat them as specs: note what you
@@ -43,7 +43,7 @@ Load `seo-aeo-geo` when work touches metadata, schema, sitemaps or page structur
 ```
 design/references/        reference images (design specs)
 theme/bytenot-estate/     the block theme
-plugin/property-core/     the companion plugin (CPTs, fields, blocks)
+plugin/bytenot-core/     the companion plugin (CPTs, fields, blocks)
 qa/screenshots/           Playwright screenshots for visual checks
 demo/                     seed content (demo/seed.php, run via Local's shell)
 scripts/                  repo tooling (zip.mjs)
@@ -67,7 +67,7 @@ QA.md
   changes the running site immediately. Never edit files on the Local side.
 - **Remote and releases.** GitHub repo `akvanaparthy/Bytenot-RealEstate` (origin added by
   the owner). Branch `main`. One commit per feature. Releases are tagged `vX.Y.Z`, and the
-  `Version:` headers in `style.css` and `property-core.php` are bumped in the same commit.
+  `Version:` headers in `style.css` and `bytenot-core.php` are bumped in the same commit.
 - **Live reload.** `npm run dev` starts browser-sync on `localhost:3000`, proxying the
   Local site. The owner keeps it running in one terminal and Claude Code in another.
   Templates, patterns, theme.json and CSS need no build step. Only custom blocks in the

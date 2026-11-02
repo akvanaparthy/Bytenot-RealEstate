@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! function_exists( 'property_core_get' ) ) {
+if ( ! function_exists( 'bytenot_core_get' ) ) {
 	return;
 }
 $bytenot_items = bytenot_featured_items( 4 );

@@ -323,7 +323,7 @@ $chapter_links = array_filter(
 			<h2 class="visit__title" id="visit-title"><?php esc_html_e( 'Walk through it this week.', 'bytenot-estate' ); ?></h2>
 			<p class="visit__lede"><?php echo esc_html( sprintf( /* translators: %s: advisor first name. */ __( 'Free, no obligation. %s confirms within the hour and meets you at the gate.', 'bytenot-estate' ), $d['advisor']['first'] ) ); ?></p>
 		</div>
-		<form class="visit__form" method="post" action="<?php echo esc_url( rest_url( 'property-core/v1/leads' ) ); ?>" data-enquire data-lead="visit" data-property="<?php echo (int) $d['id']; ?>">
+		<form class="visit__form" method="post" action="<?php echo esc_url( rest_url( 'bytenot/v1/leads' ) ); ?>" data-enquire data-lead="visit" data-property="<?php echo (int) $d['id']; ?>">
 			<label class="vf">
 				<span class="vf__label"><?php esc_html_e( 'Your name', 'bytenot-estate' ); ?></span>
 				<input class="vf__input" type="text" name="name" autocomplete="name" required>

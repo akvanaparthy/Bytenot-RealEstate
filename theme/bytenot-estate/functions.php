@@ -5,7 +5,7 @@
  * A classic theme built from the design prototype: the templates carry the
  * prototype's markup, assets/css/theme.css its stylesheet and assets/js/theme.js
  * its behaviour. Texts and images are Customizer settings; listings, advisors,
- * testimonials, FAQs and partners come from the Property Core plugin.
+ * testimonials, FAQs and partners come from the Bytenot Core plugin.
  *
  * @package bytenot-estate
  */
@@ -78,7 +78,7 @@ add_action( 'wp_enqueue_scripts', 'bytenot_assets' );
  * @return array<string, mixed>
  */
 function bytenot_config() {
-	$opts    = function_exists( 'property_core_search_options' ) ? property_core_search_options() : array( 'types' => array(), 'intents' => array(), 'locations' => array(), 'budgets' => array(), 'configurations' => array(), 'has_config' => false );
+	$opts    = function_exists( 'bytenot_core_search_options' ) ? bytenot_core_search_options() : array( 'types' => array(), 'intents' => array(), 'locations' => array(), 'budgets' => array(), 'configurations' => array(), 'has_config' => false );
 	$budgets = array();
 	foreach ( array_keys( $opts['budgets'] ) as $key ) {
 		list( $min, $max ) = array_pad( explode( '-', $key, 2 ), 2, '' );
@@ -91,7 +91,7 @@ function bytenot_config() {
 		'locations'  => (object) $opts['locations'],
 		'budgets'    => (object) $budgets,
 		'hasConfig'  => (bool) $opts['has_config'],
-		'leads'      => esc_url_raw( rest_url( 'property-core/v1/leads' ) ),
+		'leads'      => esc_url_raw( rest_url( 'bytenot/v1/leads' ) ),
 		'pageSize'   => 6,
 		'i18n'       => array(
 			'allProperties' => __( 'All properties', 'bytenot-estate' ),

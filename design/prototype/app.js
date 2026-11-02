@@ -31,7 +31,7 @@
 	};
 
 	/* ------------------------------------------------------------------
-	 * Site configuration. In WordPress this is Property Core > Setup: the
+	 * Site configuration. In WordPress this is Bytenot Core > Setup: the
 	 * agency picks which property types and transactions it deals in, and
 	 * the option lists come from the CRM sync (Zoho picklists, synced
 	 * localities). An agency that only sells plots never shows "Apartment"
@@ -959,7 +959,7 @@
 			el.addEventListener('pointerleave', () => hot(el.dataset.room, false));
 		});
 		if (isPlot) { $('#plan').hidden = true; $('.chapters a[href="#plan"]').parentElement.hidden = true; }
-		$('[data-brochure]').addEventListener('click', (e) => { e.preventDefault(); showToast(`Brochure for <b>${p.title}</b> would download here. <code>GET /wp-json/property-core/v1/brochure/${p.id}</code>`); });
+		$('[data-brochure]').addEventListener('click', (e) => { e.preventDefault(); showToast(`Brochure for <b>${p.title}</b> would download here. <code>GET /wp-json/bytenot/v1/brochure/${p.id}</code>`); });
 
 		/* --- the numbers: ledger + editable EMI sentence --- */
 		const duty = p.price * 0.06;
@@ -1170,7 +1170,7 @@
 			if (!enq.reportValidity()) return;
 			const f = new FormData(enq);
 			const payload = { property: p.id, ref: d.ref, name: f.get('name'), phone: `+91${f.get('phone')}`, date: f.get('date') || null, source: location.pathname + location.search };
-			showToast(`Thanks ${payload.name.split(' ')[0]}, ${first} will call you within the hour about <b>${p.title}</b>.<code>POST /wp-json/property-core/v1/leads ${JSON.stringify(payload)}</code>`);
+			showToast(`Thanks ${payload.name.split(' ')[0]}, ${first} will call you within the hour about <b>${p.title}</b>.<code>POST /wp-json/bytenot/v1/leads ${JSON.stringify(payload)}</code>`);
 			enq.reset();
 		});
 
@@ -1252,7 +1252,7 @@
 			if (!inquiry.reportValidity()) return;
 			const f = new FormData(inquiry);
 			const payload = { name: f.get('name'), email: f.get('email'), phone: `+91${f.get('phone')}`, message: f.get('message') || null, source: `${location.pathname}#inquiry` };
-			showToast(`Thanks ${payload.name.split(' ')[0]}, an advisor will reach you within the hour.<code>POST /wp-json/property-core/v1/leads ${JSON.stringify(payload)}</code>`);
+			showToast(`Thanks ${payload.name.split(' ')[0]}, an advisor will reach you within the hour.<code>POST /wp-json/bytenot/v1/leads ${JSON.stringify(payload)}</code>`);
 			inquiry.reset();
 		});
 	}

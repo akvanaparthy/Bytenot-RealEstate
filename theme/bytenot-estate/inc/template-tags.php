@@ -190,7 +190,7 @@ function bytenot_type_plurals( $slugs ) {
 		'commercial' => __( 'Commercial spaces', 'bytenot-estate' ),
 	);
 	$out   = array();
-	$vocab = function_exists( 'property_core_vocabularies' ) ? property_core_vocabularies()['property_type'] : array();
+	$vocab = function_exists( 'bytenot_core_vocabularies' ) ? bytenot_core_vocabularies()['property_type'] : array();
 	foreach ( $slugs as $slug ) {
 		$out[ $slug ] = $known[ $slug ] ?? ( $vocab[ $slug ] ?? ucfirst( $slug ) );
 	}
@@ -207,11 +207,11 @@ function bytenot_contact( $key ) {
 	if ( 'email' === $key ) {
 		return (string) get_theme_mod( 'bytenot_contact_email', '' );
 	}
-	if ( ! function_exists( 'property_core_setting' ) ) {
+	if ( ! function_exists( 'bytenot_core_setting' ) ) {
 		return '';
 	}
 	$map = array( 'phone' => 'phone', 'whatsapp' => 'whatsapp', 'rera' => 'rera_number', 'rera_state' => 'rera_state' );
-	return (string) property_core_setting( $map[ $key ] ?? $key );
+	return (string) bytenot_core_setting( $map[ $key ] ?? $key );
 }
 
 /**
@@ -246,7 +246,7 @@ function bytenot_wa( $number, $text = '' ) {
  * @return array<string, mixed>
  */
 function bytenot_listing( $id ) {
-	$get   = static fn( $k ) => property_core_get( $id, $k );
+	$get   = static fn( $k ) => bytenot_core_get( $id, $k );
 	$type  = get_the_terms( $id, 'property_type' );
 	$type  = $type && ! is_wp_error( $type ) ? $type[0] : null;
 	$poss  = get_the_terms( $id, 'possession' );
@@ -269,7 +269,7 @@ function bytenot_listing( $id ) {
 			$area = $city;
 		}
 	}
-	$rent   = property_core_is_rent( $id );
+	$rent   = bytenot_core_is_rent( $id );
 	$plot   = $type && 'plot' === $type->slug;
 	$unit   = $get( 'area_unit' ) ?: ( $plot ? 'sqyd' : 'sqft' );
 	$sqft   = (float) $get( 'area_primary' );
@@ -287,20 +287,20 @@ function bytenot_listing( $id ) {
 		'city'       => $city ? $city->slug : '',
 		'cityLabel'  => $city ? $city->name : '',
 		'area'       => $area ? $area->name : '',
-		'place'      => property_core_format_place( $id ),
+		'place'      => bytenot_core_format_place( $id ),
 		'bhk'        => $bhk,
 		'bhkLabel'   => $get( 'bedroom_label' ) ?: ( $bhk ? sprintf( /* translators: %s: bedrooms. */ __( '%s BHK', 'bytenot-estate' ), rtrim( rtrim( number_format( $bhk, 1, '.', '' ), '0' ), '.' ) ) : '' ),
 		'baths'      => $baths,
 		'sqft'       => $sqft,
 		'unit'       => $unit,
-		'areaText'   => property_core_format_area( $sqft, $unit ),
+		'areaText'   => bytenot_core_format_area( $sqft, $unit ),
 		'price'      => $price,
-		'priceText'  => property_core_format_price( $price, $rent ),
-		'psf'        => $rent ? __( 'per month', 'bytenot-estate' ) : property_core_format_psf( $id ),
+		'priceText'  => bytenot_core_format_price( $price, $rent ),
+		'psf'        => $rent ? __( 'per month', 'bytenot-estate' ) : bytenot_core_format_psf( $id ),
 		'intent'     => $rent ? 'rent' : 'buy',
 		'possession' => $poss ? $poss->slug : '',
 		'status'     => $status,
-		'line'       => property_core_format_line( $id ),
+		'line'       => bytenot_core_format_line( $id ),
 		'img'        => $img ?: '',
 		'thumb'      => get_the_post_thumbnail_url( $id, 'thumbnail' ) ?: '',
 		'stage'      => get_the_post_thumbnail_url( $id, 'bytenot-stage' ) ?: ( $img ?: '' ),
@@ -320,7 +320,7 @@ function bytenot_listing( $id ) {
  * @return string
  */
 function bytenot_listing_status( $id, $rent, $poss ) {
-	$date = property_core_get( $id, 'possession_date' );
+	$date = bytenot_core_get( $id, 'possession_date' );
 	if ( $rent ) {
 		if ( $date && strtotime( $date ) > time() ) {
 			/* translators: %s: date. */
@@ -349,7 +349,7 @@ function bytenot_listings() {
 			'fields'         => 'ids',
 			'no_found_rows'  => true,
 			'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'DESC' ),
-			'tax_query'      => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => property_core_closed_statuses(), 'operator' => 'NOT IN' ) ),
+			'tax_query'      => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses(), 'operator' => 'NOT IN' ) ),
 		)
 	);
 	return array_map( 'bytenot_listing', $ids );
@@ -367,7 +367,7 @@ function bytenot_featured_items( $count = 4 ) {
 		'post_status'   => 'publish',
 		'fields'        => 'ids',
 		'no_found_rows' => true,
-		'tax_query'     => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => property_core_closed_statuses(), 'operator' => 'NOT IN' ) ),
+		'tax_query'     => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses(), 'operator' => 'NOT IN' ) ),
 	);
 	$ids   = get_posts( array_merge( $base, array( 'posts_per_page' => $count, 'meta_key' => 'pc_featured', 'meta_value' => '1', 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
 	if ( count( $ids ) < $count ) {

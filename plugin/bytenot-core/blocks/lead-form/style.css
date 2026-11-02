@@ -1,0 +1,31 @@
+/* Bytenot Core: lead form block (inquiry and visit variants). */
+.lead-form .uf, .lead-form .uf__label, .lead-form .inquiry__lede { margin-block: 0; }
+.lead-form .uf { margin-top: 20px; }
+.lead-form .inquiry__submit { display: flex; width: 100%; height: 48px; margin-top: 26px; padding: 0 22px; }
+.lead-form__consent { display: flex; gap: 10px; margin-top: 18px; font-size: 12px; line-height: 1.5; color: var(--wp--preset--color--ink-muted); }
+.lead-form__consent input { flex: none; margin: 2px 0 0; accent-color: var(--wp--preset--color--primary-dark); }
+.lead-form__status:empty { display: none; }
+
+.inquiry__glass-text { font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; }
+.inquiry__glass-text em { display: block; }
+.inquiry__form { padding: 32px; border-radius: 20px; background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25); }
+.inquiry__lede { font-size: 14px; line-height: 1.55; color: var(--wp--preset--color--ink-soft); }
+.uf { display: block; margin-top: 20px; }
+.uf__label { display: block; margin-bottom: 2px; font-size: 12px; font-weight: 600; color: var(--wp--preset--color--ink); }
+.uf__input {
+	width: 100%; height: 36px; padding: 0; border: 0; border-bottom: 1px solid var(--wp--preset--color--border); border-radius: 0;
+	background: none; font: inherit; font-size: 14px; color: var(--wp--preset--color--ink);
+	transition: border-color var(--wp--custom--transition), box-shadow var(--wp--custom--transition);
+}
+.uf__input::placeholder { color: var(--wp--preset--color--ink-muted); }
+.uf__input:hover { border-bottom-color: var(--wp--preset--color--ink-muted); }
+.uf__input:focus-visible { outline: 0; border-bottom-color: var(--wp--preset--color--contrast); box-shadow: 0 1px 0 var(--wp--preset--color--contrast); }
+.uf__input--area { height: auto; min-height: 76px; padding: 8px 0 6px; line-height: 1.5; resize: vertical; }
+.uf__phone { display: flex; align-items: stretch; gap: 10px; }
+.uf__prefix { display: flex; align-items: center; height: 36px; border-bottom: 1px solid var(--wp--preset--color--border); font-size: 14px; font-weight: 600; }
+.inquiry__submit { width: 100%; margin-top: 26px; }
+
+
+.lead-form__status { margin-top: 14px; font-size: 14px; line-height: 1.5; color: var(--wp--preset--color--ink-soft); }
+.lead-form__status.is-error { color: #a33; }
+.lead-form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

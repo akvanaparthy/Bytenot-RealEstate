@@ -1,14 +1,14 @@
 <?php
 /**
  * Hero: full-viewport photo, quick-type tags, title, the search card and the partners
- * marquee. Options come from Property Core's setup; partners are a post type.
+ * marquee. Options come from Bytenot Core's setup; partners are a post type.
  *
  * @package bytenot-estate
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$bytenot_opts    = function_exists( 'property_core_search_options' ) ? property_core_search_options() : array( 'types' => array(), 'intents' => array(), 'locations' => array(), 'budgets' => array(), 'configurations' => array(), 'has_config' => false );
+$bytenot_opts    = function_exists( 'bytenot_core_search_options' ) ? bytenot_core_search_options() : array( 'types' => array(), 'intents' => array(), 'locations' => array(), 'budgets' => array(), 'configurations' => array(), 'has_config' => false );
 $bytenot_archive = get_post_type_archive_link( 'property' ) ?: home_url( '/' );
 $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page' => 30, 'orderby' => 'menu_order', 'order' => 'ASC', 'no_found_rows' => true ) );
 ?>

@@ -7,7 +7,7 @@ Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A reusable theme for real-estate companies. Pair it with the Property Core plugin for listings, projects, localities and lead capture.
+A reusable theme for real-estate companies. Pair it with the Bytenot Core plugin for listings, projects, localities and lead capture.
 
 == Description ==
 

@@ -1,7 +1,7 @@
 {
   "name": "bytenot-realestate",
   "version": "0.1.0",
-  "description": "Bytenot Estate WordPress theme and Property Core plugin",
+  "description": "Bytenot Estate WordPress theme and Bytenot Core plugin",
   "scripts": {
     "dev": "browser-sync start --proxy \"http://lavenorrealty.local\" --port 3000 --files \"theme/**/*.{php,html,css,json,js},plugin/**/*.php,plugin/**/build/**\" --no-open",
     "build": "node scripts/build.mjs",

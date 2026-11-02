@@ -47,7 +47,7 @@ Short log of choices that are expensive to reverse. Newest first.
 - **Localities are a taxonomy, not a post type.** `location` is hierarchical (City › Locality) and attached to properties, projects and advisors. Each term is a page with its own description and term meta, rendered by `taxonomy-location.html`. One entity instead of a post type plus a term kept in sync.
 - **Sold, let and withdrawn listings keep their page.** They leave archives, locality pages, search and sitemaps; the page stays published, marked, with `noindex, follow`; nothing is deleted or redirected to the home page. `pc_sold_at` is stamped automatically when the status changes.
 - **What an agency offers is a setting.** Property types, transactions (sale, rent), budget bands, phone, WhatsApp, RERA, EMI defaults and the lead destination live in Properties › Setup. Search forms and filters build from it; a plots-only agency never shows a BHK filter.
-- **Leads are stored first, pushed second.** Every form posts to `property-core/v1/leads`; the enquiry is saved as a private post, emailed at once, then pushed to the CRM through a provider interface in the background with three retries. Providers shipped: email, generic webhook. A direct Zoho CRM provider implements the same interface later.
+- **Leads are stored first, pushed second.** Every form posts to `bytenot/v1/leads`; the enquiry is saved as a private post, emailed at once, then pushed to the CRM through a provider interface in the background with three retries. Providers shipped: email, generic webhook. A direct Zoho CRM provider implements the same interface later.
 - **No multilingual plugin assumed.** The prototype's language switcher is not in the theme. If Hindi and Telugu are wanted, Polylang or WPML supplies the switcher and translated URLs.
 - **Figtree is bundled, not loaded from Google.** Two variable WOFF2 files under `assets/fonts/`; the theme falls back to the system sans-serif until they are added.
 
@@ -72,7 +72,7 @@ per direction. No two-way sync of property records.
 | Photos as the initial import only | Anything edited after import |
 
 **Mechanics.**
-- The `property` post type in `property-core` is the canonical record for the
+- The `property` post type in `bytenot-core` is the canonical record for the
   site and must be fully editable without any CRM, because the theme is sold to
   other firms. When a sync is connected, CRM-owned fields are locked read-only.
 - Match on the Zoho record ID stored as post meta, with the human reference ID

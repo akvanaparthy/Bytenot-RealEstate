@@ -91,7 +91,7 @@ $bytenot_rights  = trim( get_bloginfo( 'name' ) . ' ' . get_bloginfo( 'descripti
 					)
 				);
 			} else {
-				$bytenot_types = function_exists( 'property_core_search_options' ) ? property_core_search_options()['types'] : array();
+				$bytenot_types = function_exists( 'bytenot_core_search_options' ) ? bytenot_core_search_options()['types'] : array();
 				echo '<ul class="site-footer__links">';
 				foreach ( bytenot_type_plurals( array_keys( $bytenot_types ) ) as $bytenot_slug => $bytenot_label ) {
 					echo '<li><a href="' . esc_url( add_query_arg( 'type', $bytenot_slug, $bytenot_archive ) ) . '">' . esc_html( $bytenot_label ) . '</a></li>';
