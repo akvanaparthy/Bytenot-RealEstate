@@ -1,12 +1,10 @@
 {
   "name": "bytenot-realestate",
   "version": "0.1.0",
-  "description": "Bytenot Estate WordPress block theme and Property Core plugin",
+  "description": "Bytenot Estate WordPress theme and Property Core plugin",
   "scripts": {
     "dev": "browser-sync start --proxy \"http://lavenorrealty.local\" --port 3000 --files \"theme/**/*.{php,html,css,json,js},plugin/**/*.php,plugin/**/build/**\" --no-open",
-    "blocks": "wp-scripts start --webpack-src-dir=plugin/property-core/src --output-path=plugin/property-core/build",
-    "build": "wp-scripts build --webpack-src-dir=plugin/property-core/src --output-path=plugin/property-core/build",
-    "lint": "wp-scripts lint-js plugin/property-core/src",
+    "build": "node scripts/build.mjs",
     "zip": "node scripts/zip.mjs"
   },
   "repository": {
@@ -20,8 +18,11 @@
   },
   "homepage": "https://github.com/akvanaparthy/Bytenot-RealEstate#readme",
   "devDependencies": {
-    "@wordpress/scripts": "^35.0.0",
-    "browser-sync": "^3.0.4"
+    "browser-sync": "^3.0.4",
+    "esbuild": "^0.25.0"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "esbuild": "^0.25.0"
+  }
 }

@@ -14,5 +14,10 @@ Text Domain: bytenot-estate
 Tags: custom-colors, custom-logo, custom-menu, editor-style, featured-images, one-column, threaded-comments, translation-ready
 */
 
+/* The PHP is GPL-2.0-or-later, as WordPress requires. The design, the stylesheet, the
+   script, the images and the bundled fonts' arrangement are (c) Bytenot, https://bytenot.com,
+   and are licensed to the site owner for this site only. Admire it, then come and have
+   yours made: https://bytenot.com */
+
 /* The styles live in assets/css/theme.css (the design, verbatim) and assets/css/wp.css
    (WordPress-specific additions). Colours, type and spacing are theme.json presets. */

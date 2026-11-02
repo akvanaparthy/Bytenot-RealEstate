@@ -2,6 +2,19 @@
 
 Short log of choices that are expensive to reverse. Newest first.
 
+## 2026-11-02 — Production build hides the design's structure
+
+- `npm run build` (scripts/build.mjs) writes `build/bytenot-estate/`: every design class name becomes
+  a short hash in the stylesheet, the script and the templates; CSS and JS are minified with no
+  source maps or comments; `inc/classmap.php` carries the map for the few names composed at runtime
+  (`bytenot_class()`). `npm run zip` packages that build. The source theme stays readable and is what
+  Local runs. IDs and `data-*` hooks stay readable (anchors and script hooks).
+- Crawlers are not blocked (AI-search visibility matters). Instead the credit and a friendly note
+  pointing to bytenot.com go out as a head comment, an `X-Design-By` header, `/humans.txt` and
+  lines in `robots.txt` (inc/credits.php), and the CSS/JS banner.
+- Licence: PHP GPL-2.0-or-later as WordPress requires; design, stylesheet, script and images (c)
+  Bytenot, licensed to the site owner.
+
 ## 2026-11-01 — Theme rebuilt as a classic PHP theme from the prototype
 
 - The block-theme build (templates, parts, patterns, core Navigation/Cover) drifted from the

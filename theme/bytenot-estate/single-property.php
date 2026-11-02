@@ -223,7 +223,7 @@ $chapter_links = array_filter(
 		</div>
 		<dl class="ledger ledger--dark" data-deal>
 			<?php foreach ( $d['deal'] as $row ) : ?>
-			<div<?php echo isset( $row[2] ) ? ' class="is-' . esc_attr( $row[2] ) . '"' : ''; ?>><dt><?php echo esc_html( $row[0] ); ?></dt><dd><?php echo wp_kses( $row[1], array( 'small' => array() ) ); ?></dd></div>
+			<div<?php echo isset( $row[2] ) ? ' class="' . esc_attr( bytenot_class( 'is-' . $row[2] ) ) . '"' : ''; ?>><dt><?php echo esc_html( $row[0] ); ?></dt><dd><?php echo wp_kses( $row[1], array( 'small' => array() ) ); ?></dd></div>
 			<?php endforeach; ?>
 		</dl>
 		<?php if ( $d['emi'] ) : ?>

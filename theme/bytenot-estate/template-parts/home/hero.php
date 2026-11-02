@@ -116,7 +116,7 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 							$bytenot_thumb = get_post_thumbnail_id( $bytenot_partner->ID );
 							$bytenot_alt   = $bytenot_copy || 'mark' === $bytenot_shape ? '' : $bytenot_partner->post_title;
 							?>
-						<li class="partner<?php echo $bytenot_shape ? ' partner--' . esc_attr( $bytenot_shape ) : ''; ?>">
+						<li class="partner<?php echo $bytenot_shape ? ' ' . esc_attr( bytenot_class( 'partner--' . $bytenot_shape ) ) : ''; ?>">
 							<?php
 							if ( $bytenot_thumb ) {
 								echo wp_get_attachment_image( $bytenot_thumb, 'full', false, array_merge( array( 'alt' => $bytenot_alt, 'loading' => 'lazy' ), bytenot_svg_size( $bytenot_thumb ) ) );

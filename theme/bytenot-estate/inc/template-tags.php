@@ -8,6 +8,25 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * A design class name as served. The production build replaces class names with short
+ * hashes and writes inc/classmap.php; the few names composed at runtime go through here.
+ *
+ * @param string $names Space-separated class names.
+ * @return string
+ */
+function bytenot_class( $names ) {
+	static $map = null;
+	if ( null === $map ) {
+		$file = get_template_directory() . '/inc/classmap.php';
+		$map  = file_exists( $file ) ? (array) include $file : array();
+	}
+	if ( ! $map ) {
+		return $names;
+	}
+	return implode( ' ', array_map( static fn( $n ) => $map[ $n ] ?? $n, preg_split( '/\s+/', trim( (string) $names ) ) ) );
+}
+
+/**
  * Inline SVG icons used across the templates.
  *
  * @param string $name Icon name.
@@ -118,7 +137,7 @@ function bytenot_menu_fallback( $args ) {
 	foreach ( $items as $item ) {
 		printf(
 			'<li><a%1$s href="%2$s"%3$s>%4$s</a></li>',
-			$nav ? ' class="nav__link' . ( $item[2] ? ' is-active' : '' ) . '"' : '',
+			$nav ? ' class="' . esc_attr( bytenot_class( 'nav__link' . ( $item[2] ? ' is-active' : '' ) ) ) . '"' : '',
 			esc_url( $item[1] ),
 			$item[2] ? ' aria-current="page"' : '',
 			esc_html( $item[0] )

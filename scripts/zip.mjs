@@ -17,7 +17,7 @@ const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const distDir = join(root, 'dist');
 
 const packages = [
-	{ dir: join(root, 'theme', 'bytenot-estate'), versionFile: 'style.css' },
+	{ dir: join(root, 'build', 'bytenot-estate'), versionFile: 'style.css' }, // the production build (see build.mjs)
 	{ dir: join(root, 'plugin', 'property-core'), versionFile: 'property-core.php' },
 ];
 
@@ -127,13 +127,9 @@ function writeZip(zipPath, files) {
 	writeFileSync(zipPath, Buffer.concat([...locals, ...centrals, eocd]));
 }
 
-// 1. Build custom blocks, only if the plugin has a src folder.
-if (existsSync(join(root, 'plugin', 'property-core', 'src'))) {
-	console.log('$ npm run build');
-	execSync('npm run build', { stdio: 'inherit', cwd: root });
-} else {
-	console.log('No plugin/property-core/src folder, skipping block build.');
-}
+// 1. Build the theme (hashed class names, minified assets).
+console.log('$ node scripts/build.mjs');
+execSync('node scripts/build.mjs', { stdio: 'inherit', cwd: root });
 
 // 2. Zip each package.
 mkdirSync(distDir, { recursive: true });

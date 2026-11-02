@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 <a class="skip-link" href="#main"><?php esc_html_e( 'Skip to content', 'bytenot-estate' ); ?></a>
 
-<header class="site-header<?php echo is_front_page() || is_singular( 'property' ) ? '' : ' site-header--dark'; ?>" id="site-header" data-header>
+<header class="site-header<?php echo is_front_page() || is_singular( 'property' ) ? '' : ' ' . esc_attr( bytenot_class( 'site-header--dark' ) ); ?>" id="site-header" data-header>
 	<div class="container site-header__inner">
 		<?php bytenot_brand(); ?>
 

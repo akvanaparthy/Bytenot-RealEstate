@@ -20,7 +20,7 @@ $bytenot_parts  = preg_split( '/\{pill\}/', (string) bytenot_mod( 'about_stateme
 	<div class="about__stage">
 		<?php foreach ( $bytenot_floats as $bytenot_n => $bytenot_f ) : ?>
 			<?php if ( (int) bytenot_mod( $bytenot_f[0] ) ) : ?>
-		<div class="about__float about__float--<?php echo (int) $bytenot_n + 1; ?>" data-float data-in="<?php echo esc_attr( $bytenot_f[1] ); ?>" data-out="<?php echo esc_attr( $bytenot_f[2] ); ?>" aria-hidden="true"><div class="about__float-in"><?php bytenot_mod_image( $bytenot_f[0], 'bytenot-square', array( 'width' => 560, 'height' => 560, 'loading' => 'lazy' ) ); ?></div></div>
+		<div class="about__float <?php echo esc_attr( bytenot_class( 'about__float--' . ( (int) $bytenot_n + 1 ) ) ); ?>" data-float data-in="<?php echo esc_attr( $bytenot_f[1] ); ?>" data-out="<?php echo esc_attr( $bytenot_f[2] ); ?>" aria-hidden="true"><div class="about__float-in"><?php bytenot_mod_image( $bytenot_f[0], 'bytenot-square', array( 'width' => 560, 'height' => 560, 'loading' => 'lazy' ) ); ?></div></div>
 			<?php endif; ?>
 		<?php endforeach; ?>
 		<div class="container about__inner">

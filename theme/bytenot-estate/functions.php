@@ -17,6 +17,7 @@ define( 'BYTENOT_VERSION', wp_get_theme()->get( 'Version' ) );
 require get_template_directory() . '/inc/template-tags.php';
 require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/property.php';
+require get_template_directory() . '/inc/credits.php';
 
 /**
  * Theme setup.
@@ -127,9 +128,9 @@ function bytenot_config() {
  */
 function bytenot_body_class( $classes ) {
 	if ( is_singular( 'property' ) ) {
-		$classes[] = 'page--property';
+		$classes[] = bytenot_class( 'page--property' );
 	} elseif ( ! is_front_page() ) {
-		$classes[] = 'page--solid';
+		$classes[] = bytenot_class( 'page--solid' );
 	}
 	return $classes;
 }
@@ -149,7 +150,7 @@ function bytenot_menu_link_attributes( $atts, $item, $args ) {
 		unset( $atts['aria-current'] );
 	}
 	if ( 'primary' === ( $args->theme_location ?? '' ) && 'nav__list' === ( $args->menu_class ?? '' ) ) {
-		$atts['class'] = 'nav__link' . ( $current ? ' is-active' : '' );
+		$atts['class'] = bytenot_class( 'nav__link' . ( $current ? ' is-active' : '' ) );
 	}
 	return $atts;
 }
