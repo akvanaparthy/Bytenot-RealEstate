@@ -70,6 +70,13 @@
 	/* ------------------------------------------------------------------
 	 * Header: transparent over the hero, frosted + compact after scroll.
 	 * ------------------------------------------------------------------ */
+	// where the menu follows the page, a reload starts at the top: the rendered menu state is then right from
+	// the first frame and nothing shifts under a restored position
+	if ($('[data-header] a[href*="#"]') && 'scrollRestoration' in history && performance.getEntriesByType('navigation')[0]?.type === 'reload' && !location.hash) {
+		history.scrollRestoration = 'manual';
+		scrollTo({ top: 0, behavior: 'instant' });
+	}
+
 	const header = $('[data-header]');
 	if (header) {
 		const update = () => header.classList.toggle('is-scrolled', window.scrollY > 40);
@@ -83,7 +90,16 @@
 	 * the first section.
 	 * ------------------------------------------------------------------ */
 	const spyLinks = $$('.nav__list a, .drawer__nav a');
-	const sameHash = (a) => { const h = a.getAttribute('href') || ''; const u = new URL(a.href, location.href); return u.pathname === location.pathname && u.hash && u.hash !== '#' ? u.hash : (h === '#' || (u.pathname === location.pathname && !u.hash) ? '' : null); };
+	/* a link's section: its hash on this page; or, for a link to another page, a section here whose id matches
+	   the link's last path segment (the Properties link lights up over the featured properties section) */
+	const sameHash = (a) => {
+		const h = a.getAttribute('href') || '';
+		const u = new URL(a.href, location.href);
+		if (u.pathname === location.pathname) return u.hash && u.hash !== '#' ? u.hash : '';
+		if (h === '#') return '';
+		const slug = u.pathname.replace(/\/+$/, '').split('/').pop();
+		return slug && document.getElementById(slug) ? `#${slug}` : null;
+	};
 	const spy = spyLinks.map((a) => ({ a, hash: sameHash(a) })).filter((l) => l.hash !== null);
 	const spyTargets = [...new Set(spy.map((l) => l.hash).filter(Boolean))].map((hash) => ({ hash, el: $(hash) })).filter((t) => t.el);
 	const navList = $('.nav__list');
@@ -1181,6 +1197,17 @@
 	const faq = $('[data-faq]');
 	if (faq) {
 		const items = $$('.faq__item', faq);
+		// the list reserves room for its tallest answer, so opening and closing never moves the section below
+		const reserve = () => {
+			const open = items.find((i) => i.classList.contains('is-open'));
+			const openInner = open && $('.faq__a-inner', open);
+			const openH = openInner ? openInner.offsetHeight : 0;
+			const tallest = Math.max(...items.map((i) => $('.faq__a-inner', i).scrollHeight));
+			faq.style.minHeight = `${faq.offsetHeight - openH + tallest}px`;
+		};
+		reserve();
+		document.fonts?.ready.then(reserve);
+		let reserveTimer; addEventListener('resize', () => { clearTimeout(reserveTimer); reserveTimer = setTimeout(() => { faq.style.minHeight = ''; reserve(); }, 150); });
 		items.forEach((item) => {
 			$('.faq__q', item).addEventListener('click', () => {
 				const open = !item.classList.contains('is-open');
@@ -1204,7 +1231,10 @@
 		const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 		let lastGap = Infinity;
 		let settleTimer;
+		let userScrolled = false; // never on the browser's own scroll (restoring a position, jumping to a hash)
+		['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, () => { userScrolled = true; }, { passive: true, once: true }));
 		const settle = () => {
+			if (!userScrolled) return;
 			const top = band.getBoundingClientRect().top;
 			const gap = Math.abs(top);
 			const approaching = gap < lastGap;
@@ -1308,7 +1338,9 @@
 				// settles the start state so the fade-in transition runs)
 				const r = wrap.getBoundingClientRect();
 				const below = innerHeight - r.bottom;
-				menu.classList.toggle('dd__menu--up', below < menu.offsetHeight + 12 && r.top > below);
+				// upwards when there is no room below, and whenever the field sits in the lower half of the viewport,
+				// so the fields of one form all open the same way
+				menu.classList.toggle('dd__menu--up', (below < menu.offsetHeight + 12 && r.top > below) || (r.bottom > innerHeight * 0.55 && r.top > menu.offsetHeight + 12));
 				menu.classList.add('is-open');
 				wrap.classList.add('is-open');
 				button.setAttribute('aria-expanded', 'true');
