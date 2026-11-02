@@ -492,6 +492,35 @@ function bytenot_svg_size( $id ) {
 }
 
 /**
+ * A partner logo's shape from its proportions: wide strips, tall blocks, square marks
+ * (shown with the name beside them), or normal.
+ *
+ * @param int $id Attachment ID.
+ * @return string '' | tall | wide | mark
+ */
+function bytenot_logo_shape( $id ) {
+	$meta = $id ? wp_get_attachment_metadata( $id ) : null;
+	$w    = (int) ( $meta['width'] ?? 0 );
+	$h    = (int) ( $meta['height'] ?? 0 );
+	if ( ! $w || ! $h ) {
+		$svg = bytenot_svg_size( $id );
+		$w   = (int) ( $svg['width'] ?? 0 );
+		$h   = (int) ( $svg['height'] ?? 0 );
+	}
+	if ( ! $w || ! $h ) {
+		return '';
+	}
+	$ratio = $h / $w;
+	if ( $ratio >= 0.9 ) {
+		return 'mark';
+	}
+	if ( $ratio >= 0.45 ) {
+		return 'tall';
+	}
+	return $ratio <= 0.3 ? 'wide' : '';
+}
+
+/**
  * The legal links (footer, right cell): the "legal" menu, else the privacy policy page.
  *
  * @return array<int, array{0:string,1:string}>

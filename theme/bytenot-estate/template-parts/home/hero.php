@@ -112,8 +112,8 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 					<ul class="marquee__track"<?php echo $bytenot_copy ? ' aria-hidden="true"' : ''; ?>>
 						<?php
 						foreach ( $bytenot_partners as $bytenot_partner ) :
-							$bytenot_shape = get_post_meta( $bytenot_partner->ID, 'pc_shape', true );
 							$bytenot_thumb = get_post_thumbnail_id( $bytenot_partner->ID );
+							$bytenot_shape = get_post_meta( $bytenot_partner->ID, 'pc_shape', true ) ?: bytenot_logo_shape( $bytenot_thumb );
 							$bytenot_alt   = $bytenot_copy || 'mark' === $bytenot_shape ? '' : $bytenot_partner->post_title;
 							?>
 						<li class="partner<?php echo $bytenot_shape ? ' ' . esc_attr( bytenot_class( 'partner--' . $bytenot_shape ) ) : ''; ?>">

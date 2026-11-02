@@ -100,7 +100,7 @@ function bytenot_core_register_post_types() {
 			'show_ui'      => true,
 			'show_in_menu' => false,
 			'show_in_rest' => false,
-			'supports'     => array( 'title', 'custom-fields' ),
+			'supports'     => array( 'title' ),
 			'capabilities' => array( 'create_posts' => 'do_not_allow' ),
 			'map_meta_cap' => true,
 		)
