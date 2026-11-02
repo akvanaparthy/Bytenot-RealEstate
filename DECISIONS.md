@@ -2,6 +2,22 @@
 
 Short log of choices that are expensive to reverse. Newest first.
 
+## 2026-11-02 — Bytenot Core: one plugin, its own admin
+
+- The companion plugin is Bytenot Core (`plugin/bytenot-core`, text domain `bytenot-core`, prefix
+  `bytenot_core_`, REST `bytenot/v1`, option `bytenot_core_settings`). Post types, taxonomies and
+  the `pc_` field keys did not change.
+- It draws its own admin under a top-level "Bytenot" menu: Dashboard, Enquiries, the content types
+  (listings, projects, advisors, testimonials, FAQs, partners), Setup, Integrations, Tools. WordPress
+  keeps the outer frame; the screens use the plugin's stylesheet (Figtree, navy and gold). Settings
+  still save through the Settings API; each screen posts only its own keys.
+- Listings, projects and advisors get a "Listing details" panel (tabs: pricing, size, building,
+  legal, location with a landmarks repeater, media pickers, people and flags). The raw Custom
+  Fields panel is off for those types.
+- Private preview lives under Tools and as a one-click toggle on the dashboard.
+- The browser-sync proxy (localhost:3000) corrupts the block editor's settings JSON by rewriting a
+  URL inside it; use lavenorrealty.local for wp-admin, the proxy for the front end only.
+
 ## 2026-11-02 — Production build hides the design's structure
 
 - `npm run build` (scripts/build.mjs) writes `build/bytenot-estate/`: every design class name becomes

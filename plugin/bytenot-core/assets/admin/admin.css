@@ -193,3 +193,5 @@
 .bn-landmarks__list { margin: 0; padding: 0; list-style: none; }
 .bn-landmarks__tpl { display: none; }
 .block-editor-page #bytenot_listing { border-radius: 12px; overflow: hidden; }
+
+.bn [hidden] { display: none !important; }
