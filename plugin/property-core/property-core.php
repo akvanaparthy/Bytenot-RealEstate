@@ -37,6 +37,7 @@ require_once PROPERTY_CORE_DIR . 'includes/query.php';
 require_once PROPERTY_CORE_DIR . 'includes/blocks.php';
 require_once PROPERTY_CORE_DIR . 'includes/site-content.php';
 require_once PROPERTY_CORE_DIR . 'includes/schema.php';
+require_once PROPERTY_CORE_DIR . 'includes/preview.php';
 require_once PROPERTY_CORE_DIR . 'includes/demo.php';
 require_once PROPERTY_CORE_DIR . 'includes/demo-site.php';
 

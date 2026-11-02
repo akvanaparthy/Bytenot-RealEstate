@@ -32,6 +32,8 @@ function property_core_default_settings() {
 		'stamp_duty'   => 6,
 		'crm_provider' => 'email',
 		'crm_webhook'  => '',
+		'preview_mode' => false,
+		'preview_code' => '',
 	);
 }
 
@@ -91,6 +93,8 @@ function property_core_sanitize_settings( $input ) {
 		'stamp_duty'   => min( 20, (float) ( $input['stamp_duty'] ?? 6 ) ),
 		'crm_provider' => in_array( $input['crm_provider'] ?? 'email', array( 'email', 'webhook' ), true ) ? $input['crm_provider'] : 'email',
 		'crm_webhook'  => esc_url_raw( $input['crm_webhook'] ?? '' ),
+		'preview_mode' => ! empty( $input['preview_mode'] ),
+		'preview_code' => sanitize_text_field( $input['preview_code'] ?? '' ),
 	);
 }
 
@@ -200,6 +204,23 @@ function property_core_settings_page() {
 						</select>
 						<input type="url" name="property_core_settings[crm_webhook]" value="<?php echo esc_attr( $s['crm_webhook'] ); ?>" class="regular-text" placeholder="https://">
 						<p class="description"><?php esc_html_e( 'Every lead is stored here first and emailed; the webhook is pushed afterwards with retries. A direct Zoho CRM provider plugs into the same interface.', 'property-core' ); ?></p>
+					</td>
+				</tr>
+			</table>
+			<h2><?php esc_html_e( 'Private preview', 'property-core' ); ?></h2>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Lock the site', 'property-core' ); ?></th>
+					<td>
+						<label><input type="checkbox" name="property_core_settings[preview_mode]" value="1" <?php checked( ! empty( $s['preview_mode'] ) ); ?>> <?php esc_html_e( 'Only logged-in users can see the site', 'property-core' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Everyone else sees a holding page with a 503 status and a noindex header; feeds, the REST API and sitemaps are closed and robots.txt disallows everything. Nothing is indexed until you switch this off.', 'property-core' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="pc-preview-code"><?php esc_html_e( 'Preview code', 'property-core' ); ?></label></th>
+					<td>
+						<input id="pc-preview-code" type="text" name="property_core_settings[preview_code]" value="<?php echo esc_attr( $s['preview_code'] ); ?>" class="regular-text" autocomplete="off">
+						<p class="description"><?php echo esc_html( sprintf( /* translators: %s: example link. */ __( 'Optional. Share %s with someone who has no account; it unlocks their browser for 30 days.', 'property-core' ), home_url( '/?preview_code=' . ( $s['preview_code'] ? $s['preview_code'] : 'CODE' ) ) ) ); ?></p>
 					</td>
 				</tr>
 			</table>
