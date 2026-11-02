@@ -173,6 +173,12 @@ legend { padding: 0; }
 }
 .site-header.is-scrolled .brand { left: 0; padding: 0 22px 0 20px; }
 .site-header.is-scrolled .site-header__right { right: 0; padding: 0 12px 0 22px; }
+/* scrolled, the right bookmark is gold and its button navy; the gold rides on a pseudo-element so it can fade in */
+.site-header__right { isolation: isolate; }
+.site-header__right::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--wp--preset--gradient--brand-gold-soft); opacity: 0; transition: opacity .25s ease; }
+.site-header.is-scrolled .site-header__right::before { opacity: 1; }
+.site-header.is-scrolled .btn--cta { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); box-shadow: none; }
+.site-header.is-scrolled .btn--cta::before { background: var(--wp--preset--color--contrast-hover); }
 
 .brand { display: inline-flex; align-items: center; gap: 12px; line-height: 1; }
 .brand__mark { flex: none; width: 42px; height: auto; }
@@ -200,8 +206,14 @@ legend { padding: 0; }
 }
 .nav__link:hover { background: rgba(255, 255, 255, 0.18); }
 .site-header.is-scrolled .nav__link:hover, .site-header--dark .nav__link:hover { background: rgba(0, 0, 0, 0.06); }
-.nav__link.is-active { background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); }
-.site-header.is-scrolled .nav__link.is-active, .site-header--dark .nav__link.is-active { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
+.nav__link.is-active {
+	background: linear-gradient(180deg, #ffffff 0%, #edf2f4 100%); color: var(--wp--preset--color--contrast);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(20, 47, 63, 0.10), 0 1px 2px rgba(20, 47, 63, 0.18), 0 0 0 1px rgba(20, 47, 63, 0.05);
+}
+.site-header.is-scrolled .nav__link.is-active, .site-header--dark .nav__link.is-active {
+	background: linear-gradient(180deg, #27485e 0%, var(--wp--preset--color--contrast) 100%); color: var(--wp--preset--color--base);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(0, 0, 0, 0.28), 0 1px 2px rgba(20, 47, 63, 0.28), 0 0 0 1px rgba(20, 47, 63, 0.12);
+}
 
 .site-header__right { display: flex; align-items: center; gap: 36px; }
 .site-header.is-scrolled .site-header__right { gap: 22px; }

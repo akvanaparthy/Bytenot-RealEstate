@@ -78,6 +78,35 @@
 	}
 
 	/* ------------------------------------------------------------------
+	 * Menu follows the page: same-page section links (#about, #inquiry)
+	 * light up as their section scrolls into view; the home link while above
+	 * the first section.
+	 * ------------------------------------------------------------------ */
+	const spyLinks = $$('.nav__list a, .drawer__nav a');
+	const sameHash = (a) => { const h = a.getAttribute('href') || ''; const u = new URL(a.href, location.href); return u.pathname === location.pathname && u.hash && u.hash !== '#' ? u.hash : (h === '#' || (u.pathname === location.pathname && !u.hash) ? '' : null); };
+	const spy = spyLinks.map((a) => ({ a, hash: sameHash(a) })).filter((l) => l.hash !== null);
+	const spyTargets = [...new Set(spy.map((l) => l.hash).filter(Boolean))].map((hash) => ({ hash, el: $(hash) })).filter((t) => t.el);
+	if (spyTargets.length) {
+		let current = null;
+		const paint = () => {
+			const line = innerHeight * 0.4;
+			let hit = '';
+			spyTargets.forEach((t) => { if (t.el.getBoundingClientRect().top <= line) hit = t.hash; });
+			if (hit === current) return;
+			current = hit;
+			spy.forEach((l) => {
+				const active = l.hash === hit;
+				l.a.classList.toggle('is-active', active && l.a.classList.contains('nav__link'));
+				if (active) l.a.setAttribute('aria-current', 'page'); else l.a.removeAttribute('aria-current');
+			});
+		};
+		let spyTick = false;
+		addEventListener('scroll', () => { if (!spyTick) { spyTick = true; requestAnimationFrame(() => { spyTick = false; paint(); }); } }, { passive: true });
+		addEventListener('resize', paint);
+		paint();
+	}
+
+	/* ------------------------------------------------------------------
 	 * Language switcher (menu button pattern).
 	 * ------------------------------------------------------------------ */
 	const lang = $('[data-lang]');
@@ -238,7 +267,7 @@
 		const layers = [$('[data-spot-img]', spot), $('[data-spot-img-next]', spot)];
 		const el = (k) => $(`[data-spot-${k}]`, spot);
 		const rail = $('[data-rail]', spot);
-		let index = 0, top = 0, hoverTimer;
+		let index = 0, top = 0;
 
 		FEATURED.forEach((p) => { const i = new Image(); i.src = p.img; });
 
@@ -256,12 +285,8 @@
 				<span class="rail__text"><span class="rail__name">${p.title}</span><span class="rail__meta">${p.area}, ${cityLabel[p.city]} · ${p.type === 'plot' ? `${n(p.sqft)} sq yd` : `${p.bhk} BHK`}</span></span>
 				<span class="rail__price">${rupees(p.price, p.intent === 'rent')}<span class="rail__why">${p.why}</span></span></button>`;
 			const row = li.firstElementChild;
-			// Desktop: resting on a row previews it in the stage. Touch and keyboard: tap or Enter.
+			// A row switches the stage when pressed (click, tap or Enter); hovering only highlights it.
 			row.addEventListener('click', () => { if (i !== index) show(i); });
-			if (canHover) {
-				row.addEventListener('pointerenter', () => { clearTimeout(hoverTimer); if (i !== index) hoverTimer = setTimeout(() => show(i), 140); });
-				row.addEventListener('pointerleave', () => clearTimeout(hoverTimer));
-			}
 			rail.append(li);
 		});
 		const rows = $$('.rail__row', rail);

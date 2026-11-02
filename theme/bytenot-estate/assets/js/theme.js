@@ -25,6 +25,35 @@
 	}
 
 	/* ------------------------------------------------------------------
+	 * Menu follows the page: same-page section links (#about, #inquiry)
+	 * light up as their section scrolls into view; the home link while above
+	 * the first section.
+	 * ------------------------------------------------------------------ */
+	const spyLinks = $$('.nav__list a, .drawer__nav a');
+	const sameHash = (a) => { const h = a.getAttribute('href') || ''; const u = new URL(a.href, location.href); return u.pathname === location.pathname && u.hash && u.hash !== '#' ? u.hash : (h === '#' || (u.pathname === location.pathname && !u.hash) ? '' : null); };
+	const spy = spyLinks.map((a) => ({ a, hash: sameHash(a) })).filter((l) => l.hash !== null);
+	const spyTargets = [...new Set(spy.map((l) => l.hash).filter(Boolean))].map((hash) => ({ hash, el: $(hash) })).filter((t) => t.el);
+	if (spyTargets.length) {
+		let current = null;
+		const paint = () => {
+			const line = innerHeight * 0.4;
+			let hit = '';
+			spyTargets.forEach((t) => { if (t.el.getBoundingClientRect().top <= line) hit = t.hash; });
+			if (hit === current) return;
+			current = hit;
+			spy.forEach((l) => {
+				const active = l.hash === hit;
+				l.a.classList.toggle('is-active', active && l.a.classList.contains('nav__link'));
+				if (active) l.a.setAttribute('aria-current', 'page'); else l.a.removeAttribute('aria-current');
+			});
+		};
+		let spyTick = false;
+		addEventListener('scroll', () => { if (!spyTick) { spyTick = true; requestAnimationFrame(() => { spyTick = false; paint(); }); } }, { passive: true });
+		addEventListener('resize', paint);
+		paint();
+	}
+
+	/* ------------------------------------------------------------------
 	 * Language switcher (menu button pattern); items are links to the
 	 * translated pages, provided by the multilingual plugin.
 	 * ------------------------------------------------------------------ */
@@ -142,17 +171,14 @@
 		const layers = [$('[data-spot-img]', spot), $('[data-spot-img-next]', spot)];
 		const el = (k) => $(`[data-spot-${k}]`, spot);
 		const rail = $('[data-rail]', spot);
-		let index = 0, top = 0, hoverTimer;
+		let index = 0, top = 0;
 
 		FEATURED.forEach((p) => { const i = new Image(); i.src = p.stage; });
 
 		const rows = $$('.rail__row', rail);
 		rows.forEach((row, i) => {
+			// a row switches the stage when pressed (click, tap or Enter); hovering only highlights it
 			row.addEventListener('click', () => { if (i !== index) show(i); });
-			if (canHover) {
-				row.addEventListener('pointerenter', () => { clearTimeout(hoverTimer); if (i !== index) hoverTimer = setTimeout(() => show(i), 140); });
-				row.addEventListener('pointerleave', () => clearTimeout(hoverTimer));
-			}
 		});
 
 		/* The corner tab and the price bookmark are shaped entirely in CSS; the script only fixes their
