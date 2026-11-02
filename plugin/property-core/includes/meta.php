@@ -41,6 +41,7 @@ function property_core_fields() {
 						'distance' => array( 'type' => 'number' ),
 						'unit'     => array( 'type' => 'string', 'enum' => array( 'km', 'm', 'min' ) ),
 						'type'     => array( 'type' => 'string' ),
+						'time'     => array( 'type' => 'string' ),
 					),
 				),
 			),
@@ -69,6 +70,8 @@ function property_core_fields() {
 		'facing'           => $text,
 		'parking'          => $text,
 		'year_built'       => $int,
+		'furnishing'       => $text,
+		'ownership'        => $text,
 		// timeline
 		'possession_date'  => $text,
 		'sold_at'          => $text,
@@ -76,6 +79,8 @@ function property_core_fields() {
 		'rera_number'      => $text,
 		'rera_state'       => $text,
 		'rera_url'         => $url,
+		'approvals'        => array( 'type' => 'string', 'sanitize_callback' => 'sanitize_textarea_field' ), // one per line
+		'banks'            => $text,   // "SBI, HDFC, ICICI"
 		// location
 		'lat'              => $num,
 		'lng'              => $num,
@@ -211,6 +216,7 @@ function property_core_sanitize_landmarks( $value ) {
 			'distance' => isset( $row['distance'] ) ? (float) $row['distance'] : 0,
 			'unit'     => $unit,
 			'type'     => isset( $row['type'] ) ? sanitize_key( $row['type'] ) : '',
+			'time'     => isset( $row['time'] ) ? sanitize_text_field( $row['time'] ) : '',
 		);
 	}
 	return $out;

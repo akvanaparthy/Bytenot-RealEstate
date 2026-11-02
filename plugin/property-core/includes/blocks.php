@@ -37,7 +37,7 @@ function property_core_search_options() {
 		$intents[ $slug ] = 'for-rent' === $slug ? __( 'Rent', 'property-core' ) : __( 'Buy', 'property-core' );
 	}
 	// possession facets ride along with the transaction chips, as in the prototype
-	$intents['new-launch'] = __( 'New launch', 'property-core' );
+	$intents['new-launch'] = __( 'New Launch', 'property-core' );
 	$intents['resale']     = __( 'Resale', 'property-core' );
 
 	$locations = array();

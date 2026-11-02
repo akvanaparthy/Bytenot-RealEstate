@@ -1,0 +1,7 @@
+/* Block editor: the body type and the content width, so pages and listings read as
+   they will on the site. Presets come from theme.json. */
+.editor-styles-wrapper { font-family: var(--wp--preset--font-family--body); color: var(--wp--preset--color--ink); }
+.editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3 { color: var(--wp--preset--color--contrast); letter-spacing: -0.02em; }
+.editor-styles-wrapper .wp-block { max-width: 820px; }
+.editor-styles-wrapper .wp-block[data-align="wide"] { max-width: 1200px; }
+.editor-styles-wrapper .wp-block[data-align="full"] { max-width: none; }

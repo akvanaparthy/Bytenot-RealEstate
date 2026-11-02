@@ -71,9 +71,9 @@ function property_core_demo_image( $file, $post_id = 0 ) {
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/media.php';
 	require_once ABSPATH . 'wp-admin/includes/image.php';
-	$tmp = wp_tempnam( $file );
+	$tmp = wp_tempnam( basename( $file ) );
 	copy( $path, $tmp );
-	$id = media_handle_sideload( array( 'name' => $file, 'tmp_name' => $tmp ), $post_id );
+	$id = media_handle_sideload( array( 'name' => basename( $file ), 'tmp_name' => $tmp ), $post_id );
 	if ( is_wp_error( $id ) ) {
 		@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		return 0;
@@ -122,10 +122,7 @@ function property_core_install_demo() {
 		$loc_id  = property_core_demo_term( $p['area'], 'location', $city_id );
 		$counts['localities']++;
 		$rent = 'for-rent' === $p['status'];
-		$desc = $rent
-			? sprintf( 'A %1$s in %2$s, %3$s, available now. Maintained by the owner, close to work and transit, with society amenities included in the rent.', strtolower( $p['type'] ), $p['area'], $p['city'] )
-			: sprintf( 'A %1$s in %2$s, %3$s. Documents verified: title, approvals and tax receipts are available on request. Visits are free and can be arranged within a day.', strtolower( $p['type'] ), $p['area'], $p['city'] );
-		$id = property_core_demo_upsert( 'property', $p['title'], 'property-' . $p['key'], '<!-- wp:paragraph --><p>' . esc_html( $desc ) . '</p><!-- /wp:paragraph -->' );
+		$id = property_core_demo_upsert( 'property', $p['title'], 'property-' . $p['key'], property_core_demo_content( $p ) );
 		wp_set_object_terms( $id, $p['type'], 'property_type' );
 		wp_set_object_terms( $id, $p['status'], 'listing_status' );
 		wp_set_object_terms( $id, $p['possession'], 'possession' );
@@ -149,7 +146,7 @@ function property_core_install_demo() {
 			'reference_id'      => ( 'Hyderabad' === $p['city'] ? 'HYD' : 'BLR' ) . '-' . str_pad( (string) $p['key'], 4, '0', STR_PAD_LEFT ),
 			'source'            => 'demo',
 		);
-		foreach ( $meta as $k => $v ) {
+		foreach ( array_merge( $meta, property_core_demo_extra_meta( $p ) ) as $k => $v ) {
 			update_post_meta( $id, 'pc_' . $k, $v );
 		}
 		$img = property_core_demo_image( $p['img'], $id );
@@ -158,7 +155,7 @@ function property_core_install_demo() {
 			$counts['images']++;
 		}
 		$gallery = array();
-		foreach ( $p['gallery'] as $g ) {
+		foreach ( property_core_demo_gallery( $p ) as $g ) {
 			$gid = property_core_demo_image( $g, $id );
 			if ( $gid ) {
 				$gallery[] = $gid;
@@ -168,21 +165,7 @@ function property_core_install_demo() {
 		$counts['properties']++;
 	}
 
-	// menu for the header and footer navigation blocks (they fall back to the newest menu)
-	$home = home_url( '/' );
-	$menu = '<!-- wp:navigation-link {"label":"Home","url":"' . esc_url( $home ) . '","kind":"custom"} /-->'
-		. '<!-- wp:navigation-link {"label":"About Us","url":"' . esc_url( $home . '#about' ) . '","kind":"custom"} /-->'
-		. '<!-- wp:navigation-link {"label":"Properties","url":"' . esc_url( get_post_type_archive_link( 'property' ) ) . '","kind":"custom"} /-->'
-		. '<!-- wp:navigation-link {"label":"Contact Us","url":"' . esc_url( $home . '#inquiry' ) . '","kind":"custom"} /-->';
-	$existing = get_posts( array( 'post_type' => 'wp_navigation', 'name' => 'primary-menu', 'posts_per_page' => 1, 'post_status' => 'any' ) );
-	wp_insert_post( array(
-		'ID'           => $existing ? $existing[0]->ID : 0,
-		'post_type'    => 'wp_navigation',
-		'post_title'   => 'Primary menu',
-		'post_name'    => 'primary-menu',
-		'post_status'  => 'publish',
-		'post_content' => $menu,
-	) );
+	property_core_install_demo_site( $advisors );
 
 	update_option( 'property_core_demo_installed', time() );
 	flush_rewrite_rules();
@@ -232,12 +215,12 @@ add_action( 'admin_post_property_core_install_demo', 'property_core_demo_admin_a
 function property_core_demo_box() {
 	if ( isset( $_GET['demo'] ) && isset( $_GET['page'] ) && 'property-core' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		/* translators: %d: number of properties. */
-		echo '<div class="notice notice-success"><p>' . esc_html( sprintf( __( 'Demo content installed: %d properties, advisors, localities and the menu.', 'property-core' ), absint( $_GET['demo'] ) ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		echo '<div class="notice notice-success"><p>' . esc_html( sprintf( __( 'Demo content installed: %d properties, advisors, localities, testimonials, FAQs, partners, menus and the home page texts.', 'property-core' ), absint( $_GET['demo'] ) ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 	?>
 	<hr>
 	<h2><?php esc_html_e( 'Demo content', 'property-core' ); ?></h2>
-	<p><?php esc_html_e( 'Installs twelve sample listings with photos, two advisors, the localities, a primary menu and sample contact details, so the site looks like the design. Running it again updates the same records.', 'property-core' ); ?></p>
+	<p><?php esc_html_e( 'Installs twelve sample listings with photos, two advisors, the localities, testimonials, FAQs, partner logos, the menus and the home page texts and photos, so the site looks like the design. Running it again updates the same records.', 'property-core' ); ?></p>
 	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 		<input type="hidden" name="action" value="property_core_install_demo">
 		<?php wp_nonce_field( 'property_core_install_demo' ); ?>

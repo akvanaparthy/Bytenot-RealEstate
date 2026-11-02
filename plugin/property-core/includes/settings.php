@@ -29,6 +29,7 @@ function property_core_default_settings() {
 		'emi_rate'     => 8.5,
 		'emi_years'    => 20,
 		'emi_ltv'      => 80,
+		'stamp_duty'   => 6,
 		'crm_provider' => 'email',
 		'crm_webhook'  => '',
 	);
@@ -87,6 +88,7 @@ function property_core_sanitize_settings( $input ) {
 		'emi_rate'     => (float) ( $input['emi_rate'] ?? 8.5 ),
 		'emi_years'    => absint( $input['emi_years'] ?? 20 ),
 		'emi_ltv'      => min( 100, absint( $input['emi_ltv'] ?? 80 ) ),
+		'stamp_duty'   => min( 20, (float) ( $input['stamp_duty'] ?? 6 ) ),
 		'crm_provider' => in_array( $input['crm_provider'] ?? 'email', array( 'email', 'webhook' ), true ) ? $input['crm_provider'] : 'email',
 		'crm_webhook'  => esc_url_raw( $input['crm_webhook'] ?? '' ),
 	);

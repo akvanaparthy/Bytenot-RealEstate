@@ -3,7 +3,7 @@
  * Plugin Name:       Property Core
  * Plugin URI:        https://github.com/akvanaparthy/Bytenot-RealEstate
  * Description:       Real-estate data layer: property listings, projects, localities, agents and lead capture. Companion plugin for the Bytenot Estate theme.
- * Version:           0.2.0
+ * Version:           0.3.0
  * Requires at least: 7.1
  * Requires PHP:      8.1
  * Author:            Bytenot
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'PROPERTY_CORE_VERSION', '0.2.0' );
+define( 'PROPERTY_CORE_VERSION', '0.3.0' );
 define( 'PROPERTY_CORE_FILE', __FILE__ );
 define( 'PROPERTY_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PROPERTY_CORE_URL', plugin_dir_url( __FILE__ ) );
@@ -35,7 +35,10 @@ require_once PROPERTY_CORE_DIR . 'includes/crm/class-webhook-provider.php';
 require_once PROPERTY_CORE_DIR . 'includes/leads.php';
 require_once PROPERTY_CORE_DIR . 'includes/query.php';
 require_once PROPERTY_CORE_DIR . 'includes/blocks.php';
+require_once PROPERTY_CORE_DIR . 'includes/site-content.php';
+require_once PROPERTY_CORE_DIR . 'includes/schema.php';
 require_once PROPERTY_CORE_DIR . 'includes/demo.php';
+require_once PROPERTY_CORE_DIR . 'includes/demo-site.php';
 
 /**
  * Flush rewrite rules once the post types exist.

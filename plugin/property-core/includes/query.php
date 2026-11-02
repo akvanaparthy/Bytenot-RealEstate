@@ -70,9 +70,8 @@ function property_core_filter_archive( $query ) {
 		$query->set( 'orderby', 'date' );
 		$query->set( 'order', 'DESC' );
 	} else {
-		// featured first, then newest
-		$query->set( 'meta_key', 'pc_featured' );
-		$query->set( 'orderby', array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ) );
+		// the curated order (menu order), then newest
+		$query->set( 'orderby', array( 'menu_order' => 'ASC', 'date' => 'DESC' ) );
 	}
 	if ( $tax ) {
 		$query->set( 'tax_query', $tax );

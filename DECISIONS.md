@@ -2,6 +2,30 @@
 
 Short log of choices that are expensive to reverse. Newest first.
 
+## 2026-11-01 — Theme rebuilt as a classic PHP theme from the prototype
+
+- The block-theme build (templates, parts, patterns, core Navigation/Cover) drifted from the
+  prototype in the header, footer and listing pages. Rebuilt as a classic theme: the prototype's
+  HTML lives in `header.php`, `footer.php`, `front-page.php` + `template-parts/home/*`,
+  `archive-property.php` and `single-property.php`; `assets/css/theme.css` is the prototype
+  stylesheet verbatim (tokens come from `theme.json` presets); `assets/js/theme.js` is the
+  prototype script with data read from JSON islands instead of constants.
+- `theme.json` stays for colours, fonts and spacing (the CSS uses the preset variables) and the
+  block editor is used for page and listing content only.
+- Texts and photos are Customizer settings (Customize › Bytenot Estate); testimonials, FAQs and
+  partners are plugin post types; menus are classic menu locations. Defaults are brand-neutral;
+  the demo installer sets Lavenor's.
+- Listing stories: chapters are the h2/h3 sections of the listing's content (up to three), each
+  paired with a gallery photo; the remaining paragraphs become the specification prose. Floor
+  plans are images (`pc_floor_plans`) with rooms listed in the attachment description as
+  `Label | size` lines.
+- The language switcher renders only when a multilingual plugin supplies languages through the
+  `bytenot_languages` filter.
+- Hero search: the configuration field defaults to "Any" (the prototype preselected 2 BHK, which
+  would narrow every search by default).
+- JSON-LD (RealEstateListing, RealEstateAgent) is emitted by the plugin unless an SEO plugin is
+  active.
+
 ## 2026-11-01 — Theme port: URLs, lifecycle, localities, languages
 
 **Status:** assumed defaults, taken when the owner said "proceed" without answering; overturn any of them before content is entered.
