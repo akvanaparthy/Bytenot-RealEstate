@@ -1,9 +1,9 @@
 <?php
 /**
- * Site configuration: what this agency deals in, how prices read, where leads go.
+ * Site configuration: what this agency lists, how prices read, where leads go.
  *
- * The theme and the blocks read it through bytenot_core_setting(); nothing about one
- * company is hard-coded anywhere else. The screens live in includes/admin.
+ * The theme reads it through bytenot_core_setting(); nothing about one company is
+ * hard-coded anywhere else. The screens live in includes/admin.
  *
  * @package bytenot-core
  */
@@ -17,10 +17,11 @@ defined( 'ABSPATH' ) || exit;
  */
 function bytenot_core_default_settings() {
 	return array(
-		'types'        => array( 'apartment', 'villa', 'plot', 'commercial' ),
+		'kinds'        => array(),   // per-kind overrides; see kinds.php for the shape and defaults
 		'intents'      => array( 'for-sale', 'for-rent' ),
 		'budget_bands' => "0-5000000|Under ₹50 L\n5000000-10000000|₹50 L – ₹1 Cr\n10000000-20000000|₹1 Cr – ₹2 Cr\n20000000-|Above ₹2 Cr",
 		'phone'        => '',
+		'phone_prefix' => '+91',
 		'whatsapp'     => '',
 		'email_to'     => get_option( 'admin_email' ),
 		'rera_number'  => '',
@@ -77,7 +78,7 @@ function bytenot_core_sanitize_settings( $input ) {
 	$input   = (array) $input;
 	$current = wp_parse_args( (array) get_option( 'bytenot_core_settings', array() ), bytenot_core_default_settings() );
 	$screens = array(
-		'bytenot-setup'        => array( 'types', 'intents', 'budget_bands', 'phone', 'whatsapp', 'email_to', 'rera_number', 'rera_state', 'emi_rate', 'emi_years', 'emi_ltv', 'stamp_duty' ),
+		'bytenot-setup'        => array( 'kinds', 'intents', 'budget_bands', 'phone', 'phone_prefix', 'whatsapp', 'email_to', 'rera_number', 'rera_state', 'emi_rate', 'emi_years', 'emi_ltv', 'stamp_duty' ),
 		'bytenot-integrations' => array( 'crm_provider', 'crm_webhook' ),
 		'bytenot-tools'        => array( 'preview_mode', 'preview_code' ),
 	);
@@ -86,14 +87,36 @@ function bytenot_core_sanitize_settings( $input ) {
 	foreach ( isset( $screens[ $screen ] ) ? $screens[ $screen ] : array_keys( bytenot_core_default_settings() ) as $key ) {
 		$raw[ $key ] = $input[ $key ] ?? '';
 	}
-	$vocab  = bytenot_core_vocabularies();
-	$types  = array_values( array_intersect( array_map( 'sanitize_key', (array) $raw['types'] ), array_keys( $vocab['property_type'] ) ) );
+
+	// kinds: on/off, labels, URL base (unique), sub-types one per line
+	$kinds = array();
+	$bases = array();
+	foreach ( bytenot_core_kind_defaults() as $slug => $d ) {
+		$k    = isset( $raw['kinds'][ $slug ] ) ? (array) $raw['kinds'][ $slug ] : array();
+		$base = sanitize_title( (string) ( $k['base'] ?? '' ) ) ?: $d['base'];
+		if ( in_array( $base, $bases, true ) ) {
+			$base = $d['base'];
+		}
+		$bases[]        = $base;
+		$kinds[ $slug ] = array(
+			'on'       => empty( $k['on'] ) ? 0 : 1,
+			'singular' => sanitize_text_field( (string) ( $k['singular'] ?? '' ) ),
+			'plural'   => sanitize_text_field( (string) ( $k['plural'] ?? '' ) ),
+			'base'     => $base,
+			'subtypes' => sanitize_textarea_field( (string) ( $k['subtypes'] ?? '' ) ),
+		);
+	}
+	if ( ! array_filter( array_column( $kinds, 'on' ) ) ) {
+		$kinds['property']['on'] = 1;
+	}
+
 	$intent = array_values( array_intersect( array_map( 'sanitize_key', (array) $raw['intents'] ), array( 'for-sale', 'for-rent' ) ) );
 	return array(
-		'types'        => $types ? $types : array_keys( $vocab['property_type'] ),
+		'kinds'        => $kinds,
 		'intents'      => $intent ? $intent : array( 'for-sale' ),
 		'budget_bands' => sanitize_textarea_field( (string) $raw['budget_bands'] ),
 		'phone'        => sanitize_text_field( (string) $raw['phone'] ),
+		'phone_prefix' => preg_replace( '/[^\d+]/', '', (string) $raw['phone_prefix'] ),
 		'whatsapp'     => preg_replace( '/\D+/', '', (string) $raw['whatsapp'] ),
 		'email_to'     => sanitize_email( (string) $raw['email_to'] ),
 		'rera_number'  => sanitize_text_field( (string) $raw['rera_number'] ),
@@ -125,3 +148,76 @@ function bytenot_core_settings_init() {
 	);
 }
 add_action( 'admin_init', 'bytenot_core_settings_init' );
+
+/**
+ * After the settings change: sub-type terms exist and the URL bases are routed.
+ *
+ * @param mixed $old Old value.
+ * @param mixed $new New value.
+ */
+function bytenot_core_settings_saved( $old, $new ) {
+	$old_kinds = isset( $old['kinds'] ) ? wp_json_encode( $old['kinds'] ) : '';
+	$new_kinds = isset( $new['kinds'] ) ? wp_json_encode( $new['kinds'] ) : '';
+	if ( $old_kinds !== $new_kinds ) {
+		set_transient( 'bytenot_core_flush', 1, HOUR_IN_SECONDS ); // the kinds cache is per request; flush on the next load
+	}
+}
+add_action( 'update_option_bytenot_core_settings', 'bytenot_core_settings_saved', 10, 2 );
+
+/**
+ * Flush rewrite rules and sync sub-type terms once, on the request after a kinds change.
+ */
+function bytenot_core_flush_after_save() {
+	if ( ! get_transient( 'bytenot_core_flush' ) ) {
+		return;
+	}
+	delete_transient( 'bytenot_core_flush' );
+	bytenot_core_sync_subtype_terms();
+	flush_rewrite_rules();
+}
+add_action( 'init', 'bytenot_core_flush_after_save', 99 );
+
+/**
+ * Options for the search form and the listing filters, from settings and synced terms.
+ *
+ * @return array<string, mixed>
+ */
+function bytenot_core_search_options() {
+	$kinds = array();
+	$types = array();
+	foreach ( bytenot_core_kinds( true ) as $slug => $k ) {
+		$kinds[ $slug ] = $k['plural'];
+		$types[ $slug ] = bytenot_core_subtypes( $slug );
+	}
+	$intents = array();
+	foreach ( (array) bytenot_core_setting( 'intents' ) as $slug ) {
+		$intents[ $slug ] = 'for-rent' === $slug ? __( 'Rent', 'bytenot-core' ) : __( 'Buy', 'bytenot-core' );
+	}
+	// possession facets ride along with the transaction chips, as in the prototype
+	$intents['new-launch'] = __( 'New Launch', 'bytenot-core' );
+	$intents['resale']     = __( 'Resale', 'bytenot-core' );
+
+	$locations = array();
+	$cities    = get_terms( array( 'taxonomy' => 'location', 'parent' => 0, 'hide_empty' => false ) );
+	if ( ! is_wp_error( $cities ) ) {
+		foreach ( $cities as $city ) {
+			$locations[ $city->slug ] = $city->name;
+		}
+	}
+	$budgets = array();
+	foreach ( bytenot_core_budget_bands() as $band ) {
+		$budgets[ $band[0] . '-' . ( null === $band[1] ? '' : $band[1] ) ] = $band[2];
+	}
+	$primary = bytenot_core_primary_kind();
+	return array(
+		'kinds'          => $kinds,
+		'primary'        => $primary,
+		'types'          => $types[ $primary ] ?? array(),
+		'typesByKind'    => $types,
+		'intents'        => $intents,
+		'locations'      => $locations,
+		'budgets'        => $budgets,
+		'configurations' => array( '1' => __( '1 BHK', 'bytenot-core' ), '2' => __( '2 BHK', 'bytenot-core' ), '3' => __( '3 BHK', 'bytenot-core' ), '4' => __( '4 BHK+', 'bytenot-core' ) ),
+		'has_config'     => isset( $kinds['apartment'] ) || isset( $kinds['property'] ) || isset( $kinds['project'] ),
+	);
+}

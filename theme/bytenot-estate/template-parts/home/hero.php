@@ -8,9 +8,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$bytenot_opts    = function_exists( 'bytenot_core_search_options' ) ? bytenot_core_search_options() : array( 'types' => array(), 'intents' => array(), 'locations' => array(), 'budgets' => array(), 'configurations' => array(), 'has_config' => false );
-$bytenot_archive = get_post_type_archive_link( 'property' ) ?: home_url( '/' );
+$bytenot_opts     = bytenot_search_options();
+$bytenot_archive  = bytenot_archive_url();
 $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page' => 30, 'orderby' => 'menu_order', 'order' => 'ASC', 'no_found_rows' => true ) );
+// the first search field: the kinds when several are on, else the primary kind's types, else nothing
+$bytenot_first    = count( $bytenot_opts['kinds'] ) > 1 ? 'kind' : ( $bytenot_opts['types'] ? 'type' : '' );
+$bytenot_nfields  = ( $bytenot_first ? 1 : 0 ) + 2 + ( $bytenot_opts['has_config'] ? 1 : 0 );
 ?>
 <section class="hero" aria-labelledby="hero-title">
 	<div class="hero__media" aria-hidden="true">
@@ -20,8 +23,8 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 
 	<div class="container hero__inner">
 		<div class="hero__content">
-			<?php if ( $bytenot_opts['types'] && bytenot_mod( 'hero_tags' ) ) : ?>
-			<ul class="tags" aria-label="<?php esc_attr_e( 'Quick property type', 'bytenot-estate' ); ?>">
+			<?php if ( 'type' === $bytenot_first && bytenot_mod( 'hero_tags' ) ) : ?>
+			<ul class="tags" aria-label="<?php esc_attr_e( 'Quick type', 'bytenot-estate' ); ?>">
 				<?php foreach ( array_slice( $bytenot_opts['types'], 0, 4, true ) as $bytenot_slug => $bytenot_name ) : ?>
 				<li><button class="tag" type="button" data-type="<?php echo esc_attr( $bytenot_slug ); ?>"><?php echo esc_html( $bytenot_name ); ?></button></li>
 				<?php endforeach; ?>
@@ -35,21 +38,34 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 		</div>
 
 		<div class="search-wrap">
-		<form class="search<?php echo $bytenot_opts['has_config'] ? '' : ' search--three'; ?>" action="<?php echo esc_url( $bytenot_archive ); ?>" method="get" aria-labelledby="search-title" data-search novalidate>
+		<form class="search<?php echo 4 === $bytenot_nfields ? '' : ' search--three'; ?>" action="<?php echo esc_url( $bytenot_archive ); ?>" method="get" aria-labelledby="search-title" data-search novalidate>
 			<h2 class="search__title" id="search-title"><?php echo esc_html( bytenot_mod( 'search_title' ) ); ?></h2>
 
 			<div class="search__fields">
+				<?php if ( 'kind' === $bytenot_first ) : ?>
+				<div class="field">
+					<label class="field__label" for="f-kind"><?php esc_html_e( 'Looking for', 'bytenot-estate' ); ?></label>
+					<span class="field__select">
+						<select class="field__input" id="f-kind" name="kind" data-kind-select>
+							<?php foreach ( $bytenot_opts['kinds'] as $bytenot_slug => $bytenot_name ) : ?>
+							<option value="<?php echo esc_attr( $bytenot_slug ); ?>" data-url="<?php echo esc_url( bytenot_archive_url( $bytenot_slug ) ); ?>"><?php echo esc_html( $bytenot_name ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</span>
+				</div>
+				<?php elseif ( 'type' === $bytenot_first ) : ?>
 				<div class="field">
 					<label class="field__label" for="f-type"><?php esc_html_e( 'Looking for', 'bytenot-estate' ); ?></label>
 					<span class="field__select">
 						<select class="field__input" id="f-type" name="type">
-							<option value=""><?php esc_html_e( 'Enter type', 'bytenot-estate' ); ?></option>
+							<option value=""><?php esc_html_e( 'Any type', 'bytenot-estate' ); ?></option>
 							<?php foreach ( $bytenot_opts['types'] as $bytenot_slug => $bytenot_name ) : ?>
 							<option value="<?php echo esc_attr( $bytenot_slug ); ?>"><?php echo esc_html( $bytenot_name ); ?></option>
 							<?php endforeach; ?>
 						</select>
 					</span>
 				</div>
+				<?php endif; ?>
 				<div class="field">
 					<label class="field__label" for="f-budget"><?php esc_html_e( 'Budget', 'bytenot-estate' ); ?></label>
 					<span class="field__select">
@@ -103,7 +119,7 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 	</div>
 
 	<?php if ( $bytenot_partners ) : ?>
-	<div class="partners" aria-label="<?php esc_attr_e( 'Our channel partners', 'bytenot-estate' ); ?>">
+	<section class="partners" aria-label="<?php echo esc_attr( trim( bytenot_mod( 'partners_before' ) . ' ' . bytenot_mod( 'partners_after' ) ) ); ?>">
 		<div class="partners__inner">
 			<p class="partners__word" aria-hidden="true"><?php echo esc_html( bytenot_mod( 'partners_before' ) ); ?></p>
 			<div class="marquee" data-marquee>
@@ -113,7 +129,7 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 						<?php
 						foreach ( $bytenot_partners as $bytenot_partner ) :
 							$bytenot_thumb = get_post_thumbnail_id( $bytenot_partner->ID );
-							$bytenot_shape = get_post_meta( $bytenot_partner->ID, 'pc_shape', true ) ?: bytenot_logo_shape( $bytenot_thumb );
+							$bytenot_shape = get_post_meta( $bytenot_partner->ID, 'bn_shape', true ) ?: bytenot_logo_shape( $bytenot_thumb );
 							$bytenot_alt   = $bytenot_copy || 'mark' === $bytenot_shape ? '' : $bytenot_partner->post_title;
 							?>
 						<li class="partner<?php echo $bytenot_shape ? ' ' . esc_attr( bytenot_class( 'partner--' . $bytenot_shape ) ) : ''; ?>">
@@ -133,6 +149,6 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 			</div>
 			<p class="partners__word" aria-hidden="true"><?php echo esc_html( bytenot_mod( 'partners_after' ) ); ?></p>
 		</div>
-	</div>
+	</section>
 	<?php endif; ?>
 </section>

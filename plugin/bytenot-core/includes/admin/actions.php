@@ -44,7 +44,7 @@ add_action( 'admin_post_bytenot_core_toggle_preview', 'bytenot_core_action_toggl
  * Push one lead to the CRM again.
  */
 function bytenot_core_action_retry_lead() {
-	if ( ! current_user_can( 'edit_posts' ) ) {
+	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'bytenot-core' ) );
 	}
 	$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
@@ -77,10 +77,12 @@ function bytenot_core_action_test_lead() {
 		'form'           => 'test',
 		'preferred_date' => '',
 		'consent'        => true,
-		'property_id'    => 0,
-		'property_title' => '',
-		'property_url'   => '',
-		'property_ref'   => '',
+		'listing_id'     => 0,
+		'listing_kind'   => '',
+		'listing_title'  => '',
+		'listing_url'    => '',
+		'listing_ref'    => '',
+		'project_title'  => '',
 		'crm_record_id'  => '',
 		'agent_id'       => 0,
 		'source_url'     => admin_url( 'admin.php?page=bytenot-integrations' ),
@@ -101,22 +103,25 @@ function bytenot_core_action_test_lead() {
 add_action( 'admin_post_bytenot_core_test_lead', 'bytenot_core_action_test_lead' );
 
 /**
- * Enquiries as CSV.
+ * Enquiries as CSV. Visitor-typed cells that start like a spreadsheet formula are
+ * neutralised with a leading apostrophe.
  */
 function bytenot_core_action_export_leads() {
-	if ( ! current_user_can( 'edit_posts' ) ) {
+	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'Not allowed.', 'bytenot-core' ) );
 	}
 	check_admin_referer( 'bytenot_core_export_leads' );
-	$ids = get_posts( array( 'post_type' => 'enquiry', 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'orderby' => 'date', 'order' => 'DESC', 'no_found_rows' => true ) );
+	$ids  = get_posts( array( 'post_type' => 'enquiry', 'post_status' => 'private', 'posts_per_page' => -1, 'fields' => 'ids', 'orderby' => 'date', 'order' => 'DESC', 'no_found_rows' => true ) );
+	$safe = static fn( $v ) => preg_match( '/^[=+\-@\t\r]/', (string) $v ) ? "'" . $v : (string) $v;
 	nocache_headers();
 	header( 'Content-Type: text/csv; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename="enquiries-' . gmdate( 'Y-m-d' ) . '.csv"' );
 	$out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-	fputcsv( $out, array( 'id', 'received', 'name', 'phone', 'email', 'form', 'property', 'preferred_date', 'message', 'source_url', 'crm_status', 'crm_error' ) );
+	fputcsv( $out, array( 'id', 'received', 'name', 'phone', 'email', 'form', 'listing', 'project', 'preferred_date', 'message', 'source_url', 'crm_status', 'crm_error' ) );
 	foreach ( $ids as $id ) {
-		$p = (int) bytenot_core_get( $id, 'property_id' );
-		fputcsv( $out, array( $id, get_post_time( 'Y-m-d H:i', false, $id ), bytenot_core_get( $id, 'name' ), bytenot_core_get( $id, 'phone' ), bytenot_core_get( $id, 'email' ), bytenot_core_get( $id, 'form' ), $p ? get_the_title( $p ) : '', bytenot_core_get( $id, 'preferred_date' ), bytenot_core_get( $id, 'message' ), bytenot_core_get( $id, 'source_url' ), bytenot_core_get( $id, 'crm_status' ), bytenot_core_get( $id, 'crm_error' ) ) );
+		$l  = (int) bytenot_core_get( $id, 'listing_id' );
+		$pr = (int) bytenot_core_get( $id, 'project_id' );
+		fputcsv( $out, array_map( $safe, array( $id, get_post_time( 'Y-m-d H:i', false, $id ), bytenot_core_get( $id, 'name' ), bytenot_core_get( $id, 'phone' ), bytenot_core_get( $id, 'email' ), bytenot_core_get( $id, 'form' ), $l ? get_the_title( $l ) : '', $pr ? get_the_title( $pr ) : '', bytenot_core_get( $id, 'preferred_date' ), bytenot_core_get( $id, 'message' ), bytenot_core_get( $id, 'source_url' ), bytenot_core_get( $id, 'crm_status' ), bytenot_core_get( $id, 'crm_error' ) ) ) );
 	}
 	fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	exit;

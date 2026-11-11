@@ -22,8 +22,10 @@ const out = join(root, 'build', 'bytenot-estate');
 const BANNER = '/*! Bytenot Estate. Design, styles and scripts (c) Bytenot, https://bytenot.com. Love this interface? Come and have yours made: premium branding, websites, AI and automation. You are very welcome. */';
 
 /* Class names WordPress, the editor or plugins emit, which the stylesheet targets and must keep. */
-const KEEP_PREFIXES = ['wp-', 'has-', 'is-style-', 'align', 'page-template', 'post-', 'type-', 'status-', 'format-', 'tax-', 'term-', 'category-', 'tag-', 'menu-item', 'current', 'logged-', 'admin-', 'customize-', 'no-', 'js', 'hentry', 'sticky', 'bypostauthor', 'gallery', 'screen-reader', 'nav-links', 'page-numbers', 'prev', 'next', 'dots', 'editor-', 'block-', 'rtl', 'single', 'archive', 'blog', 'home', 'search', 'error404', 'attachment', 'author', 'date', 'paged', 'privacy-policy', 'property-template', 'postid-', 'page-id-', 'parent-pageid-'];
-const keep = (name) => KEEP_PREFIXES.some((p) => name === p || name.startsWith(p));
+const KEEP_PREFIXES = ['wp-', 'has-', 'is-style-', 'align', 'page-template', 'post-', 'type-', 'status-', 'format-', 'tax-', 'term-', 'category-', 'tag-', 'menu-item', 'current', 'logged-', 'admin-', 'customize-', 'no-', 'editor-', 'block-', 'property-template', 'postid-', 'page-id-', 'parent-pageid-', 'screen-reader', 'nav-links', 'page-numbers', 'privacy-policy'];
+/* Body and pagination classes WordPress emits as whole words; the design's own search__*, home-*, prev/next-looking names are not these. */
+const KEEP_EXACT = new Set(['js', 'hentry', 'sticky', 'bypostauthor', 'gallery', 'prev', 'next', 'dots', 'rtl', 'single', 'archive', 'blog', 'home', 'search', 'search-results', 'search-no-results', 'error404', 'attachment', 'author', 'date', 'paged', 'page', 'singular', 'category', 'tag']);
+const keep = (name) => KEEP_EXACT.has(name) || KEEP_PREFIXES.some((p) => name.startsWith(p));
 
 /* ---------- 1. the class map, from both stylesheets ---------- */
 const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '');

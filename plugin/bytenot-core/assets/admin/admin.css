@@ -241,3 +241,26 @@
 .bn-list-screen .wrap .displaying-num { color: #6b7f8c; }
 .bn-list-screen .wrap .tablenav-pages a, .bn-list-screen .wrap .tablenav-pages .tablenav-pages-navspan { border-radius: 999px; border-color: #dfe6ea; color: #142f3f; background: #fff; }
 .bn-list-screen .wrap .tablenav-pages a:hover { border-color: #142f3f; background: #fff; color: #142f3f; }
+
+/* ---------- kinds (Setup) ---------- */
+.bn .bn-kind { display: grid; grid-template-columns: 180px 1fr; gap: 6px 24px; padding: 16px 0; border-top: 1px solid var(--border); }
+.bn .bn-kind:first-of-type { border-top: 0; padding-top: 4px; }
+.bn .bn-kind__switch { align-self: start; }
+.bn .bn-kind__what { grid-column: 1; margin: 0; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }
+.bn .bn-kind__fields { grid-column: 2; grid-row: 1 / span 2; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 14px; opacity: .55; transition: opacity .2s ease; }
+.bn .bn-kind.is-on .bn-kind__fields { opacity: 1; }
+.bn .bn-kind__field { display: grid; gap: 4px; font-size: 12px; color: var(--ink-soft); }
+.bn .bn-kind__field--wide { grid-column: 1 / -1; }
+.bn .bn-kind__base { display: flex; align-items: center; gap: 4px; }
+.bn .bn-kind__base .bn-input { flex: 1; }
+@media (max-width: 782px) { .bn .bn-kind { grid-template-columns: 1fr; } .bn .bn-kind__fields { grid-column: 1; grid-row: auto; grid-template-columns: 1fr; } }
+
+/* ---------- kind row in the listing editor ---------- */
+.bn .bn-editor__kind { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 24px; padding: 4px 0 16px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.bn .bn-chips--radio .bn-chip input { position: absolute; opacity: 0; }
+.bn .bn-chips--radio .bn-chip { position: relative; }
+.bn .bn-chips--radio .bn-chip input:focus-visible + span { outline: 2px solid var(--navy); outline-offset: 2px; }
+.bn .bn-editor [hidden] { display: none !important; }
+
+/* ---------- kind bar above the listings list ---------- */
+.bn-kindbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 0 0 12px; }

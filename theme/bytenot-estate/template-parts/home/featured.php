@@ -17,8 +17,10 @@ if ( ! $bytenot_items ) {
 }
 $bytenot_first   = $bytenot_items[0];
 $bytenot_total   = count( $bytenot_items );
-$bytenot_all     = (int) wp_count_posts( 'property' )->publish;
-$bytenot_archive = get_post_type_archive_link( 'property' ) ?: home_url( '/' );
+$bytenot_kind    = bytenot_core_primary_kind();
+$bytenot_term    = get_term_by( 'slug', $bytenot_kind, 'listing_kind' );
+$bytenot_all     = $bytenot_term ? (int) $bytenot_term->count : 0;
+$bytenot_archive = bytenot_archive_url( $bytenot_kind );
 $bytenot_video   = bytenot_mod( 'featured_video_url' );
 $bytenot_embed   = $bytenot_video ? wp_oembed_get( $bytenot_video, array( 'width' => 1280 ) ) : '';
 if ( $bytenot_video && ! $bytenot_embed && preg_match( '/\.(mp4|webm)(\?|$)/i', $bytenot_video ) ) {
@@ -50,7 +52,7 @@ $bytenot_json = array_map(
 		<div class="spot" data-featured aria-roledescription="carousel" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'Featured %s', 'bytenot-estate' ), bytenot_noun() ) ); ?>">
 			<script type="application/json" data-featured-items><?php echo wp_json_encode( $bytenot_json ); ?></script>
 			<div class="spot__stage">
-				<figure class="spot__media" aria-hidden="false">
+				<figure class="spot__media">
 					<img class="spot__img is-on" data-spot-img src="<?php echo esc_url( $bytenot_first['stage'] ); ?>" alt="<?php echo esc_attr( $bytenot_first['alt'] ); ?>" width="1200" height="800">
 					<img class="spot__img" data-spot-img-next src="" alt="" width="1200" height="800" aria-hidden="true">
 					<div class="spot__shade"></div>
@@ -71,7 +73,7 @@ $bytenot_json = array_map(
 			</div>
 
 			<div class="rail-wrap">
-				<ol class="rail" data-rail><div class="rail__hl" data-rail-hl aria-hidden="true"></div>
+				<ol class="rail" data-rail><li class="rail__hl" data-rail-hl aria-hidden="true"></li>
 					<?php foreach ( $bytenot_items as $bytenot_i => $bytenot_p ) : ?>
 					<li><button class="rail__row<?php echo 0 === $bytenot_i ? ' is-active' : ''; ?>" type="button" aria-pressed="<?php echo 0 === $bytenot_i ? 'true' : 'false'; ?>">
 						<img class="rail__thumb" src="<?php echo esc_url( $bytenot_p['thumb'] ); ?>" alt="" width="72" height="72" loading="lazy">
@@ -81,11 +83,11 @@ $bytenot_json = array_map(
 				</ol>
 				<div class="rail__foot">
 					<div class="spot__nav"<?php echo $bytenot_total < 2 ? ' hidden' : ''; ?>>
-						<button class="arrow" type="button" aria-label="<?php esc_attr_e( 'Previous property', 'bytenot-estate' ); ?>" data-prev>
+						<button class="arrow" type="button" aria-label="<?php esc_attr_e( 'Previous', 'bytenot-estate' ); ?>" data-prev>
 							<?php bytenot_the_icon( 'arrow-left', 20 ); ?>
 						</button>
 						<span class="spot__count" data-spot-count aria-live="polite">01 / <?php echo esc_html( str_pad( (string) $bytenot_total, 2, '0', STR_PAD_LEFT ) ); ?></span>
-						<button class="arrow" type="button" aria-label="<?php esc_attr_e( 'Next property', 'bytenot-estate' ); ?>" data-next>
+						<button class="arrow" type="button" aria-label="<?php esc_attr_e( 'Next', 'bytenot-estate' ); ?>" data-next>
 							<?php bytenot_the_icon( 'arrow', 20 ); ?>
 						</button>
 					</div>
@@ -99,7 +101,7 @@ $bytenot_json = array_map(
 </section>
 
 <?php if ( bytenot_mod( 'featured_video_caption' ) || $bytenot_embed ) : ?>
-<dialog class="modal" id="video-modal" data-video-modal aria-label="<?php esc_attr_e( 'Property tour video', 'bytenot-estate' ); ?>">
+<dialog class="modal" id="video-modal" data-video-modal aria-label="<?php esc_attr_e( 'Tour video', 'bytenot-estate' ); ?>">
 	<button class="modal__close" type="button" aria-label="<?php esc_attr_e( 'Close video', 'bytenot-estate' ); ?>" data-video-close>
 		<?php bytenot_the_icon( 'close', 22 ); ?>
 	</button>

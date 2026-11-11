@@ -1,10 +1,10 @@
 <?php
 /**
- * Taxonomies: property_type, listing_status, location, feature, possession.
+ * Taxonomies: listing_kind, listing_type, listing_status, location, feature, possession.
  *
- * `location` is the spine: City > Locality, with its own pages at /localities/{slug}/.
- * Which property types and statuses a site offers is a setting (see settings.php), so an
- * agency that only sells plots never shows apartment filters.
+ * `listing_kind` is fixed (project, apartment, property); `listing_type` holds the
+ * sub-types typed in Setup (Apartment, Villa, Plot, Land, Commercial ...). `location`
+ * is the spine: City > Locality, with its own pages at /localities/{slug}/.
  *
  * @package bytenot-core
  */
@@ -16,15 +16,35 @@ defined( 'ABSPATH' ) || exit;
  */
 function bytenot_core_register_taxonomies() {
 	register_taxonomy(
-		'property_type',
-		array( 'property', 'project' ),
+		'listing_kind',
+		array( 'listing' ),
 		array(
 			'labels'            => array(
-				'name'          => _x( 'Property types', 'taxonomy general name', 'bytenot-core' ),
-				'singular_name' => _x( 'Property type', 'taxonomy singular name', 'bytenot-core' ),
+				'name'          => _x( 'Kinds', 'taxonomy general name', 'bytenot-core' ),
+				'singular_name' => _x( 'Kind', 'taxonomy singular name', 'bytenot-core' ),
 			),
+			'description'       => __( 'Project, apartment or property. Set in the listing editor, never by hand.', 'bytenot-core' ),
+			'hierarchical'      => false,
+			'public'            => false,
+			'show_ui'           => false,
+			'show_in_rest'      => true,
+			'show_admin_column' => false,
+			'rewrite'           => false,
+		)
+	);
+
+	register_taxonomy(
+		'listing_type',
+		array( 'listing' ),
+		array(
+			'labels'            => array(
+				'name'          => _x( 'Types', 'taxonomy general name', 'bytenot-core' ),
+				'singular_name' => _x( 'Type', 'taxonomy singular name', 'bytenot-core' ),
+			),
+			'description'       => __( 'The sub-type within a kind: villa, plot, commercial ... Defined in Setup.', 'bytenot-core' ),
 			'hierarchical'      => false,
 			'public'            => true,
+			'show_ui'           => false,
 			'show_in_rest'      => true,
 			'show_admin_column' => true,
 			'rewrite'           => array( 'slug' => 'type', 'with_front' => false ),
@@ -33,7 +53,7 @@ function bytenot_core_register_taxonomies() {
 
 	register_taxonomy(
 		'listing_status',
-		array( 'property' ),
+		array( 'listing' ),
 		array(
 			'labels'            => array(
 				'name'          => _x( 'Listing status', 'taxonomy general name', 'bytenot-core' ),
@@ -49,7 +69,7 @@ function bytenot_core_register_taxonomies() {
 
 	register_taxonomy(
 		'location',
-		array( 'property', 'project', 'agent' ),
+		array( 'listing', 'agent' ),
 		array(
 			'labels'            => array(
 				'name'          => _x( 'Localities', 'taxonomy general name', 'bytenot-core' ),
@@ -68,7 +88,7 @@ function bytenot_core_register_taxonomies() {
 
 	register_taxonomy(
 		'feature',
-		array( 'property', 'project' ),
+		array( 'listing' ),
 		array(
 			'labels'            => array(
 				'name'          => _x( 'Amenities', 'taxonomy general name', 'bytenot-core' ),
@@ -84,7 +104,7 @@ function bytenot_core_register_taxonomies() {
 
 	register_taxonomy(
 		'possession',
-		array( 'property', 'project' ),
+		array( 'listing' ),
 		array(
 			'labels'            => array(
 				'name'          => _x( 'Possession', 'taxonomy general name', 'bytenot-core' ),
@@ -101,18 +121,16 @@ function bytenot_core_register_taxonomies() {
 add_action( 'init', 'bytenot_core_register_taxonomies' );
 
 /**
- * The fixed vocabularies. Property types and statuses are referenced by slug in
- * settings and in the search block, so they are seeded on activation.
+ * The fixed vocabularies, seeded on activation and referenced by slug.
  *
  * @return array<string, array<string, string>> taxonomy => slug => name.
  */
 function bytenot_core_vocabularies() {
 	return array(
-		'property_type'  => array(
-			'apartment'  => __( 'Apartment', 'bytenot-core' ),
-			'villa'      => __( 'Villa', 'bytenot-core' ),
-			'plot'       => __( 'Plot', 'bytenot-core' ),
-			'commercial' => __( 'Commercial', 'bytenot-core' ),
+		'listing_kind'   => array(
+			'project'   => __( 'Project', 'bytenot-core' ),
+			'apartment' => __( 'Apartment', 'bytenot-core' ),
+			'property'  => __( 'Property', 'bytenot-core' ),
 		),
 		'listing_status' => array(
 			'for-sale'    => __( 'For sale', 'bytenot-core' ),
@@ -132,7 +150,7 @@ function bytenot_core_vocabularies() {
 }
 
 /**
- * Create the vocabulary terms that do not exist yet.
+ * Create the vocabulary terms that do not exist yet, plus the sub-types from Setup.
  */
 function bytenot_core_seed_terms() {
 	foreach ( bytenot_core_vocabularies() as $taxonomy => $terms ) {
@@ -142,4 +160,5 @@ function bytenot_core_seed_terms() {
 			}
 		}
 	}
+	bytenot_core_sync_subtype_terms();
 }

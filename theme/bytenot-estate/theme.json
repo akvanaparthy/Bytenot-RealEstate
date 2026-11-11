@@ -83,10 +83,9 @@
 		},
 		"custom": {
 			"radius": { "card": "24px", "input": "10px", "pill": "999px" },
-			"shadow": { "float": "0 12px 40px rgba(20, 47, 63, 0.14)" },
 			"hero": { "frame": "12px", "notchGap": "12px", "partnersHeight": "96px" },
 			"layout": { "contentSize": "1440px", "gutter": "40px" },
-			"header": { "height": "86px", "heightCompact": "72px", "piece": "56px" },
+			"header": { "height": "86px", "heightCompact": "72px" },
 			"transition": "0.2s ease"
 		}
 	},

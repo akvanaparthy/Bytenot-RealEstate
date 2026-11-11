@@ -20,16 +20,16 @@ class Bytenot_Core_Email_Provider implements Bytenot_Core_CRM_Provider {
 			return new WP_Error( 'no_recipient', __( 'No lead email address is configured.', 'bytenot-core' ) );
 		}
 		$subject = sprintf(
-			/* translators: 1: form name, 2: property or site name. */
+			/* translators: 1: form name, 2: listing or site name. */
 			__( 'New %1$s enquiry: %2$s', 'bytenot-core' ),
 			$lead['form'],
-			$lead['property_title'] ?: get_bloginfo( 'name' )
+			$lead['listing_title'] ?: get_bloginfo( 'name' )
 		);
 		$lines = array(
 			__( 'Name', 'bytenot-core' ) . ': ' . $lead['name'],
 			__( 'Phone', 'bytenot-core' ) . ': ' . $lead['phone'],
 			__( 'Email', 'bytenot-core' ) . ': ' . $lead['email'],
-			__( 'Property', 'bytenot-core' ) . ': ' . $lead['property_title'] . ' ' . $lead['property_url'],
+			__( 'Listing', 'bytenot-core' ) . ': ' . $lead['listing_title'] . ' ' . $lead['listing_url'],
 			__( 'Preferred date', 'bytenot-core' ) . ': ' . $lead['preferred_date'],
 			__( 'Message', 'bytenot-core' ) . ":\n" . $lead['message'],
 			'',

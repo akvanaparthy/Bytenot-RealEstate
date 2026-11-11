@@ -1,5 +1,5 @@
 /* WordPress-only additions to the prototype stylesheet: the admin bar, generic pages
-   and posts, form status, honeypot, floor-plan images, video embed. */
+   and posts, the busy form, honeypot, floor-plan images, video embed. */
 
 /* the fixed header sits below the admin bar when logged in */
 .admin-bar .site-header { top: var(--wp-admin--admin-bar--height, 32px); }
@@ -11,10 +11,7 @@
 /* honeypot */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-/* lead form feedback */
-.form-status { margin: 10px 0 0; font-size: 14px; color: var(--wp--preset--color--ink-soft); }
-.form-status.is-error { color: #b4232c; }
-.inquiry__form .form-status { color: var(--wp--preset--color--ink-soft); }
+/* a form while it posts */
 form.is-busy button[type="submit"] { opacity: 0.6; pointer-events: none; }
 
 /* chapter body may hold several paragraphs */
@@ -59,7 +56,6 @@ form.is-busy button[type="submit"] { opacity: 0.6; pointer-events: none; }
 .nav-links .page-numbers.current { background: var(--wp--preset--color--contrast); color: #fff; border-color: transparent; }
 .site-search { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; max-width: 520px; }
 .site-search .uf { flex: 1 1 260px; }
-.sticky, .bypostauthor, .gallery-caption, .wp-caption, .wp-caption-text, .screen-reader-text { /* core classes */ }
 .screen-reader-text { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .wp-caption { max-width: 100%; }
 .wp-caption-text { margin-top: 8px; font-size: 13px; color: var(--wp--preset--color--ink-muted); }

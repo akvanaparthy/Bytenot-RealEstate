@@ -1,16 +1,29 @@
-/* Bytenot Core listing editor: tabs, media pickers, the landmarks repeater. */
+/* Bytenot Core listing editor: the kind switch, tabs, media pickers, the landmarks repeater. */
 (() => {
 	const t = window.bytenotEditor || {};
 	const root = document.querySelector('.bn-editor');
 	if (!root) return;
 
-	// tabs
+	// kind: everything tagged data-kinds shows only for the chosen kind
 	const tabs = [...root.querySelectorAll('.bn-editor__tab')];
 	const panels = [...root.querySelectorAll('.bn-editor__panel')];
-	tabs.forEach((tab) => tab.addEventListener('click', () => {
+	const forKind = (el, kind) => !el.dataset.kinds || el.dataset.kinds.split(' ').includes(kind);
+	const activate = (tab) => {
 		tabs.forEach((x) => { const on = x === tab; x.classList.toggle('is-active', on); x.setAttribute('aria-selected', String(on)); });
-		panels.forEach((p) => { const on = p.dataset.panel === tab.dataset.tab; p.classList.toggle('is-active', on); p.hidden = !on; });
-	}));
+		panels.forEach((p) => { const on = tab && p.dataset.panel === tab.dataset.tab; p.classList.toggle('is-active', on); p.hidden = !on; });
+	};
+	const applyKind = (kind) => {
+		root.dataset.kind = kind;
+		root.querySelectorAll('[data-kinds]').forEach((el) => { el.hidden = !forKind(el, kind); });
+		const active = tabs.find((x) => x.classList.contains('is-active') && !x.hidden);
+		activate(active || tabs.find((x) => !x.hidden) || null);
+	};
+	tabs.forEach((tab) => tab.addEventListener('click', () => activate(tab)));
+	const kindInputs = [...root.querySelectorAll('input[name="bn_kind"]')];
+	kindInputs.forEach((r) => r.addEventListener('change', () => { if (r.checked) applyKind(r.value); }));
+	const checked = kindInputs.find((r) => r.checked);
+	applyKind(checked ? checked.value : root.dataset.kind || '');
+	if (!tabs.some((x) => x.classList.contains('is-active'))) activate(tabs.find((x) => !x.hidden) || null);
 
 	// media: photo lists and single files
 	root.querySelectorAll('.bn-media').forEach((box) => {

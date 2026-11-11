@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 <a class="skip-link" href="#main"><?php esc_html_e( 'Skip to content', 'bytenot-estate' ); ?></a>
 
-<header class="site-header<?php echo is_front_page() || is_singular( 'property' ) ? '' : ' ' . esc_attr( bytenot_class( 'site-header--dark' ) ); ?>" id="site-header" data-header>
+<header class="site-header<?php echo is_front_page() || is_singular( 'listing' ) ? '' : ' ' . esc_attr( bytenot_class( 'site-header--dark' ) ); ?>" id="site-header" data-header>
 	<div class="container site-header__inner">
 		<?php bytenot_brand(); ?>
 
@@ -52,7 +52,7 @@ defined( 'ABSPATH' ) || exit;
 	<div class="drawer__backdrop" data-drawer-close></div>
 	<div class="drawer__panel" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Menu', 'bytenot-estate' ); ?>">
 		<div class="drawer__head">
-			<?php bytenot_brand( 'brand--dark', false ); ?>
+			<?php bytenot_brand( 'brand--dark', false, true ); ?>
 			<button class="drawer__close" type="button" aria-label="<?php esc_attr_e( 'Close menu', 'bytenot-estate' ); ?>" data-drawer-close>
 				<?php bytenot_the_icon( 'close', 22 ); ?>
 			</button>

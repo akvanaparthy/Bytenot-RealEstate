@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 $bytenot_email   = bytenot_contact( 'email' );
 $bytenot_phone   = bytenot_contact( 'phone' );
-$bytenot_archive = get_post_type_archive_link( 'property' ) ?: home_url( '/' );
+$bytenot_archive = bytenot_archive_url();
 $bytenot_social  = array_filter(
 	array(
 		'linkedin'  => array( __( 'LinkedIn', 'bytenot-estate' ), bytenot_mod( 'social_linkedin' ) ),
@@ -64,7 +64,7 @@ $bytenot_rights  = trim( get_bloginfo( 'name' ) . ' ' . get_bloginfo( 'descripti
 
 		<div class="site-footer__contact">
 			<?php if ( $bytenot_phone ) : ?>
-			<a class="site-footer__phone" href="<?php echo esc_attr( bytenot_tel( $bytenot_phone ) ); ?>"><?php echo esc_html( $bytenot_phone ); ?></a>
+			<a class="site-footer__phone" href="<?php echo esc_url( bytenot_tel( $bytenot_phone ) ); ?>"><?php echo esc_html( $bytenot_phone ); ?></a>
 			<?php endif; ?>
 			<?php if ( $bytenot_email ) : ?>
 			<a class="site-footer__email" href="mailto:<?php echo esc_attr( $bytenot_email ); ?>"><?php echo esc_html( $bytenot_email ); ?></a>
@@ -78,7 +78,7 @@ $bytenot_rights  = trim( get_bloginfo( 'name' ) . ' ' . get_bloginfo( 'descripti
 			<?php endif; ?>
 		</div>
 
-		<nav class="site-footer__col site-footer__col--right" aria-label="<?php esc_attr_e( 'Property types', 'bytenot-estate' ); ?>">
+		<nav class="site-footer__col site-footer__col--right" aria-label="<?php esc_attr_e( 'Browse', 'bytenot-estate' ); ?>">
 			<?php
 			if ( has_nav_menu( 'footer-types' ) ) {
 				wp_nav_menu(
@@ -91,9 +91,13 @@ $bytenot_rights  = trim( get_bloginfo( 'name' ) . ' ' . get_bloginfo( 'descripti
 					)
 				);
 			} else {
-				$bytenot_types = function_exists( 'bytenot_core_search_options' ) ? bytenot_core_search_options()['types'] : array();
+				// the kinds on offer, then the primary kind's types
+				$bytenot_opts = bytenot_search_options();
 				echo '<ul class="site-footer__links">';
-				foreach ( bytenot_type_plurals( array_keys( $bytenot_types ) ) as $bytenot_slug => $bytenot_label ) {
+				foreach ( $bytenot_opts['kinds'] as $bytenot_slug => $bytenot_label ) {
+					echo '<li><a href="' . esc_url( bytenot_archive_url( $bytenot_slug ) ) . '">' . esc_html( $bytenot_label ) . '</a></li>';
+				}
+				foreach ( $bytenot_opts['types'] as $bytenot_slug => $bytenot_label ) {
 					echo '<li><a href="' . esc_url( add_query_arg( 'type', $bytenot_slug, $bytenot_archive ) ) . '">' . esc_html( $bytenot_label ) . '</a></li>';
 				}
 				echo '</ul>';
@@ -112,8 +116,16 @@ $bytenot_rights  = trim( get_bloginfo( 'name' ) . ' ' . get_bloginfo( 'descripti
 			<p class="site-footer__label"><?php esc_html_e( 'Address location', 'bytenot-estate' ); ?></p>
 			<p class="site-footer__meta"><?php echo esc_html( bytenot_mod( 'contact_address' ) ); ?></p>
 			<?php endif; ?>
-			<?php if ( bytenot_contact( 'rera' ) ) : ?>
-			<p class="site-footer__meta"><?php echo esc_html( trim( bytenot_contact( 'rera_state' ) . ' ' . sprintf( /* translators: %s: RERA number. */ ( false === stripos( bytenot_contact( 'rera_state' ), 'rera' ) ? __( 'RERA No. %s', 'bytenot-estate' ) : __( 'No. %s', 'bytenot-estate' ) ), bytenot_contact( 'rera' ) ) ) ); ?></p>
+			<?php
+			if ( bytenot_contact( 'rera' ) ) :
+				/* translators: %s: RERA number. */
+				$bytenot_rera_fmt = __( 'RERA No. %s', 'bytenot-estate' );
+				if ( false !== stripos( bytenot_contact( 'rera_state' ), 'rera' ) ) {
+					/* translators: %s: registration number. */
+					$bytenot_rera_fmt = __( 'No. %s', 'bytenot-estate' );
+				}
+				?>
+			<p class="site-footer__meta"><?php echo esc_html( trim( bytenot_contact( 'rera_state' ) . ' ' . sprintf( $bytenot_rera_fmt, bytenot_contact( 'rera' ) ) ) ); ?></p>
 			<?php endif; ?>
 		</div>
 		<div class="site-footer__cell site-footer__cell--right">

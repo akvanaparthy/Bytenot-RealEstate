@@ -114,3 +114,31 @@ the advisor user, so the field map is one-to-one.
 - Zoho as master for everything: no media pipeline and no place for editorial
   or locality content; forces bad content into CRM fields.
 - Two-way sync of property records: conflict handling costs more than it saves.
+
+## 2026-11-11 — One listing post type with kinds; audit clean-up
+
+**Context.** Lavenor sells developers' projects and the apartments inside them,
+and may add standalone land or houses later. The plugin had a `property` type
+the theme rendered and a `project` type nothing rendered, and the site's noun
+("Properties"/"Projects") was a Customizer text.
+
+**Decision.** One post type, `listing`, with a fixed `listing_kind` term:
+`project` (a developer's venture), `apartment` (one unit, child of a project via
+`post_parent`) or `property` (standalone). Bytenot › Setup switches kinds on,
+names them, sets each kind's URL base and its sub-types (`listing_type` terms).
+The first kind switched on is the primary kind: the menu, the home search and
+the featured rail point to it. Addresses: `/{base}/{slug}/` per kind and
+`/projects/{project}/{unit}/` for an apartment inside a project. A project's
+price range, configurations, area range and unit count roll up from its
+apartments whenever it has any. Meta keys moved from `pc_` to `bn_`; the dead
+block layer (`blocks/`, bindings) is gone since the theme is classic PHP.
+
+**Also settled by the audit.** Budget bands skip rentals on both server and
+client; closed listings leave the sitemap; export and retry need
+`manage_options`; CSV cells are formula-safe; the demo never overwrites a site
+name, settings or menus it did not create; the phone country code is a Setup
+setting, not `+91` in the theme; the inquiry form carries a real consent box.
+
+**Alternatives rejected.** A separate post type per kind (three editors, three
+archives, no shared fields or filters); apartments as rows inside a project
+without their own pages (no unit-level URLs, enquiries or SEO).

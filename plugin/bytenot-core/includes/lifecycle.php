@@ -27,9 +27,9 @@ function bytenot_core_hide_closed( $query ) {
 	if ( is_admin() || ! $query->is_main_query() || $query->is_singular() ) {
 		return;
 	}
-	$type = $query->get( 'post_type' );
-	$is_property = 'property' === $type || ( is_array( $type ) && in_array( 'property', $type, true ) ) || $query->is_tax( array( 'location', 'property_type', 'possession', 'feature' ) );
-	if ( ! $is_property && ! $query->is_search() ) {
+	$type       = $query->get( 'post_type' );
+	$is_listing = 'listing' === $type || ( is_array( $type ) && in_array( 'listing', $type, true ) ) || $query->is_tax( array( 'location', 'listing_type', 'possession', 'feature' ) );
+	if ( ! $is_listing && ! $query->is_search() ) {
 		return;
 	}
 	$tax_query   = (array) $query->get( 'tax_query' );
@@ -50,7 +50,7 @@ add_action( 'pre_get_posts', 'bytenot_core_hide_closed' );
  * @return array
  */
 function bytenot_core_robots( $robots ) {
-	if ( is_singular( 'property' ) && has_term( bytenot_core_closed_statuses(), 'listing_status' ) ) {
+	if ( is_singular( 'listing' ) && has_term( bytenot_core_closed_statuses(), 'listing_status' ) ) {
 		$robots['noindex'] = true;
 		$robots['follow']  = true;
 	}
@@ -59,7 +59,7 @@ function bytenot_core_robots( $robots ) {
 add_filter( 'wp_robots', 'bytenot_core_robots' );
 
 /**
- * Record when a listing closed.
+ * Record when a listing closed, and refresh its project's summary.
  *
  * @param int    $object_id Post ID.
  * @param array  $terms     Term IDs or slugs.
@@ -72,9 +72,13 @@ function bytenot_core_stamp_closed( $object_id, $terms, $tt_ids, $taxonomy ) {
 	}
 	$closed = has_term( bytenot_core_closed_statuses(), 'listing_status', $object_id );
 	if ( $closed && ! bytenot_core_get( $object_id, 'sold_at' ) ) {
-		update_post_meta( $object_id, 'pc_sold_at', gmdate( 'Y-m-d' ) );
+		bytenot_core_set( $object_id, 'sold_at', gmdate( 'Y-m-d' ) );
 	} elseif ( ! $closed ) {
-		delete_post_meta( $object_id, 'pc_sold_at' );
+		bytenot_core_set( $object_id, 'sold_at', '' );
+	}
+	$project = bytenot_core_project_of( $object_id );
+	if ( $project ) {
+		bytenot_core_rollup( $project );
 	}
 }
 add_action( 'set_object_terms', 'bytenot_core_stamp_closed', 10, 4 );

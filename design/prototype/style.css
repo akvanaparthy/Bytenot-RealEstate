@@ -742,6 +742,7 @@ legend { padding: 0; }
 	border-top: 1px solid var(--wp--preset--color--border); border-bottom: 1px solid var(--wp--preset--color--border);
 }
 .filters-bar--four { grid-template-columns: repeat(4, minmax(0, 1fr)); } /* no BHK field for plot/commercial-only agencies */
+.filters-bar--six { grid-template-columns: repeat(6, minmax(0, 1fr)); } /* kind and type filters both on */
 .filters-bar__field { position: relative; display: block; padding: 0 28px 0 0; border-right: 1px solid var(--wp--preset--color--border); }
 .filters-bar__field:last-child { border-right: 0; }
 .filters-bar__field + .filters-bar__field { padding-left: 28px; }
@@ -1610,4 +1611,34 @@ legend { padding: 0; }
 	.lightbox__img { border-radius: 0; }
 	.lightbox__arrow { display: none; }
 }	.lightbox__arrow { display: none; }
+}
+
+/* ---------- a project's apartments ---------- */
+.units { padding-top: 72px; }
+.units__table { width: 100%; margin-top: 28px; border-collapse: collapse; font-size: 14px; }
+.units__table th { padding: 0 12px 12px 0; border-bottom: 1px solid var(--wp--preset--color--contrast); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-align: left; color: var(--wp--preset--color--ink-muted); }
+.units__table td { padding: 16px 12px 16px 0; border-bottom: 1px solid var(--wp--preset--color--border); vertical-align: middle; }
+.units__name { font-weight: 600; color: var(--wp--preset--color--ink); }
+.units__name + small { display: block; margin-top: 2px; font-size: 12px; color: var(--wp--preset--color--ink-muted); }
+.units__num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.units__go { width: 1%; padding-right: 0 !important; text-align: right; white-space: nowrap; }
+.units__row.is-closed td { color: var(--wp--preset--color--ink-muted); }
+.units__row.is-closed .units__name { text-decoration: line-through; }
+.ph__partof { margin-top: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.75); }
+.ph__partof a { color: var(--wp--preset--color--base); text-decoration: underline; text-underline-offset: 4px; }
+.fact[hidden] { display: none; }
+.inquiry__consent { margin-top: 18px; font-size: 13px; color: var(--wp--preset--color--ink-soft); }
+/* the compact bar is out of the tab order until it shows */
+.prop-bar { visibility: hidden; }
+.prop-bar.is-visible { visibility: visible; }
+@media (max-width: 720px) {
+	.units { padding-top: 48px; }
+	.units__table thead { display: none; }
+	.units__table tr { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 14px 0; border-bottom: 1px solid var(--wp--preset--color--border); }
+	.units__table td { display: block; padding: 0; border: 0; }
+	.units__table td:first-child { grid-column: 1; }
+	.units__num { grid-column: 2; grid-row: 1; }
+	.units__go { grid-column: 1 / -1; text-align: left; }
+	.units__table td:nth-child(2)::after, .units__table td:nth-child(3)::after, .units__table td:nth-child(4)::after { content: " · "; color: var(--wp--preset--color--ink-muted); }
+	.units__table td:nth-child(2), .units__table td:nth-child(3), .units__table td:nth-child(4), .units__table td:nth-child(5) { display: inline; font-size: 13px; color: var(--wp--preset--color--ink-soft); }
 }

@@ -44,7 +44,9 @@ function bytenot_icon( $name, $size = 16 ) {
 		'area'       => '<path d="M4 4h6M4 4v6M20 20h-6M20 20v-6"/>',
 		'bed'        => '<path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/>',
 		'bath'       => '<path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-3zM6 12V6a2 2 0 0 1 2-2h1"/>',
+		'units'      => '<path d="M4 20V8l8-5 8 5v12M4 20h16M9 20v-5h6v5M8 11h2M14 11h2M8 15h2M14 15h2"/>',
 		'download'   => '<path d="M12 4v12M7 11l5 5 5-5M5 20h14"/>',
+		'play'       => '<path d="M8 5v14l11-7z"/>',
 		'check'      => '<path d="M4 12.5l5 5L20 7"/>',
 		'grid'       => '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
 		'phone'      => '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
@@ -73,7 +75,7 @@ function bytenot_the_icon( $name, $size = 16 ) {
 /**
  * Social brand glyphs (filled).
  *
- * @param string $name linkedin | x | facebook | instagram.
+ * @param string $name linkedin | x | facebook | instagram | youtube.
  * @return string
  */
 function bytenot_social_icon( $name ) {
@@ -98,12 +100,23 @@ function bytenot_inline( $html ) {
 }
 
 /**
- * The brand lockup: logo mark plus name and tagline.
+ * "2.5" from 2.5, "3" from 3.0.
+ *
+ * @param float $n Number.
+ * @return string
+ */
+function bytenot_trim_number( $n ) {
+	return rtrim( rtrim( number_format( (float) $n, 1, '.', '' ), '0' ), '.' );
+}
+
+/**
+ * The brand lockup: logo mark plus name and tagline, or a wordmark or lockup alone.
  *
  * @param string $classes Extra classes.
  * @param bool   $link    Wrap in a link to the home page.
+ * @param bool   $dark    Always the dark version (the mobile drawer); the header also gets the light one for photos.
  */
-function bytenot_brand( $classes = '', $link = true ) {
+function bytenot_brand( $classes = '', $link = true, $dark = false ) {
 	$name = get_bloginfo( 'name' );
 	$sub  = get_bloginfo( 'description' );
 	$logo = (int) get_theme_mod( 'custom_logo' );
@@ -118,7 +131,7 @@ function bytenot_brand( $classes = '', $link = true ) {
 			$w = ! empty( $size['height'] ) ? (int) round( 40 * $size['width'] / $size['height'] ) : 160;
 			return '<img class="' . esc_attr( bytenot_class( $class ) ) . '" src="' . esc_url( wp_get_attachment_url( $id ) ) . '" alt="' . esc_attr( $alt ) . '" width="' . $w . '" height="40"' . ( '' === $alt ? ' aria-hidden="true"' : '' ) . '>';
 		};
-		$light = false === strpos( $classes, 'brand--dark' ) ? (int) bytenot_mod( 'header_logo_light' ) : 0;
+		$light = $dark ? 0 : (int) bytenot_mod( 'header_logo_light' );
 		$inner = $light
 			? '<span class="brand__logos">' . $img( $logo, 'brand__logo brand__logo--dark', $name ) . $img( $light, 'brand__logo brand__logo--light', '' ) . '</span>'
 			: $img( $logo, 'brand__logo', $name );
@@ -136,23 +149,75 @@ function bytenot_brand( $classes = '', $link = true ) {
 	}
 }
 
+/* ---------- what the site lists ---------- */
+
 /**
- * What the site calls its listings, plural: "properties" by default, "projects" for a
- * developer or channel partner. Set under Customize › Listings page.
+ * The search vocabulary from Bytenot Core, with an empty fallback when the plugin is off.
  *
- * @param bool $capitalised First letter upper-cased, for buttons and menu items.
- * @return string
+ * @return array<string, mixed>
  */
-function bytenot_noun( $capitalised = false ) {
-	$noun = trim( (string) bytenot_mod( 'listing_noun' ) );
-	if ( '' === $noun ) {
-		$noun = __( 'properties', 'bytenot-estate' );
+function bytenot_search_options() {
+	static $opts = null;
+	if ( null === $opts ) {
+		$opts = function_exists( 'bytenot_core_search_options' )
+			? bytenot_core_search_options()
+			: array( 'kinds' => array(), 'primary' => '', 'types' => array(), 'typesByKind' => array(), 'intents' => array(), 'locations' => array(), 'budgets' => array(), 'configurations' => array(), 'has_config' => false );
 	}
-	return $capitalised ? mb_strtoupper( mb_substr( $noun, 0, 1 ) ) . mb_substr( $noun, 1 ) : $noun;
+	return $opts;
 }
 
 /**
- * Default primary menu when none is assigned: Home, About, Properties, Contact.
+ * The listings page for a kind (the primary kind by default).
+ *
+ * @param string $kind Kind.
+ * @return string
+ */
+function bytenot_archive_url( $kind = '' ) {
+	return function_exists( 'bytenot_core_archive_url' ) ? bytenot_core_archive_url( $kind ) : home_url( '/' );
+}
+
+/**
+ * The kind a page is about: the archive's kind, a listing's kind, else the primary kind.
+ *
+ * @return string
+ */
+function bytenot_current_kind() {
+	if ( ! function_exists( 'bytenot_core_kind_of' ) ) {
+		return '';
+	}
+	if ( is_singular( 'listing' ) ) {
+		return bytenot_core_kind_of( get_the_ID() );
+	}
+	$kind = is_post_type_archive( 'listing' ) ? sanitize_key( (string) get_query_var( 'kind' ) ) : '';
+	return $kind && isset( bytenot_core_kinds( true )[ $kind ] ) ? $kind : bytenot_core_primary_kind();
+}
+
+/**
+ * What listings are called on this page, plural: "projects", "properties".
+ *
+ * @param bool   $capitalised First letter upper-cased, for buttons and menu items.
+ * @param string $kind        A specific kind, else the current one.
+ * @return string
+ */
+function bytenot_noun( $capitalised = false, $kind = '' ) {
+	$noun = function_exists( 'bytenot_core_kind_label' ) ? bytenot_core_kind_label( $kind ?: bytenot_current_kind(), true ) : __( 'Listings', 'bytenot-estate' );
+	return $capitalised ? $noun : mb_strtolower( $noun );
+}
+
+/**
+ * One listing is called ... "project", "apartment".
+ *
+ * @param string $kind        Kind.
+ * @param bool   $capitalised First letter upper-cased.
+ * @return string
+ */
+function bytenot_kind_one( $kind, $capitalised = false ) {
+	$word = function_exists( 'bytenot_core_kind_label' ) ? bytenot_core_kind_label( $kind, false ) : __( 'Listing', 'bytenot-estate' );
+	return $capitalised ? $word : mb_strtolower( $word );
+}
+
+/**
+ * Default primary menu when none is assigned: Home, About, the primary kind, Contact.
  *
  * @param array $args Menu args.
  */
@@ -161,7 +226,7 @@ function bytenot_menu_fallback( $args ) {
 	$items = array(
 		array( __( 'Home', 'bytenot-estate' ), $home, is_front_page() ),
 		array( __( 'About Us', 'bytenot-estate' ), $home . '#about', false ),
-		array( bytenot_noun( true ), get_post_type_archive_link( 'property' ) ?: $home, is_post_type_archive( 'property' ) || is_singular( 'property' ) ),
+		array( bytenot_noun( true, function_exists( 'bytenot_core_primary_kind' ) ? bytenot_core_primary_kind() : '' ), bytenot_archive_url(), is_post_type_archive( 'listing' ) || is_singular( 'listing' ) ),
 		array( __( 'Contact Us', 'bytenot-estate' ), $home . '#inquiry', false ),
 	);
 	$nav = 'nav__list' === $args['menu_class'];
@@ -209,40 +274,19 @@ function bytenot_language_switcher() {
 }
 
 /**
- * Plural labels for property types, for footer links and result headings.
+ * The agency's phone, WhatsApp number, phone prefix and public email.
  *
- * @param string[] $slugs Type slugs.
- * @return array<string, string>
- */
-function bytenot_type_plurals( $slugs ) {
-	$known = array(
-		'apartment'  => __( 'Apartments', 'bytenot-estate' ),
-		'villa'      => __( 'Villas', 'bytenot-estate' ),
-		'plot'       => __( 'Plots', 'bytenot-estate' ),
-		'commercial' => __( 'Commercial spaces', 'bytenot-estate' ),
-	);
-	$out   = array();
-	$vocab = function_exists( 'bytenot_core_vocabularies' ) ? bytenot_core_vocabularies()['property_type'] : array();
-	foreach ( $slugs as $slug ) {
-		$out[ $slug ] = $known[ $slug ] ?? ( $vocab[ $slug ] ?? ucfirst( $slug ) );
-	}
-	return $out;
-}
-
-/**
- * The agency's phone, WhatsApp number and public email.
- *
- * @param string $key phone | whatsapp | email | rera | rera_state.
+ * @param string $key phone | whatsapp | email | rera | rera_state | prefix.
  * @return string
  */
 function bytenot_contact( $key ) {
 	if ( 'email' === $key ) {
-		return (string) get_theme_mod( 'bytenot_contact_email', '' );
+		return (string) bytenot_mod( 'contact_email' );
 	}
 	if ( ! function_exists( 'bytenot_core_setting' ) ) {
-		return '';
+		return 'prefix' === $key ? '+91' : '';
 	}
-	$map = array( 'phone' => 'phone', 'whatsapp' => 'whatsapp', 'rera' => 'rera_number', 'rera_state' => 'rera_state' );
+	$map = array( 'phone' => 'phone', 'whatsapp' => 'whatsapp', 'rera' => 'rera_number', 'rera_state' => 'rera_state', 'prefix' => 'phone_prefix' );
 	return (string) bytenot_core_setting( $map[ $key ] ?? $key );
 }
 
@@ -271,15 +315,18 @@ function bytenot_wa( $number, $text = '' ) {
 	return 'https://wa.me/' . $number . ( $text ? '?text=' . rawurlencode( $text ) : '' );
 }
 
+/* ---------- listings ---------- */
+
 /**
  * One listing as the templates and the script see it.
  *
- * @param int $id Property ID.
+ * @param int $id Listing ID.
  * @return array<string, mixed>
  */
 function bytenot_listing( $id ) {
 	$get   = static fn( $k ) => bytenot_core_get( $id, $k );
-	$type  = get_the_terms( $id, 'property_type' );
+	$kind  = bytenot_core_kind_of( $id );
+	$type  = get_the_terms( $id, 'listing_type' );
 	$type  = $type && ! is_wp_error( $type ) ? $type[0] : null;
 	$poss  = get_the_terms( $id, 'possession' );
 	$poss  = $poss && ! is_wp_error( $poss ) ? $poss[0] : null;
@@ -301,19 +348,49 @@ function bytenot_listing( $id ) {
 			$area = $city;
 		}
 	}
-	$rent   = bytenot_core_is_rent( $id );
-	$plot   = $type && 'plot' === $type->slug;
-	$unit   = $get( 'area_unit' ) ?: ( $plot ? 'sqyd' : 'sqft' );
-	$sqft   = (float) $get( 'area_primary' );
-	$price  = (int) $get( 'price' );
-	$bhk    = (float) $get( 'bedrooms' );
-	$baths  = (float) $get( 'bathrooms' );
-	$status = bytenot_listing_status( $id, $rent, $poss );
-	$img    = get_the_post_thumbnail_url( $id, 'bytenot-card' );
+	$project = 'project' === $kind;
+	$rent    = ! $project && bytenot_core_is_rent( $id );
+	$land    = $type && preg_match( '/plot|land/i', $type->slug );
+	$unit    = $get( 'area_unit' ) ?: ( $land ? 'sqyd' : 'sqft' );
+	$sqft    = (float) $get( 'area_primary' );
+	$price   = (int) $get( 'price' );
+	$min     = (int) $get( 'price_min' );
+	$max     = (int) $get( 'price_max' );
+	$bhk     = (float) $get( 'bedrooms' );
+	$baths   = (float) $get( 'bathrooms' );
+	$img     = get_the_post_thumbnail_url( $id, 'bytenot-card' );
+	$parent  = bytenot_core_project_of( $id );
+	$units   = $project ? ( (int) $get( 'units_total' ) ?: (int) $get( 'units_listed' ) ) : 0;
+	$bhk_txt = $get( 'bedroom_label' ) ?: ( $bhk ? sprintf( /* translators: %s: bedrooms. */ __( '%s BHK', 'bytenot-estate' ), bytenot_trim_number( $bhk ) ) : '' );
+	$config  = (string) $get( 'config_label' );
+
+	if ( $project ) {
+		$facts = array(
+			bytenot_core_format_area_range( $get( 'area_min' ), $get( 'area_max' ), $unit ),
+			$config,
+			/* translators: %d: units. */
+			$units ? sprintf( _n( '%d unit', '%d units', $units, 'bytenot-estate' ), $units ) : bytenot_trim_number( (int) $get( 'towers' ) ) . ' ' . __( 'towers', 'bytenot-estate' ),
+		);
+		if ( ! (int) $get( 'towers' ) && ! $units ) {
+			$facts[2] = '';
+		}
+		$price_text = $get( 'price_on_request' ) ? __( 'Price on request', 'bytenot-estate' ) : bytenot_core_format_range( $min, $max );
+		$psf        = $config && $type ? trim( $config . ' ' . mb_strtolower( $type->name ) ) : '';
+	} else {
+		$facts = array(
+			bytenot_core_format_area( $sqft, $unit ),
+			$bhk > 0 ? $bhk_txt : ( $type ? $type->name : '' ),
+			$baths > 0 ? sprintf( /* translators: %s: bathrooms. */ _n( '%s Bath', '%s Baths', (int) ceil( $baths ), 'bytenot-estate' ), bytenot_trim_number( $baths ) ) : '',
+		);
+		$price_text = $get( 'price_on_request' ) ? __( 'Price on request', 'bytenot-estate' ) : bytenot_core_format_price( $price, $rent );
+		$psf        = $rent ? __( 'per month', 'bytenot-estate' ) : bytenot_core_format_psf( $id );
+	}
 	return array(
 		'id'         => $id,
 		'title'      => get_the_title( $id ),
 		'url'        => get_permalink( $id ),
+		'kind'       => $kind,
+		'kindLabel'  => bytenot_kind_one( $kind, true ),
 		'type'       => $type ? $type->slug : '',
 		'typeLabel'  => $type ? $type->name : '',
 		'city'       => $city ? $city->slug : '',
@@ -321,17 +398,21 @@ function bytenot_listing( $id ) {
 		'area'       => $area ? $area->name : '',
 		'place'      => bytenot_core_format_place( $id ),
 		'bhk'        => $bhk,
-		'bhkLabel'   => $get( 'bedroom_label' ) ?: ( $bhk ? sprintf( /* translators: %s: bedrooms. */ __( '%s BHK', 'bytenot-estate' ), rtrim( rtrim( number_format( $bhk, 1, '.', '' ), '0' ), '.' ) ) : '' ),
+		'bhkLabel'   => $bhk_txt,
+		'bhkSet'     => array_values( array_filter( array_map( 'floatval', explode( ',', (string) $get( 'bhk_set' ) ) ) ) ),
 		'baths'      => $baths,
 		'sqft'       => $sqft,
 		'unit'       => $unit,
-		'areaText'   => bytenot_core_format_area( $sqft, $unit ),
-		'price'      => $price,
-		'priceText'  => bytenot_core_format_price( $price, $rent ),
-		'psf'        => $rent ? __( 'per month', 'bytenot-estate' ) : bytenot_core_format_psf( $id ),
+		'areaText'   => $facts[0],
+		'facts'      => $facts,
+		'price'      => $project ? $min : $price,
+		'priceMin'   => $min,
+		'priceMax'   => $max,
+		'priceText'  => $price_text,
+		'psf'        => $psf,
 		'intent'     => $rent ? 'rent' : 'buy',
 		'possession' => $poss ? $poss->slug : '',
-		'status'     => $status,
+		'status'     => bytenot_listing_status( $id, $rent, $poss ),
 		'line'       => bytenot_core_format_line( $id ),
 		'img'        => $img ?: '',
 		'thumb'      => get_the_post_thumbnail_url( $id, 'thumbnail' ) ?: '',
@@ -340,13 +421,20 @@ function bytenot_listing( $id ) {
 		'featured'   => (bool) $get( 'featured' ),
 		'why'        => (string) $get( 'featured_reason' ),
 		'ref'        => (string) $get( 'reference_id' ),
+		'parent'     => $parent ? array( 'id' => $parent, 'title' => get_the_title( $parent ), 'url' => get_permalink( $parent ) ) : null,
+		'units'      => $units,
+		'developer'  => $project ? bytenot_core_developer_name( $id ) : '',
+		'tower'      => (string) $get( 'tower' ),
+		'unitNo'     => (string) $get( 'unit_no' ),
+		'cta'        => $project ? sprintf( /* translators: %s: kind, e.g. "project". */ __( 'View %s', 'bytenot-estate' ), bytenot_kind_one( $kind ) ) : __( 'Book a visit', 'bytenot-estate' ),
+		'ctaHref'    => $project ? get_permalink( $id ) : get_permalink( $id ) . '#visit',
 	);
 }
 
 /**
  * The short status a card shows: "Ready to move", "Available now", "Possession Dec 2026".
  *
- * @param int          $id   Property ID.
+ * @param int          $id   Listing ID.
  * @param bool         $rent For rent.
  * @param WP_Term|null $poss Possession term.
  * @return string
@@ -360,28 +448,32 @@ function bytenot_listing_status( $id, $rent, $poss ) {
 		}
 		return __( 'Available now', 'bytenot-estate' );
 	}
-	if ( $poss && 'under-construction' === $poss->slug && $date ) {
+	if ( $poss && in_array( $poss->slug, array( 'under-construction', 'new-launch' ), true ) && $date && strtotime( $date ) > time() ) {
 		/* translators: %s: year or date. */
-		return sprintf( __( 'Possession %s', 'bytenot-estate' ), wp_date( strlen( $date ) > 7 ? 'M Y' : 'Y', strtotime( $date ) ) );
+		return sprintf( __( 'Possession %s', 'bytenot-estate' ), wp_date( strlen( $date ) > 7 ? 'M Y' : 'M Y', strtotime( $date ) ) );
 	}
 	return $poss ? $poss->name : __( 'For sale', 'bytenot-estate' );
 }
 
 /**
- * All open listings, newest first, as the listing page's data set.
+ * All open listings of a kind, curated order then newest, as the listing page's data set.
  *
+ * @param string $kind Kind; empty for the current kind.
  * @return array<int, array<string, mixed>>
  */
-function bytenot_listings() {
+function bytenot_listings( $kind = '' ) {
 	$ids = get_posts(
 		array(
-			'post_type'      => 'property',
+			'post_type'      => 'listing',
 			'post_status'    => 'publish',
 			'posts_per_page' => 300,
 			'fields'         => 'ids',
 			'no_found_rows'  => true,
 			'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'DESC' ),
-			'tax_query'      => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses(), 'operator' => 'NOT IN' ) ),
+			'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				array( 'taxonomy' => 'listing_kind', 'field' => 'slug', 'terms' => $kind ?: bytenot_current_kind() ),
+				array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses(), 'operator' => 'NOT IN' ),
+			),
 		)
 	);
 	return array_map( 'bytenot_listing', $ids );
@@ -395,24 +487,24 @@ function bytenot_listings() {
  */
 function bytenot_featured_items( $count = 4 ) {
 	$base  = array(
-		'post_type'     => 'property',
+		'post_type'     => 'listing',
 		'post_status'   => 'publish',
 		'fields'        => 'ids',
 		'no_found_rows' => true,
-		'tax_query'     => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses(), 'operator' => 'NOT IN' ) ),
+		'tax_query'     => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses(), 'operator' => 'NOT IN' ) ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 	);
-	$ids   = get_posts( array_merge( $base, array( 'posts_per_page' => $count, 'meta_key' => 'pc_featured', 'meta_value' => '1', 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) );
+	$ids   = get_posts( array_merge( $base, array( 'posts_per_page' => $count, 'meta_key' => 'bn_featured', 'meta_value' => '1', 'orderby' => array( 'menu_order' => 'ASC', 'date' => 'DESC' ) ) ) ); // phpcs:ignore WordPress.DB.SlowDBQuery
 	if ( count( $ids ) < $count ) {
-		$ids = array_merge( $ids, get_posts( array_merge( $base, array( 'posts_per_page' => $count - count( $ids ), 'post__not_in' => $ids ) ) ) );
+		$ids = array_merge( $ids, get_posts( array_merge( $base, array( 'posts_per_page' => $count - count( $ids ), 'post__not_in' => $ids ) ) ) ); // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
 	}
 	$items = array();
 	foreach ( $ids as $id ) {
-		$l           = bytenot_listing( $id );
-		$l['why']    = $l['why'] ?: __( 'New this week', 'bytenot-estate' );
-		$l['meta']   = $l['place'] . ' · ' . ( $l['bhkLabel'] ?: $l['areaText'] );
-		$l['visit']  = $l['url'] . '#visit';
-		$l['alt']    = $l['title'] . ', ' . $l['area'];
-		$items[]     = $l;
+		$l          = bytenot_listing( $id );
+		$l['why']   = $l['why'] ?: __( 'New this week', 'bytenot-estate' );
+		$l['meta']  = $l['place'] . ' · ' . ( 'project' === $l['kind'] ? ( $l['facts'][1] ?: $l['facts'][0] ) : ( $l['bhkLabel'] ?: $l['areaText'] ) );
+		$l['visit'] = $l['url'] . '#visit';
+		$l['alt']   = $l['title'] . ', ' . $l['area'];
+		$items[]    = $l;
 	}
 	return $items;
 }
@@ -420,41 +512,34 @@ function bytenot_featured_items( $count = 4 ) {
 /**
  * A listing card (listing page, nearby, and the script's template).
  *
- * @param array|null $p   Listing array from bytenot_listing(); null prints the empty template.
- * @param string     $cta visit | view.
+ * @param array|null $p Listing array from bytenot_listing(); null prints the empty template.
  */
-function bytenot_card( $p, $cta = 'visit' ) {
+function bytenot_card( $p ) {
 	$empty = null === $p;
-	$p     = $p ?: array( 'url' => '#', 'img' => '', 'title' => '', 'area' => '', 'status' => '', 'place' => '', 'priceText' => '', 'areaText' => '', 'bhkLabel' => '', 'baths' => 0, 'type' => '' );
-	$href  = $empty ? '#' : $p['url'];
-	$beds  = 'plot' === $p['type'] ? __( 'Plot', 'bytenot-estate' ) : $p['bhkLabel'];
-	$baths = 'plot' === $p['type'] ? __( 'Gated', 'bytenot-estate' ) : ( $p['baths'] ? sprintf( /* translators: %s: bathrooms. */ _n( '%s Bath', '%s Baths', (int) $p['baths'], 'bytenot-estate' ), rtrim( rtrim( number_format( $p['baths'], 1, '.', '' ), '0' ), '.' ) ) : '' );
+	$p     = $p ?: array( 'url' => '#', 'img' => '', 'title' => '', 'area' => '', 'status' => '', 'place' => '', 'priceText' => '', 'facts' => array( '', '', '' ), 'kind' => '', 'cta' => '', 'ctaHref' => '#' );
+	$icons = array( 'area', 'bed', 'project' === $p['kind'] ? 'units' : 'bath' );
 	?>
-	<li class="card">
-		<a class="card__media" href="<?php echo esc_url( $href ); ?>">
+	<li class="card" data-kind="<?php echo esc_attr( $p['kind'] ); ?>">
+		<a class="card__media" href="<?php echo esc_url( $p['url'] ); ?>">
 			<img class="card__img" src="<?php echo esc_url( $p['img'] ); ?>" alt="<?php echo esc_attr( $empty ? '' : $p['title'] . ', ' . $p['area'] ); ?>" width="900" height="660" loading="lazy">
 		</a>
 		<span class="card__tab"><span class="card__status"><?php echo esc_html( $p['status'] ); ?></span></span>
 		<div class="card__body">
 		<div class="card__head">
-			<h3 class="card__title"><a href="<?php echo esc_url( $href ); ?>"><?php echo esc_html( $p['title'] ); ?></a></h3>
+			<h3 class="card__title"><a href="<?php echo esc_url( $p['url'] ); ?>"><?php echo esc_html( $p['title'] ); ?></a></h3>
 			<p class="card__place">
 				<?php bytenot_the_icon( 'pin', 14 ); ?>
 				<span><?php echo esc_html( $p['place'] ); ?></span>
 			</p>
 		</div>
 		<ul class="card__facts">
-			<li class="fact"><?php bytenot_the_icon( 'area', 14 ); ?><span data-fact="area"><?php echo esc_html( $p['areaText'] ); ?></span></li>
-			<li class="fact"><?php bytenot_the_icon( 'bed', 14 ); ?><span data-fact="beds"><?php echo esc_html( $empty ? '' : $beds ); ?></span></li>
-			<li class="fact"><?php bytenot_the_icon( 'bath', 14 ); ?><span data-fact="baths"><?php echo esc_html( $empty ? '' : $baths ); ?></span></li>
+			<?php foreach ( $p['facts'] as $bytenot_i => $bytenot_fact ) : ?>
+			<li class="fact"<?php echo '' === $bytenot_fact && ! $empty ? ' hidden' : ''; ?>><?php if ( $empty && 2 === $bytenot_i ) : ?><span class="fact__icon" data-icon="bath"><?php bytenot_the_icon( 'bath', 14 ); ?></span><span class="fact__icon" data-icon="units" hidden><?php bytenot_the_icon( 'units', 14 ); ?></span><?php else : ?><span class="fact__icon"><?php bytenot_the_icon( $icons[ $bytenot_i ], 14 ); ?></span><?php endif; ?><span data-fact="<?php echo (int) $bytenot_i; ?>"><?php echo esc_html( $bytenot_fact ); ?></span></li>
+			<?php endforeach; ?>
 		</ul>
 		<div class="card__foot">
 			<p class="card__price"><?php echo esc_html( $p['priceText'] ); ?></p>
-			<?php if ( 'view' === $cta ) : ?>
-			<a class="btn btn--accent btn--sm" href="<?php echo esc_url( $href ); ?>"><?php esc_html_e( 'View home', 'bytenot-estate' ); ?> <?php bytenot_the_icon( 'arrow' ); ?></a>
-			<?php else : ?>
-			<a class="btn btn--accent btn--sm" href="<?php echo esc_url( $empty ? '#' : $href . '#visit' ); ?>"><?php esc_html_e( 'Book a visit', 'bytenot-estate' ); ?> <?php bytenot_the_icon( 'arrow' ); ?></a>
-			<?php endif; ?>
+			<a class="btn btn--accent btn--sm" href="<?php echo esc_url( $p['ctaHref'] ); ?>" data-cta><span data-cta-text><?php echo esc_html( $p['cta'] ); ?></span> <?php bytenot_the_icon( 'arrow' ); ?></a>
 		</div>
 		</div>
 	</li>
@@ -472,11 +557,23 @@ function bytenot_lead_fields() {
 }
 
 /**
+ * The phone field's country prefix and the input, shared by both forms.
+ *
+ * @param string $class Input class.
+ */
+function bytenot_phone_input( $class ) {
+	$prefix = bytenot_contact( 'prefix' );
+	?>
+	<span class="<?php echo esc_attr( bytenot_class( $class . '__phone' ) ); ?>"><?php if ( $prefix ) : ?><span class="<?php echo esc_attr( bytenot_class( $class . '__prefix' ) ); ?>"><?php echo esc_html( $prefix ); ?></span><?php endif; ?><input class="<?php echo esc_attr( bytenot_class( $class . '__input' ) ); ?>" type="tel" name="phone" inputmode="tel" minlength="8" maxlength="15" autocomplete="<?php echo $prefix ? 'tel-national' : 'tel'; ?>" required></span>
+	<?php
+}
+
+/**
  * Customizer image as an <img>, or nothing.
  *
- * @param string $mod   Theme mod holding an attachment ID.
- * @param string $size  Image size.
- * @param array  $attrs Attributes.
+ * @param string $mod      Theme mod holding an attachment ID.
+ * @param string $size     Image size.
+ * @param array  $attrs    Attributes.
  * @param string $fallback Fallback URL (theme file) when no image is set.
  */
 function bytenot_mod_image( $mod, $size, $attrs = array(), $fallback = '' ) {
@@ -524,7 +621,7 @@ function bytenot_svg_size( $id ) {
 }
 
 /**
- * A partner logo's shape from its proportions: wide strips, tall blocks, square marks
+ * A logo's shape from its proportions: wide strips, tall blocks, square marks
  * (shown with the name beside them), or normal.
  *
  * @param int $id Attachment ID.

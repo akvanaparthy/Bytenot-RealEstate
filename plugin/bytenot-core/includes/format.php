@@ -1,6 +1,6 @@
 <?php
 /**
- * Formatting helpers: Indian price notation, areas, labels.
+ * Formatting helpers: Indian price notation, areas, one-line summaries.
  *
  * @package bytenot-core
  */
@@ -31,6 +31,25 @@ function bytenot_core_format_price( $amount, $rent = false ) {
 }
 
 /**
+ * A project's price range: "₹1.2 Cr – ₹1.9 Cr", or "From ₹1.2 Cr" when only one end is known.
+ *
+ * @param int $min From.
+ * @param int $max To.
+ * @return string
+ */
+function bytenot_core_format_range( $min, $max ) {
+	$min = (int) $min;
+	$max = (int) $max;
+	if ( $min > 0 && $max > $min ) {
+		/* translators: 1: lowest price, 2: highest price. */
+		return sprintf( __( '%1$s – %2$s', 'bytenot-core' ), bytenot_core_format_price( $min ), bytenot_core_format_price( $max ) );
+	}
+	$one = $min > 0 ? $min : $max;
+	/* translators: %s: price. */
+	return $one > 0 ? sprintf( __( 'From %s', 'bytenot-core' ), bytenot_core_format_price( $one ) ) : '';
+}
+
+/**
  * Indian digit grouping: 1,23,456.
  *
  * @param int|float $n Number.
@@ -57,19 +76,46 @@ function bytenot_core_format_area( $value, $unit = 'sqft' ) {
 	if ( (float) $value <= 0 ) {
 		return '';
 	}
+	return bytenot_core_format_indian( $value ) . ' ' . bytenot_core_area_unit_label( $unit );
+}
+
+/**
+ * An area range: "1,250–1,850 sq ft".
+ *
+ * @param float  $min  From.
+ * @param float  $max  To.
+ * @param string $unit Unit key.
+ * @return string
+ */
+function bytenot_core_format_area_range( $min, $max, $unit = 'sqft' ) {
+	$min = (float) $min;
+	$max = (float) $max;
+	if ( $min > 0 && $max > $min ) {
+		return bytenot_core_format_indian( $min ) . '–' . bytenot_core_format_indian( $max ) . ' ' . bytenot_core_area_unit_label( $unit );
+	}
+	return bytenot_core_format_area( $min > 0 ? $min : $max, $unit );
+}
+
+/**
+ * Unit label: "sq ft".
+ *
+ * @param string $unit Unit key.
+ * @return string
+ */
+function bytenot_core_area_unit_label( $unit ) {
 	$units = array(
 		'sqft' => __( 'sq ft', 'bytenot-core' ),
 		'sqyd' => __( 'sq yd', 'bytenot-core' ),
 		'sqm'  => __( 'sq m', 'bytenot-core' ),
 		'acre' => __( 'acres', 'bytenot-core' ),
 	);
-	return bytenot_core_format_indian( $value ) . ' ' . ( $units[ $unit ] ?? $unit );
+	return $units[ $unit ] ?? $unit;
 }
 
 /**
  * Price per unit of area: "₹6,575 per sq ft".
  *
- * @param int $post_id Property ID.
+ * @param int $post_id Listing ID.
  * @return string
  */
 function bytenot_core_format_psf( $post_id ) {
@@ -86,7 +132,7 @@ function bytenot_core_format_psf( $post_id ) {
 /**
  * Is the listing for rent?
  *
- * @param int $post_id Property ID.
+ * @param int $post_id Listing ID.
  * @return bool
  */
 function bytenot_core_is_rent( $post_id ) {
@@ -94,16 +140,44 @@ function bytenot_core_is_rent( $post_id ) {
 }
 
 /**
- * "4 BHK villa · 3,650 sq ft · Ready to move".
+ * The sub-type's name: "Villa", "Plots".
  *
- * @param int $post_id Property ID.
+ * @param int $post_id Listing ID.
+ * @return string
+ */
+function bytenot_core_type_name( $post_id ) {
+	$type = get_the_terms( $post_id, 'listing_type' );
+	return $type && ! is_wp_error( $type ) ? $type[0]->name : '';
+}
+
+/**
+ * One line: "4 BHK villa · 3,650 sq ft · Ready to move" for a home,
+ * "2, 3 BHK apartments · 42 units · by Aparna" for a project.
+ *
+ * @param int $post_id Listing ID.
  * @return string
  */
 function bytenot_core_format_line( $post_id ) {
 	$parts = array();
+	$type  = bytenot_core_type_name( $post_id );
+	if ( 'project' === bytenot_core_kind_of( $post_id ) ) {
+		$config = bytenot_core_get( $post_id, 'config_label' );
+		if ( $config || $type ) {
+			$parts[] = trim( $config . ' ' . strtolower( $type ) );
+		}
+		$units = (int) bytenot_core_get( $post_id, 'units_total' ) ?: (int) bytenot_core_get( $post_id, 'units_listed' );
+		if ( $units ) {
+			/* translators: %d: units. */
+			$parts[] = sprintf( _n( '%d unit', '%d units', $units, 'bytenot-core' ), $units );
+		}
+		$dev = bytenot_core_developer_name( $post_id );
+		if ( $dev ) {
+			/* translators: %s: developer. */
+			$parts[] = sprintf( __( 'by %s', 'bytenot-core' ), $dev );
+		}
+		return implode( ' · ', $parts );
+	}
 	$label = bytenot_core_get( $post_id, 'bedroom_label' );
-	$type  = get_the_terms( $post_id, 'property_type' );
-	$type  = $type && ! is_wp_error( $type ) ? $type[0]->name : '';
 	if ( $label ) {
 		$parts[] = trim( $label . ' ' . strtolower( $type ) );
 	} elseif ( $type ) {
@@ -118,6 +192,20 @@ function bytenot_core_format_line( $post_id ) {
 		$parts[] = $poss[0]->name;
 	}
 	return implode( ' · ', $parts );
+}
+
+/**
+ * A project's developer: the partner's name, or the typed name.
+ *
+ * @param int $post_id Listing ID.
+ * @return string
+ */
+function bytenot_core_developer_name( $post_id ) {
+	$partner = (int) bytenot_core_get( $post_id, 'developer_id' );
+	if ( $partner && 'partner' === get_post_type( $partner ) ) {
+		return get_the_title( $partner );
+	}
+	return (string) bytenot_core_get( $post_id, 'developer' );
 }
 
 /**

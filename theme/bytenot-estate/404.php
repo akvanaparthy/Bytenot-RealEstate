@@ -18,7 +18,7 @@ get_header();
 			<p class="prose page-lede"><?php esc_html_e( 'The home you are looking for may have been sold or the address mistyped. Browse the current listings or search below.', 'bytenot-estate' ); ?></p>
 		</header>
 		<div class="page-actions">
-			<a class="btn btn--dark" href="<?php echo esc_url( get_post_type_archive_link( 'property' ) ?: home_url( '/' ) ); ?>"><?php esc_html_e( 'See all properties', 'bytenot-estate' ); ?> <?php bytenot_the_icon( 'arrow' ); ?></a>
+			<a class="btn btn--dark" href="<?php echo esc_url( bytenot_archive_url() ); ?>"><?php echo esc_html( sprintf( /* translators: %s: what listings are called, e.g. "projects". */ __( 'See all %s', 'bytenot-estate' ), bytenot_noun() ) ); ?> <?php bytenot_the_icon( 'arrow' ); ?></a>
 			<a class="btn btn--outline" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Back home', 'bytenot-estate' ); ?></a>
 		</div>
 		<?php get_search_form(); ?>

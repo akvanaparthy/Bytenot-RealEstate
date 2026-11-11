@@ -3,14 +3,14 @@
  * Private preview: while it is on, only logged-in users (or visitors with the preview
  * code) see the site. Everyone else gets a holding page with a 503 status and a
  * noindex header; feeds, the REST API, sitemaps and robots.txt are closed too, so
- * nothing is indexed before launch. One switch under Properties › Setup turns it off.
+ * nothing is indexed before launch. One switch under Bytenot › Tools turns it off.
  *
  * @package bytenot-core
  */
 
 defined( 'ABSPATH' ) || exit;
 
-const BYTENOT_CORE_PREVIEW_COOKIE = 'pc_preview';
+const BYTENOT_CORE_PREVIEW_COOKIE = 'bytenot_preview';
 
 /**
  * Is the preview lock on?
@@ -101,11 +101,22 @@ function bytenot_core_preview_gate() {
 add_action( 'template_redirect', 'bytenot_core_preview_gate', 0 );
 
 /**
- * The holding page: the site name, the tagline and one line. No theme, no scripts.
+ * The holding page: the logo or the site name, the tagline and one line, in the theme's
+ * own colours. No theme templates, no scripts.
  */
 function bytenot_core_preview_page() {
-	$name = get_bloginfo( 'name' );
-	$tag  = get_bloginfo( 'description' );
+	$name    = get_bloginfo( 'name' );
+	$tag     = get_bloginfo( 'description' );
+	$palette = (array) wp_get_global_settings( array( 'color', 'palette', 'theme' ) );
+	$colors  = array();
+	foreach ( $palette as $c ) {
+		if ( isset( $c['slug'], $c['color'] ) ) {
+			$colors[ $c['slug'] ] = $c['color'];
+		}
+	}
+	$bg    = $colors['contrast'] ?? '#1b2630';
+	$gold  = $colors['primary'] ?? '#d9c58f';
+	$logo  = has_custom_logo() ? wp_get_attachment_image_url( (int) get_theme_mod( 'bytenot_header_logo_light' ) ?: (int) get_theme_mod( 'custom_logo' ), 'full' ) : '';
 	?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -116,20 +127,23 @@ function bytenot_core_preview_page() {
 <title><?php echo esc_html( $name ); ?></title>
 <style>
 	html { height: 100%; }
-	body { min-height: 100%; margin: 0; display: grid; place-items: center; padding: 24px; box-sizing: border-box; background: #142f3f; color: #fff; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+	body { min-height: 100%; margin: 0; display: grid; place-items: center; padding: 24px; box-sizing: border-box; background: <?php echo esc_html( $bg ); ?>; color: #fff; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
 	.card { text-align: center; max-width: 560px; }
-	.mark { width: 56px; height: 56px; margin: 0 auto 28px; }
+	.logo { display: block; max-width: min(320px, 70vw); max-height: 96px; margin: 0 auto; }
 	h1 { margin: 0; font-size: clamp(28px, 5vw, 44px); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-	.tag { margin: 6px 0 0; font-size: 12px; letter-spacing: .34em; text-transform: uppercase; color: #f9ebb2; }
+	.tag { margin: 6px 0 0; font-size: 12px; letter-spacing: .34em; text-transform: uppercase; color: <?php echo esc_html( $gold ); ?>; }
 	p.lede { margin: 32px 0 0; font-size: 17px; color: rgba(255, 255, 255, .78); }
-	a { color: #f9ebb2; }
+	a { color: <?php echo esc_html( $gold ); ?>; }
 </style>
 </head>
 <body>
 	<div class="card">
-		<svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f9ebb2"/><stop offset="1" stop-color="#897749"/></linearGradient></defs><path fill="url(#g)" d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z"/></svg>
+		<?php if ( $logo ) : ?>
+		<img class="logo" src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( $name ); ?>">
+		<?php else : ?>
 		<h1><?php echo esc_html( $name ); ?></h1>
 		<?php if ( $tag ) : ?><p class="tag"><?php echo esc_html( $tag ); ?></p><?php endif; ?>
+		<?php endif; ?>
 		<p class="lede"><?php esc_html_e( 'We are putting the finishing touches on our new home. Back very soon.', 'bytenot-core' ); ?></p>
 	</div>
 </body>
@@ -200,8 +214,8 @@ function bytenot_core_preview_admin_bar( $bar ) {
 	}
 	$bar->add_node(
 		array(
-			'id'    => 'pc-preview',
-			'title' => '<span style="color:#f9ebb2">● ' . esc_html__( 'Private preview on', 'bytenot-core' ) . '</span>',
+			'id'    => 'bytenot-preview',
+			'title' => '● ' . esc_html__( 'Private preview on', 'bytenot-core' ),
 			'href'  => admin_url( 'admin.php?page=bytenot-tools' ),
 			'meta'  => array( 'title' => __( 'Only logged-in users can see the site. Switch off under Bytenot › Tools.', 'bytenot-core' ) ),
 		)

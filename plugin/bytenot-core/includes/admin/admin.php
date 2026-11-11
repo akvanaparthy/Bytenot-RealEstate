@@ -21,6 +21,15 @@ require_once __DIR__ . '/editor.php';
 const BYTENOT_CORE_MENU = 'bytenot';
 
 /**
+ * The post types the admin dresses: the listing, then the content types.
+ *
+ * @return string[]
+ */
+function bytenot_core_post_types() {
+	return array( 'listing', 'agent', 'testimonial', 'faq', 'partner' );
+}
+
+/**
  * The screens: slug => [ title, capability, renderer ].
  *
  * @return array<string, array{0:string,1:string,2:callable}>
@@ -55,7 +64,7 @@ function bytenot_core_admin_menu_order() {
 	if ( empty( $submenu[ BYTENOT_CORE_MENU ] ) ) {
 		return;
 	}
-	$order = array( 'bytenot', 'bytenot-leads', 'edit.php?post_type=property', 'edit.php?post_type=project', 'edit.php?post_type=agent', 'edit.php?post_type=testimonial', 'edit.php?post_type=faq', 'edit.php?post_type=partner', 'bytenot-setup', 'bytenot-integrations', 'bytenot-tools' );
+	$order = array_merge( array( 'bytenot', 'bytenot-leads' ), array_map( static fn( $t ) => 'edit.php?post_type=' . $t, bytenot_core_post_types() ), array( 'bytenot-setup', 'bytenot-integrations', 'bytenot-tools' ) );
 	$items = $submenu[ BYTENOT_CORE_MENU ];
 	usort(
 		$items,
@@ -80,19 +89,29 @@ function bytenot_core_admin_current() {
 }
 
 /**
+ * Is the current screen one of the plugin's post types' list tables?
+ *
+ * @return string Post type or ''.
+ */
+function bytenot_core_admin_list_type() {
+	$screen = get_current_screen();
+	return $screen && 'edit' === $screen->base && in_array( $screen->post_type, bytenot_core_post_types(), true ) ? $screen->post_type : '';
+}
+
+/**
  * Stylesheet and script on the plugin's screens (and the light touch on its post lists).
  *
  * @param string $hook Hook suffix.
  */
 function bytenot_core_admin_assets( $hook ) {
 	$screen = get_current_screen();
-	$ours   = bytenot_core_admin_current() || ( $screen && in_array( $screen->post_type, array( 'property', 'project', 'agent', 'enquiry', 'testimonial', 'faq', 'partner' ), true ) );
+	$ours   = bytenot_core_admin_current() || ( $screen && in_array( $screen->post_type, array_merge( bytenot_core_post_types(), array( 'enquiry' ) ), true ) );
 	if ( ! $ours ) {
 		return;
 	}
 	wp_enqueue_style( 'bytenot-core-admin', BYTENOT_CORE_URL . 'assets/admin/admin.css', array(), BYTENOT_CORE_VERSION );
 	wp_enqueue_script( 'bytenot-core-admin', BYTENOT_CORE_URL . 'assets/admin/admin.js', array(), BYTENOT_CORE_VERSION, true );
-	wp_localize_script( 'bytenot-core-admin', 'bytenotAdmin', array( 'copied' => __( 'Copied', 'bytenot-core' ), 'confirmDemo' => __( 'Reinstall the demo content? Existing demo records are updated in place; your own records are untouched.', 'bytenot-core' ) ) );
+	wp_localize_script( 'bytenot-core-admin', 'bytenotAdmin', array( 'copied' => __( 'Copied', 'bytenot-core' ), 'confirmDemo' => __( 'Reinstall the demo content? Demo records are updated in place; your own records and settings are untouched.', 'bytenot-core' ) ) );
 }
 add_action( 'admin_enqueue_scripts', 'bytenot_core_admin_assets' );
 
@@ -107,8 +126,8 @@ function bytenot_core_admin_tabs() {
 	$t = static fn( $slug, $label, $url, $match ) => array( 'slug' => $slug, 'label' => $label, 'url' => $url, 'match' => $match );
 	return array(
 		$t( 'bytenot', __( 'Dashboard', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot' ), array( 'page:bytenot' ) ),
-		$t( 'listings', __( 'Listings', 'bytenot-core' ), admin_url( 'edit.php?post_type=property' ), array( 'type:property' ) ),
-		$t( 'content', __( 'Content', 'bytenot-core' ), admin_url( 'edit.php?post_type=partner' ), array( 'type:project', 'type:agent', 'type:testimonial', 'type:faq', 'type:partner' ) ),
+		$t( 'listings', __( 'Listings', 'bytenot-core' ), admin_url( 'edit.php?post_type=listing' ), array( 'type:listing' ) ),
+		$t( 'content', __( 'Content', 'bytenot-core' ), admin_url( 'edit.php?post_type=partner' ), array( 'type:agent', 'type:testimonial', 'type:faq', 'type:partner' ) ),
 		$t( 'bytenot-leads', __( 'Enquiries', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot-leads' ), array( 'page:bytenot-leads' ) ),
 		$t( 'bytenot-setup', __( 'Setup', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot-setup' ), array( 'page:bytenot-setup' ) ),
 		$t( 'bytenot-integrations', __( 'Integrations', 'bytenot-core' ), admin_url( 'admin.php?page=bytenot-integrations' ), array( 'page:bytenot-integrations' ) ),
@@ -127,7 +146,6 @@ function bytenot_core_admin_content_types() {
 		'testimonial' => __( 'Testimonials', 'bytenot-core' ),
 		'faq'         => __( 'FAQs', 'bytenot-core' ),
 		'agent'       => __( 'Advisors', 'bytenot-core' ),
-		'project'     => __( 'Projects', 'bytenot-core' ),
 	);
 }
 
@@ -202,12 +220,12 @@ function bytenot_core_admin_open( $slug ) {
  * The header above the content types' list tables, so they are part of the same admin.
  */
 function bytenot_core_admin_list_header() {
-	$screen = get_current_screen();
-	if ( ! $screen || 'edit' !== $screen->base || ! in_array( $screen->post_type, array( 'property', 'project', 'agent', 'testimonial', 'faq', 'partner' ), true ) ) {
+	$type = bytenot_core_admin_list_type();
+	if ( ! $type ) {
 		return;
 	}
 	echo '<div class="bn bn--bar">';
-	bytenot_core_admin_header( 'type:' . $screen->post_type );
+	bytenot_core_admin_header( 'type:' . $type );
 	echo '</div>';
 }
 add_action( 'all_admin_notices', 'bytenot_core_admin_list_header', 1 );
@@ -219,11 +237,7 @@ add_action( 'all_admin_notices', 'bytenot_core_admin_list_header', 1 );
  * @return string
  */
 function bytenot_core_admin_body_class( $classes ) {
-	$screen = get_current_screen();
-	if ( $screen && 'edit' === $screen->base && in_array( $screen->post_type, array( 'property', 'project', 'agent', 'testimonial', 'faq', 'partner' ), true ) ) {
-		$classes .= ' bn-list-screen';
-	}
-	return $classes;
+	return bytenot_core_admin_list_type() ? $classes . ' bn-list-screen' : $classes;
 }
 add_filter( 'admin_body_class', 'bytenot_core_admin_body_class' );
 
@@ -333,9 +347,9 @@ function bytenot_core_badge( $status ) {
  */
 function bytenot_core_lead_stats() {
 	global $wpdb;
-	$total  = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'enquiry' AND post_status = 'private'" );
-	$week   = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'enquiry' AND post_status = 'private' AND post_date_gmt >= %s", gmdate( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS ) ) );
-	$by     = $wpdb->get_results( "SELECT m.meta_value AS s, COUNT(*) AS n FROM {$wpdb->postmeta} m JOIN {$wpdb->posts} p ON p.ID = m.post_id WHERE p.post_type = 'enquiry' AND m.meta_key = 'pc_crm_status' GROUP BY m.meta_value", OBJECT_K );
+	$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'enquiry' AND post_status = 'private'" );
+	$week  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'enquiry' AND post_status = 'private' AND post_date_gmt >= %s", gmdate( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS ) ) );
+	$by    = $wpdb->get_results( "SELECT m.meta_value AS s, COUNT(*) AS n FROM {$wpdb->postmeta} m JOIN {$wpdb->posts} p ON p.ID = m.post_id WHERE p.post_type = 'enquiry' AND m.meta_key = 'bn_crm_status' GROUP BY m.meta_value", OBJECT_K );
 	return array(
 		'total'   => $total,
 		'week'    => $week,
@@ -351,7 +365,7 @@ function bytenot_core_lead_stats() {
  * @return array{live:int,closed:int,draft:int}
  */
 function bytenot_core_listing_stats() {
-	$closed = get_posts( array( 'post_type' => 'property', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'no_found_rows' => true, 'tax_query' => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses() ) ) ) );
-	$counts = wp_count_posts( 'property' );
+	$closed = get_posts( array( 'post_type' => 'listing', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'no_found_rows' => true, 'tax_query' => array( array( 'taxonomy' => 'listing_status', 'field' => 'slug', 'terms' => bytenot_core_closed_statuses() ) ) ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+	$counts = wp_count_posts( 'listing' );
 	return array( 'live' => (int) $counts->publish - count( $closed ), 'closed' => count( $closed ), 'draft' => (int) $counts->draft );
 }

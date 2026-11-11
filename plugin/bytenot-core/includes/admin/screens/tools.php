@@ -19,7 +19,7 @@ function bytenot_core_screen_tools() {
 			<?php settings_fields( 'bytenot_core' ); ?>
 			<input type="hidden" name="bytenot_core_settings[_screen]" value="bytenot-tools">
 			<?php
-			$link = home_url( '/?preview_code=' . ( $s['preview_code'] ? $s['preview_code'] : 'CODE' ) );
+			$link = add_query_arg( 'preview_code', rawurlencode( $s['preview_code'] ? $s['preview_code'] : 'CODE' ), home_url( '/' ) );
 			$lock = '<label class="bn-switch"><input type="checkbox" name="bytenot_core_settings[preview_mode]" value="1" ' . checked( ! empty( $s['preview_mode'] ), true, false ) . '><span class="bn-switch__track" aria-hidden="true"></span><span class="bn-switch__label">' . esc_html__( 'Only logged-in users can see the site', 'bytenot-core' ) . '</span></label>';
 			bytenot_core_card(
 				__( 'Private preview', 'bytenot-core' ),
@@ -35,7 +35,7 @@ function bytenot_core_screen_tools() {
 			$html = '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="bn-actions" data-confirm-demo>'
 				. '<input type="hidden" name="action" value="bytenot_core_install_demo">' . wp_nonce_field( 'bytenot_core_install_demo', '_wpnonce', true, false )
 				. '<button class="bn-btn" type="submit">' . ( $installed ? esc_html__( 'Reinstall demo content', 'bytenot-core' ) : esc_html__( 'Install demo content', 'bytenot-core' ) ) . '</button></form>'
-				. '<p class="bn-card__note">' . esc_html__( 'Twelve sample listings with photos, two advisors, localities, testimonials, FAQs, partner logos, the menus and the home page texts and photos, so the site looks like the design. Running it again updates the same records; your own records are untouched.', 'bytenot-core' )
+				. '<p class="bn-card__note">' . esc_html__( 'Sample projects and apartments with photos, two advisors, localities, testimonials, FAQs, partner logos, the menus and the home page texts and photos, so the site looks like the design. Running it again updates the same records; your own records are untouched.', 'bytenot-core' )
 				. ( $installed ? ' ' . esc_html( sprintf( /* translators: %s: date. */ __( 'Last installed %s.', 'bytenot-core' ), wp_date( get_option( 'date_format' ), (int) $installed ) ) ) : '' ) . '</p>';
 			bytenot_core_card( __( 'Demo content', 'bytenot-core' ), $html );
 			$html = '<div class="bn-actions"><a class="bn-btn bn-btn--ghost" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=bytenot_core_export_leads' ), 'bytenot_core_export_leads' ) ) . '">' . esc_html__( 'Export enquiries (CSV)', 'bytenot-core' ) . '</a></div>'

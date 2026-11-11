@@ -37,7 +37,7 @@ if ( ! $bytenot_cards ) {
 				<span class="t-card__mark" aria-hidden="true">&ldquo;</span>
 				<blockquote class="t-card__quote"><?php echo wp_kses_post( wpautop( do_blocks( $bytenot_card->post_content ) ) ); ?></blockquote>
 				<p class="t-card__name"><?php echo esc_html( $bytenot_card->post_title ); ?></p>
-				<p class="t-card__role"><?php echo esc_html( get_post_meta( $bytenot_card->ID, 'pc_role', true ) ); ?></p>
+				<p class="t-card__role"><?php echo esc_html( get_post_meta( $bytenot_card->ID, 'bn_role', true ) ); ?></p>
 			</div>
 		</li>
 		<?php endforeach; ?>

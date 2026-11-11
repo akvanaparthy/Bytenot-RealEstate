@@ -18,10 +18,14 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 			<form class="inquiry__form" method="post" action="<?php echo esc_url( rest_url( 'bytenot/v1/leads' ) ); ?>" data-inquiry data-lead="inquiry">
 				<p class="inquiry__lede"><?php echo esc_html( bytenot_mod( 'inquiry_lede' ) ); ?></p>
-				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Name', 'bytenot-estate' ); ?></span><input class="uf__input" type="text" name="name" placeholder="<?php esc_attr_e( 'Jane Smith', 'bytenot-estate' ); ?>" autocomplete="name" required></label>
-				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Email', 'bytenot-estate' ); ?></span><input class="uf__input" type="email" name="email" placeholder="jane@example.com" autocomplete="email" required></label>
-				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Phone', 'bytenot-estate' ); ?></span><span class="uf__phone"><span class="uf__prefix">+91</span><input class="uf__input" type="tel" name="phone" placeholder="98765 43210" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" autocomplete="tel-national" required></span></label>
+				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Name', 'bytenot-estate' ); ?></span><input class="uf__input" type="text" name="name" placeholder="<?php esc_attr_e( 'Your name', 'bytenot-estate' ); ?>" autocomplete="name" required></label>
+				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Email', 'bytenot-estate' ); ?></span><input class="uf__input" type="email" name="email" placeholder="<?php esc_attr_e( 'you@example.com', 'bytenot-estate' ); ?>" autocomplete="email" required></label>
+				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Phone', 'bytenot-estate' ); ?></span><?php bytenot_phone_input( 'uf' ); ?></label>
 				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Message', 'bytenot-estate' ); ?></span><textarea class="uf__input uf__input--area" name="message" rows="3" placeholder="<?php esc_attr_e( "Tell us about the home you're looking for", 'bytenot-estate' ); ?>"></textarea></label>
+				<label class="consent inquiry__consent">
+					<input type="checkbox" name="consent" required>
+					<span><?php echo esc_html( sprintf( /* translators: %s: site name. */ __( '%s may contact me about this enquiry. No spam, and I can opt out any time.', 'bytenot-estate' ), get_bloginfo( 'name' ) ) ); ?></span>
+				</label>
 				<?php bytenot_lead_fields(); ?>
 				<button class="btn btn--dark inquiry__submit" type="submit"><?php esc_html_e( 'Submit', 'bytenot-estate' ); ?></button>
 			</form>

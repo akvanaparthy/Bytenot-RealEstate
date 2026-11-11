@@ -1,6 +1,6 @@
 <?php
 /**
- * Posts, projects and advisors: title, date, featured image and content.
+ * Posts and advisors: title, date or role, featured image and content.
  *
  * @package bytenot-estate
  */
@@ -19,8 +19,8 @@ get_header();
 		<header class="page-head">
 			<?php if ( 'post' === get_post_type() ) : ?>
 			<p class="fig-label"><?php echo esc_html( get_the_date() ); ?></p>
-			<?php elseif ( get_post_meta( get_the_ID(), 'pc_role', true ) ) : ?>
-			<p class="fig-label"><?php echo esc_html( get_post_meta( get_the_ID(), 'pc_role', true ) ); ?></p>
+			<?php elseif ( get_post_meta( get_the_ID(), 'bn_role', true ) ) : ?>
+			<p class="fig-label"><?php echo esc_html( get_post_meta( get_the_ID(), 'bn_role', true ) ); ?></p>
 			<?php endif; ?>
 			<h1 class="page-title"><?php the_title(); ?></h1>
 		</header>
@@ -32,9 +32,6 @@ get_header();
 		</div>
 	</article>
 		<?php
-		if ( comments_open() || get_comments_number() ) {
-			comments_template();
-		}
 	endwhile;
 	?>
 </main>

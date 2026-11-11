@@ -20,7 +20,7 @@ function bytenot_customizer_fields() {
 		'header'       => array(
 			'header_cta_text'  => array( __( 'Button text', 'bytenot-estate' ), 'text', __( 'Talk to an advisor', 'bytenot-estate' ) ),
 			'header_cta_short' => array( __( 'Button text (phones)', 'bytenot-estate' ), 'text', __( 'Enquire', 'bytenot-estate' ) ),
-			'header_cta_url'   => array( __( 'Button link', 'bytenot-estate' ), 'text', '#inquiry' ),
+			'header_cta_url'   => array( __( 'Button link', 'bytenot-estate' ), 'url', '#inquiry' ),
 			'header_logo_light' => array( __( 'Logo on photos (light version, shown while the header is transparent)', 'bytenot-estate' ), 'image', 0 ),
 		),
 		'hero'         => array(
@@ -68,11 +68,10 @@ function bytenot_customizer_fields() {
 			'inquiry_tag'   => array( __( 'Bottom tagline', 'bytenot-estate' ), 'html', __( "Let's find <em>your perfect</em> home", 'bytenot-estate' ) ),
 		),
 		'listing'      => array(
-			'listing_noun'    => array( __( 'What listings are called (plural, lower case)', 'bytenot-estate' ), 'text', __( 'properties', 'bytenot-estate' ) ),
 			'listing_title_1' => array( __( 'Title, first line', 'bytenot-estate' ), 'html', __( 'Find the home', 'bytenot-estate' ) ),
 			'listing_pill'    => array( __( 'Small photo in the title', 'bytenot-estate' ), 'image', 0 ),
 			'listing_title_2' => array( __( 'Title, second line', 'bytenot-estate' ), 'html', __( '<em>that feels</em> like yours.', 'bytenot-estate' ) ),
-			'listing_lede'    => array( __( 'Lede', 'bytenot-estate' ), 'textarea', __( 'Our full collection of verified homes and investment properties, updated daily, priced transparently and ready to view. Use the filters to narrow by type, location, budget or configuration, and book a site visit in a few clicks.', 'bytenot-estate' ) ),
+			'listing_lede'    => array( __( 'Lede', 'bytenot-estate' ), 'textarea', __( 'Our full collection of verified listings, updated daily, priced transparently and ready to view. Use the filters to narrow by type, location, budget or configuration, and book a site visit in a few clicks.', 'bytenot-estate' ) ),
 		),
 		'property'     => array(
 			'papers_documents' => array( __( 'Documents available on request', 'bytenot-estate' ), 'text', __( 'Sale deed, EC, approved plan, OC, tax receipts', 'bytenot-estate' ) ),

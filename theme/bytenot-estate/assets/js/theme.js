@@ -152,7 +152,7 @@
 	const postLead = async (form, extra) => {
 		const f = new FormData(form);
 		const payload = {
-			name: f.get('name'), email: f.get('email') || '', phone: `+91${String(f.get('phone') || '').replace(/\D/g, '')}`,
+			name: f.get('name'), email: f.get('email') || '', phone: `${CFG.phonePrefix || ''}${String(f.get('phone') || '').replace(/\D/g, '')}`,
 			message: f.get('message') || '', preferred_date: f.get('date') || '', consent: !!f.get('consent'),
 			website: f.get('website') || '', started: Number(f.get('started')) || 0, source_url: location.href,
 			attribution: document.referrer ? `referrer=${document.referrer}` : '', ...extra,
@@ -172,24 +172,29 @@
 	const form = $('[data-search]');
 	if (form) {
 		const typeField = $('#f-type', form);
-		$$('.tag[data-type]').forEach((tag) => tag.addEventListener('click', () => {
-			$$('.tag').forEach((t) => t.classList.toggle('is-active', t === tag));
-			typeField.value = tag.dataset.type;
-			typeField.dd?.sync();
-			const control = typeField.dd?.button || typeField;
-			control.classList.add('is-flash');
-			setTimeout(() => control.classList.remove('is-flash'), 900);
-			control.focus({ preventScroll: true });
-		}));
-		typeField.addEventListener('change', () => {
-			$$('.tag').forEach((t) => t.classList.toggle('is-active', t.dataset.type === typeField.value));
-		});
+		if (typeField) {
+			$$('.tag[data-type]').forEach((tag) => tag.addEventListener('click', () => {
+				$$('.tag').forEach((t) => t.classList.toggle('is-active', t === tag));
+				typeField.value = tag.dataset.type;
+				typeField.dd?.sync();
+				const control = typeField.dd?.button || typeField;
+				control.classList.add('is-flash');
+				setTimeout(() => control.classList.remove('is-flash'), 900);
+				control.focus({ preventScroll: true });
+			}));
+			typeField.addEventListener('change', () => {
+				$$('.tag').forEach((t) => t.classList.toggle('is-active', t.dataset.type === typeField.value));
+			});
+		}
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
+			// the kind chosen decides which listings page answers; the other fields travel as filters
+			const kindSel = $('[data-kind-select]', form);
+			const action = kindSel?.selectedOptions[0]?.dataset.url || form.getAttribute('action');
 			const params = new URLSearchParams();
-			new FormData(form).forEach((value, key) => { if (value) params.set(key, value); });
+			new FormData(form).forEach((value, key) => { if (value && key !== 'kind') params.set(key, value); });
 			const q = params.toString();
-			window.location.href = form.getAttribute('action') + (q ? (form.getAttribute('action').includes('?') ? '&' : '?') + q : '');
+			window.location.href = action + (q ? (action.includes('?') ? '&' : '?') + q : '');
 		});
 	}
 
@@ -391,16 +396,23 @@
 		const tpl = $('#card-template');
 		let shown = PAGE;
 
-		const current = () => Object.fromEntries(new FormData(form));
+		const current = () => { const f = Object.fromEntries(new FormData(form)); delete f.kind; return f; };
+		// a project matches a budget when its range overlaps the band and a configuration when its units include it
+		const inBand = (p, band) => (p.kind === 'project'
+			? (p.priceMax || p.priceMin) >= band[0] && (band[1] === null || (p.priceMin || p.priceMax) < band[1])
+			: p.intent === 'buy' && p.price >= band[0] && (band[1] === null || p.price < band[1]));
+		const hasBhk = (p, bhk) => (p.kind === 'project'
+			? (bhk === '4' ? p.bhkSet.some((b) => b >= 4) : p.bhkSet.includes(Number(bhk)))
+			: (bhk === '4' ? p.bhk >= 4 : p.bhk === Number(bhk)));
 		const filtered = () => {
 			const f = current();
-			const band = f.budget && CFG.budgets ? CFG.budgets[f.budget] : null;
+			const band = f.budget && f.intent !== 'for-rent' && CFG.budgets ? CFG.budgets[f.budget] : null;
 			let out = LISTINGS.filter((p) =>
 				(!f.type || p.type === f.type) &&
 				(!f.location || p.city === f.location) &&
-				(!f.bhk || (f.bhk === '4' ? p.bhk >= 4 : p.bhk === Number(f.bhk))) &&
+				(!f.bhk || hasBhk(p, f.bhk)) &&
 				(!f.intent || (f.intent === 'for-sale' ? p.intent === 'buy' : f.intent === 'for-rent' ? p.intent === 'rent' : f.intent === 'new-launch' ? /new-launch|under-construction/.test(p.possession) : p.possession === f.intent)) &&
-				(!band || (p.intent === 'buy' && p.price >= band[0] && (band[1] === null || p.price < band[1])))
+				(!band || inBand(p, band))
 			);
 			const sort = sortEl.value;
 			if (sort === 'price-asc') out.sort((a, b) => a.price - b.price);
@@ -417,19 +429,20 @@
 				const node = tpl.content.cloneNode(true);
 				const img = $('.card__img', node);
 				img.src = p.img; img.alt = `${p.title}, ${p.area}`;
+				$('.card', node).dataset.kind = p.kind;
 				$('.card__status', node).textContent = p.status;
 				const link = $('.card__title a', node); link.textContent = p.title; link.href = p.url;
 				$('.card__media', node).href = p.url;
-				$('.card__foot .btn', node).href = `${p.url}#visit`;
+				$('[data-cta]', node).href = p.ctaHref;
+				$('[data-cta-text]', node).textContent = p.cta;
 				$('.card__place span', node).textContent = p.place;
-				$('[data-fact=area]', node).textContent = p.areaText;
-				$('[data-fact=beds]', node).textContent = p.type === 'plot' ? (CFG.types?.plot || 'Plot') : p.bhkLabel;
-				$('[data-fact=baths]', node).textContent = p.type === 'plot' ? '' : (p.baths ? `${p.baths} ${p.baths === 1 ? 'Bath' : 'Baths'}` : '');
+				p.facts.forEach((text, i) => { const el = $(`[data-fact="${i}"]`, node); el.textContent = text; el.closest('.fact').hidden = !text; });
+				$$('[data-icon]', node).forEach((ic) => { ic.hidden = ic.dataset.icon !== (p.kind === 'project' ? 'units' : 'bath'); });
 				$('.card__price', node).textContent = p.priceText;
 				cardsEl.append(node);
 			});
 			liveCards(cardsEl);
-			label.textContent = `${(CFG.typePlural && CFG.typePlural[f.type]) || T.allProperties}${f.location && CFG.locations?.[f.location] ? fmt(T.in, CFG.locations[f.location]) : ''}${f.intent === 'for-rent' ? T.forRent : ''}`;
+			label.textContent = `${(f.type && CFG.types?.[f.type]) || T.allListings}${f.location && CFG.locations?.[f.location] ? fmt(T.in, CFG.locations[f.location]) : ''}${f.intent === 'for-rent' ? T.forRent : ''}`;
 			count.textContent = fmt(list.length === 1 ? T.result : T.results, list.length);
 			empty.hidden = list.length > 0;
 			more.hidden = list.length <= shown;
@@ -440,7 +453,8 @@
 			history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
 		};
 
-		form.addEventListener('change', () => { shown = PAGE; render(); });
+		$('[data-kind-select]', form)?.addEventListener('change', (e) => { const url = e.target.selectedOptions[0]?.dataset.url; if (url) location.href = url; });
+		form.addEventListener('change', (e) => { if (e.target.matches('[data-kind-select]')) return; shown = PAGE; render(); });
 		form.addEventListener('submit', (e) => { e.preventDefault(); shown = PAGE; render(); });
 		sortEl.addEventListener('change', render);
 		more.addEventListener('click', () => { shown += PAGE; render(); });
@@ -559,8 +573,8 @@
 	 * editable EMI sentence, the radial plot, the map, the compact bar,
 	 * save/share and the visit form.
 	 * ------------------------------------------------------------------ */
-	const propertyRoot = $('[data-property]');
-	const P = propertyRoot ? json('[data-property-json]', propertyRoot) : null;
+	const propertyRoot = $('[data-listing]');
+	const P = propertyRoot ? json('[data-listing-json]', propertyRoot) : null;
 	if (propertyRoot && P) {
 		const n = (x) => Math.round(x).toLocaleString('en-IN');
 		const L = 100000;
@@ -784,6 +798,7 @@
 			const on = ph.getBoundingClientRect().bottom < 0 || matchMedia('(max-width: 720px)').matches;
 			bar.classList.toggle('is-visible', on);
 			bar.setAttribute('aria-hidden', String(!on));
+			bar.toggleAttribute('inert', !on);
 		};
 		let ticking = false;
 		window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; onScroll(); }); } }, { passive: true });
@@ -821,7 +836,7 @@
 			e.preventDefault();
 			if (!enq.reportValidity()) return;
 			try {
-				const payload = await postLead(enq, { form: 'visit', property_id: P.id });
+				const payload = await postLead(enq, { form: 'visit', listing_id: P.id });
 				showToast(fmt(T.thanksVisit, esc(payload.name.split(' ')[0]), esc(P.first), `<b>${esc(P.title)}</b>`));
 				enq.reset();
 			} catch (err) { showToast(esc(err.message)); }
@@ -889,7 +904,7 @@
 			e.preventDefault();
 			if (!inquiry.reportValidity()) return;
 			try {
-				const payload = await postLead(inquiry, { form: 'inquiry', consent: true });
+				const payload = await postLead(inquiry, { form: 'inquiry' });
 				showToast(fmt(T.thanks, esc(payload.name.split(' ')[0])));
 				inquiry.reset();
 			} catch (err) { showToast(esc(err.message)); }

@@ -1,8 +1,8 @@
 <?php
 /**
- * Properties: intro, filters, results. The server renders the filtered query (so every
- * filter URL is a real page); the script then filters the full set client-side from the
- * JSON island, exactly as the prototype does.
+ * Listings of one kind: intro, filters, results. The server renders the filtered query
+ * (so every filter URL is a real page); the script then filters the full set client-side
+ * from the JSON island, exactly as the prototype does.
  *
  * @package bytenot-estate
  */
@@ -11,9 +11,11 @@ defined( 'ABSPATH' ) || exit;
 
 get_header();
 
-$bytenot_opts  = bytenot_core_search_options();
+$bytenot_opts  = bytenot_search_options();
+$bytenot_kind  = bytenot_current_kind();
 $bytenot_q     = static fn( $k ) => sanitize_text_field( (string) get_query_var( $k ) );
-$bytenot_label = $bytenot_q( 'type' ) && isset( $bytenot_opts['types'][ $bytenot_q( 'type' ) ] ) ? bytenot_type_plurals( array( $bytenot_q( 'type' ) ) )[ $bytenot_q( 'type' ) ] : sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'All %s', 'bytenot-estate' ), bytenot_noun() );
+$bytenot_types = $bytenot_opts['typesByKind'][ $bytenot_kind ] ?? array();
+$bytenot_label = $bytenot_q( 'type' ) && isset( $bytenot_types[ $bytenot_q( 'type' ) ] ) ? $bytenot_types[ $bytenot_q( 'type' ) ] : sprintf( /* translators: %s: what listings are called, e.g. "projects". */ __( 'All %s', 'bytenot-estate' ), bytenot_noun() );
 if ( $bytenot_q( 'location' ) && isset( $bytenot_opts['locations'][ $bytenot_q( 'location' ) ] ) ) {
 	$bytenot_label .= sprintf( /* translators: %s: city. */ __( ' in %s', 'bytenot-estate' ), $bytenot_opts['locations'][ $bytenot_q( 'location' ) ] );
 }
@@ -21,6 +23,8 @@ if ( 'for-rent' === $bytenot_q( 'intent' ) ) {
 	$bytenot_label .= __( ' for rent', 'bytenot-estate' );
 }
 $bytenot_found = (int) $GLOBALS['wp_query']->found_posts;
+$bytenot_nf    = ( count( $bytenot_opts['kinds'] ) > 1 ? 1 : 0 ) + ( $bytenot_types ? 1 : 0 ) + 3 + ( $bytenot_opts['has_config'] ? 1 : 0 );
+$bytenot_cols  = $bytenot_nf <= 4 ? ' filters-bar--four' : ( $bytenot_nf >= 6 ? ' filters-bar--six' : '' );
 ?>
 
 <main id="main">
@@ -35,21 +39,35 @@ $bytenot_found = (int) $GLOBALS['wp_query']->found_posts;
 	</div>
 </section>
 
-<section class="listing" aria-labelledby="results-title">
+<section class="listing" aria-labelledby="results-title" data-kind="<?php echo esc_attr( $bytenot_kind ); ?>">
 	<div class="container">
-		<script type="application/json" data-listings><?php echo wp_json_encode( bytenot_listings() ); ?></script>
-		<form class="filters-bar<?php echo $bytenot_opts['has_config'] ? '' : ' filters-bar--four'; ?>" method="get" action="<?php echo esc_url( get_post_type_archive_link( 'property' ) ); ?>" data-listing-filters aria-label="<?php echo esc_attr( sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'Filter %s', 'bytenot-estate' ), bytenot_noun() ) ); ?>">
+		<script type="application/json" data-listings><?php echo wp_json_encode( bytenot_listings( $bytenot_kind ) ); ?></script>
+		<form class="filters-bar<?php echo esc_attr( $bytenot_cols ); ?>" method="get" action="<?php echo esc_url( bytenot_archive_url( $bytenot_kind ) ); ?>" data-listing-filters aria-label="<?php echo esc_attr( sprintf( /* translators: %s: what listings are called, e.g. "projects". */ __( 'Filter %s', 'bytenot-estate' ), bytenot_noun() ) ); ?>">
+			<?php if ( count( $bytenot_opts['kinds'] ) > 1 ) : ?>
 			<label class="filters-bar__field">
 				<span class="filters-bar__label"><?php esc_html_e( 'Looking for', 'bytenot-estate' ); ?></span>
 				<span class="field__select">
+					<select class="filters-bar__select" name="kind" data-kind-select>
+						<?php foreach ( $bytenot_opts['kinds'] as $bytenot_slug => $bytenot_name ) : ?>
+						<option value="<?php echo esc_attr( $bytenot_slug ); ?>" data-url="<?php echo esc_url( bytenot_archive_url( $bytenot_slug ) ); ?>"<?php selected( $bytenot_kind, $bytenot_slug ); ?>><?php echo esc_html( $bytenot_name ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</span>
+			</label>
+			<?php endif; ?>
+			<?php if ( $bytenot_types ) : ?>
+			<label class="filters-bar__field">
+				<span class="filters-bar__label"><?php esc_html_e( 'Type', 'bytenot-estate' ); ?></span>
+				<span class="field__select">
 					<select class="filters-bar__select" name="type">
 						<option value=""><?php esc_html_e( 'Any type', 'bytenot-estate' ); ?></option>
-						<?php foreach ( $bytenot_opts['types'] as $bytenot_slug => $bytenot_name ) : ?>
+						<?php foreach ( $bytenot_types as $bytenot_slug => $bytenot_name ) : ?>
 						<option value="<?php echo esc_attr( $bytenot_slug ); ?>"<?php selected( $bytenot_q( 'type' ), $bytenot_slug ); ?>><?php echo esc_html( $bytenot_name ); ?></option>
 						<?php endforeach; ?>
 					</select>
 				</span>
 			</label>
+			<?php endif; ?>
 			<label class="filters-bar__field">
 				<span class="filters-bar__label"><?php esc_html_e( 'Location', 'bytenot-estate' ); ?></span>
 				<span class="field__select">
@@ -89,7 +107,7 @@ $bytenot_found = (int) $GLOBALS['wp_query']->found_posts;
 				<span class="filters-bar__label"><?php esc_html_e( 'Status', 'bytenot-estate' ); ?></span>
 				<span class="field__select">
 					<select class="filters-bar__select" name="intent">
-						<option value=""><?php esc_html_e( 'Buy or rent', 'bytenot-estate' ); ?></option>
+						<option value=""><?php echo esc_html( count( $bytenot_opts['intents'] ) > 3 ? __( 'Buy or rent', 'bytenot-estate' ) : __( 'Any', 'bytenot-estate' ) ); ?></option>
 						<?php foreach ( $bytenot_opts['intents'] as $bytenot_slug => $bytenot_name ) : ?>
 						<option value="<?php echo esc_attr( $bytenot_slug ); ?>"<?php selected( $bytenot_q( 'intent' ), $bytenot_slug ); ?>><?php echo esc_html( $bytenot_name ); ?></option>
 						<?php endforeach; ?>
@@ -100,7 +118,7 @@ $bytenot_found = (int) $GLOBALS['wp_query']->found_posts;
 		</form>
 
 		<div class="results-head">
-			<h2 class="results-title" id="results-title"><span data-results-label><?php echo esc_html( $bytenot_label ); ?></span> <small data-results-count><?php echo esc_html( sprintf( _n( '(%d result)', '(%d results)', $bytenot_found, 'bytenot-estate' ), $bytenot_found ) ); ?></small></h2>
+			<h2 class="results-title" id="results-title"><span data-results-label><?php echo esc_html( $bytenot_label ); ?></span> <small data-results-count><?php echo esc_html( sprintf( /* translators: %d: results. */ _n( '(%d result)', '(%d results)', $bytenot_found, 'bytenot-estate' ), $bytenot_found ) ); ?></small></h2>
 			<div class="results-sort">
 				<label class="results-sort__label" for="sort"><?php esc_html_e( 'Sort by', 'bytenot-estate' ); ?></label>
 				<span class="field__select">
@@ -123,7 +141,7 @@ $bytenot_found = (int) $GLOBALS['wp_query']->found_posts;
 			?>
 		</ul>
 
-		<p class="results-empty" data-results-empty<?php echo have_posts() ? ' hidden' : ''; ?>><?php echo esc_html( sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'No %s match these filters yet.', 'bytenot-estate' ), bytenot_noun() ) ); ?> <button type="button" class="link-btn" data-results-reset><?php esc_html_e( 'Clear filters', 'bytenot-estate' ); ?></button> <?php esc_html_e( "or tell us what you're looking for.", 'bytenot-estate' ); ?></p>
+		<p class="results-empty" data-results-empty<?php echo have_posts() ? ' hidden' : ''; ?>><?php echo esc_html( sprintf( /* translators: %s: what listings are called, e.g. "projects". */ __( 'No %s match these filters yet.', 'bytenot-estate' ), bytenot_noun() ) ); ?> <button type="button" class="link-btn" data-results-reset><?php esc_html_e( 'Clear filters', 'bytenot-estate' ); ?></button> <?php esc_html_e( "or tell us what you're looking for.", 'bytenot-estate' ); ?></p>
 
 		<div class="results-more">
 			<button class="btn btn--outline" type="button" data-load-more hidden><?php esc_html_e( 'Load more', 'bytenot-estate' ); ?></button>
