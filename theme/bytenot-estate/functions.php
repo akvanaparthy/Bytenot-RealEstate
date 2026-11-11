@@ -169,7 +169,7 @@ add_filter( 'body_class', 'bytenot_body_class' );
  * @return array
  */
 function bytenot_menu_link_attributes( $atts, $item, $args ) {
-	$current = $item->current && false === strpos( (string) $item->url, '#' );
+	$current = ( $item->current || bytenot_menu_item_is_listing_kind( $item ) ) && false === strpos( (string) $item->url, '#' );
 	if ( ! $current ) {
 		unset( $atts['aria-current'] );
 	}
@@ -179,6 +179,30 @@ function bytenot_menu_link_attributes( $atts, $item, $args ) {
 	return $atts;
 }
 add_filter( 'nav_menu_link_attributes', 'bytenot_menu_link_attributes', 10, 3 );
+
+/**
+ * A menu link to a kind's archive is current on that archive and on every listing of that kind,
+ * units included (their project's kind counts). WordPress only marks the archive item itself.
+ *
+ * @param WP_Post $item Menu item.
+ * @return bool
+ */
+function bytenot_menu_item_is_listing_kind( $item ) {
+	if ( ! function_exists( 'bytenot_core_archive_url' ) || ! ( is_post_type_archive( 'listing' ) || is_singular( 'listing' ) ) ) {
+		return false;
+	}
+	$kinds = array( bytenot_current_kind() );
+	if ( is_singular( 'listing' ) && get_post()->post_parent ) {
+		$kinds[] = bytenot_core_kind_of( get_post()->post_parent );
+	}
+	$url = untrailingslashit( (string) $item->url );
+	foreach ( array_filter( $kinds ) as $kind ) {
+		if ( $url === untrailingslashit( bytenot_core_archive_url( $kind ) ) ) {
+			return true;
+		}
+	}
+	return false;
+}
 
 /**
  * Nothing on the <li> except what the script and styles need.

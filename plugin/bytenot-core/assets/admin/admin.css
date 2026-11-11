@@ -45,6 +45,7 @@
 .bn-grid > div { display: grid; gap: 20px; }
 .bn-card { padding: 24px 26px; border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
 .bn-card--wide { grid-column: 1 / -1; margin-top: 20px; }
+.bn-card--wide + .bn-grid { margin-top: 20px; } /* the wide card stands outside the grid, so it needs its own gap below */
 .bn-card--flush { padding: 0; overflow: hidden; }
 .bn-card__title { margin: 0 0 6px; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
 .bn-card__lede { margin: 0 0 18px; font-size: 14px; color: var(--ink-muted); }
@@ -251,6 +252,7 @@
 .bn .bn-kind.is-on .bn-kind__fields { opacity: 1; }
 .bn .bn-kind__field { display: grid; gap: 4px; font-size: 12px; color: var(--ink-soft); }
 .bn .bn-kind__field--wide { grid-column: 1 / -1; }
+.bn .bn-kind__field textarea { min-height: 104px; resize: vertical; line-height: 1.5; }
 .bn .bn-kind__base { display: flex; align-items: center; gap: 4px; }
 .bn .bn-kind__base .bn-input { flex: 1; }
 @media (max-width: 782px) { .bn .bn-kind { grid-template-columns: 1fr; } .bn .bn-kind__fields { grid-column: 1; grid-row: auto; grid-template-columns: 1fr; } }

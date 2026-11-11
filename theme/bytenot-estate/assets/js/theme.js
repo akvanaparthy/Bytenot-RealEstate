@@ -19,7 +19,7 @@
 	 * ------------------------------------------------------------------ */
 	// where the menu follows the page, a reload starts at the top: the rendered menu state is then right from
 	// the first frame and nothing shifts under a restored position
-	if ($('[data-about], [data-inquiry]') && $('[data-header] a[href*="#"]') && 'scrollRestoration' in history && performance.getEntriesByType('navigation')[0]?.type === 'reload' && !location.hash) {
+	if ($('[data-about]') && $('[data-header] a[href*="#"]') && 'scrollRestoration' in history && performance.getEntriesByType('navigation')[0]?.type === 'reload' && !location.hash) {
 		history.scrollRestoration = 'manual';
 		scrollTo({ top: 0, behavior: 'instant' });
 	}
@@ -45,6 +45,7 @@
 	const sameHash = (a) => {
 		const h = a.getAttribute('href') || '';
 		const u = new URL(a.href, location.href);
+		if (u.hash && u.hash !== '#' && u.pathname !== location.pathname && document.getElementById(u.hash.slice(1))) { a.setAttribute('href', u.hash); return u.hash; } // the section is on this page too (the inquiry form is on every page)
 		if (u.pathname === location.pathname) return u.hash && u.hash !== '#' ? u.hash : '';
 		if (h === '#') return '';
 		const slug = u.pathname.replace(/\/+$/, '').split('/').pop();
@@ -616,12 +617,34 @@
 
 		/* --- opening: the photo eases back into its frame as you scroll --- */
 		const ph = $('[data-ph]');
-		const phImg = $('[data-ph-img]');
+		const slides = $$('[data-ph-slide]');
+		const cssScroll = typeof CSS !== 'undefined' && CSS.supports('animation-timeline: scroll()') && matchMedia('(min-width: 721px) and (prefers-reduced-motion: no-preference)').matches; // the stylesheet drives the settle where it can
 		const zoom = () => {
-			if (!phImg) return;
+			if (!slides.length || cssScroll) return;
 			const k = Math.min(1, Math.max(0, scrollY / Math.max(1, ph.offsetHeight)));
-			phImg.style.setProperty('--ph-zoom', reduced ? 1 : (1.08 - 0.08 * k).toFixed(4));
+			ph.style.setProperty('--ph-zoom', reduced ? 1 : (1.08 - 0.08 * k).toFixed(4));
 		};
+
+		/* --- opening slider: arrows, swipe, keyboard; the lightbox opens on the slide in view --- */
+		if (slides.length > 1) {
+			const phIndex = $('[data-ph-index]');
+			const allBtn = $('.ph__all', ph);
+			let cur = 0;
+			const go = (k) => {
+				cur = (k + slides.length) % slides.length;
+				slides.forEach((s, j) => { if (j === cur && s.loading === 'lazy') s.loading = 'eager'; s.classList.toggle('is-on', j === cur); });
+				if (phIndex) phIndex.textContent = String(cur + 1).padStart(2, '0');
+				if (allBtn) allBtn.dataset.openPhoto = String(cur);
+				const nx = slides[(cur + 1) % slides.length]; if (nx.loading === 'lazy') nx.loading = 'eager'; // the next one is ready before it is asked for
+			};
+			$('[data-ph-prev]', ph)?.addEventListener('click', () => go(cur - 1));
+			$('[data-ph-next]', ph)?.addEventListener('click', () => go(cur + 1));
+			ph.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') go(cur + 1); else if (e.key === 'ArrowLeft') go(cur - 1); });
+			const media = $('.ph__media', ph);
+			let sx = null, sy = 0;
+			media.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } }, { passive: true });
+			media.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40 && Math.abs(e.clientX - sx) > Math.abs(e.clientY - sy)) go(e.clientX < sx ? cur + 1 : cur - 1); sx = null; }, { passive: true });
+		}
 
 		/* --- chapters --- */
 		const chapterEls = $$('[data-chapter]');
@@ -635,6 +658,9 @@
 		const track = $('[data-strip-track]');
 		if (track) {
 			const stripIndex = $('[data-strip-index]');
+			const stepBy = (d) => track.scrollBy({ left: d * (track.firstElementChild.offsetWidth + 12), behavior: reduced ? 'auto' : 'smooth' });
+			$('[data-strip-prev]')?.addEventListener('click', () => stepBy(-1));
+			$('[data-strip-next]')?.addEventListener('click', () => stepBy(1));
 			track.addEventListener('scroll', () => {
 				const li = track.firstElementChild;
 				const step = li.offsetWidth + 12;
@@ -1069,3 +1095,11 @@
 		});
 	}
 })();
+
+/* A card's photo carries the shared transition name while the page leaves, so the next page's opening grows out of it. */
+document.addEventListener('click', (e) => {
+	const a = e.target.closest('.card a[href], .rail__row, [data-spot-link]');
+	if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.button) return;
+	const img = a.closest('.card, .spot')?.querySelector('.card__img, .spot__img.is-on, .spot__img');
+	if (img) img.style.viewTransitionName = 'listing-opening';
+});

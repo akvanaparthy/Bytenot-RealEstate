@@ -25,6 +25,11 @@ $bytenot_legal   = bytenot_legal_links();
 $bytenot_rights  = trim( get_bloginfo( 'name' ) . ' ' . get_bloginfo( 'description' ) ) . ' ' . wp_date( 'Y' ) . ( bytenot_mod( 'footer_slogan' ) ? ' · ' . bytenot_mod( 'footer_slogan' ) : '' );
 ?>
 
+<?php
+if ( ! is_front_page() ) {
+	get_template_part( 'template-parts/home/inquiry' ); // the lead form sits above the footer on every other page
+}
+?>
 <footer class="site-footer" id="contact">
 	<div class="brand-motif" aria-hidden="true"></div>
 	<div class="site-footer__bg" aria-hidden="true">

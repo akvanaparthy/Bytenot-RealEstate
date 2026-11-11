@@ -30,7 +30,7 @@ function bytenot_core_screen_setup() {
 				. '<label class="bn-kind__field"><span>' . esc_html__( 'One', 'bytenot-core' ) . '</span><input class="bn-input" type="text" id="' . esc_attr( $id( 'singular' ) ) . '" name="' . esc_attr( $n( 'singular' ) ) . '" value="' . esc_attr( $k['singular'] ) . '"></label>'
 				. '<label class="bn-kind__field"><span>' . esc_html__( 'Many', 'bytenot-core' ) . '</span><input class="bn-input" type="text" name="' . esc_attr( $n( 'plural' ) ) . '" value="' . esc_attr( $k['plural'] ) . '"></label>'
 				. '<label class="bn-kind__field"><span>' . esc_html__( 'Address', 'bytenot-core' ) . '</span><span class="bn-kind__base"><span class="bn-muted">/</span><input class="bn-input" type="text" name="' . esc_attr( $n( 'base' ) ) . '" value="' . esc_attr( $k['base'] ) . '"><span class="bn-muted">/</span></span></label>'
-				. '<label class="bn-kind__field bn-kind__field--wide"><span>' . esc_html__( 'Types', 'bytenot-core' ) . '</span><textarea class="bn-input" name="' . esc_attr( $n( 'subtypes' ) ) . '" rows="2" placeholder="' . esc_attr__( 'One per line, optional', 'bytenot-core' ) . '">' . esc_textarea( implode( "\n", $k['subtypes'] ) ) . '</textarea></label>'
+				. '<label class="bn-kind__field bn-kind__field--wide"><span>' . esc_html__( 'Types', 'bytenot-core' ) . '</span><textarea class="bn-input" name="' . esc_attr( $n( 'subtypes' ) ) . '" rows="4" placeholder="' . esc_attr__( 'One per line, optional', 'bytenot-core' ) . '">' . esc_textarea( implode( "\n", $k['subtypes'] ) ) . '</textarea></label>'
 				. '</div></div>';
 		}
 		bytenot_core_card(

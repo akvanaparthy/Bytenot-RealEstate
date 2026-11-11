@@ -50,19 +50,24 @@ $bytenot_links      = array_filter(
 
 <section class="ph" aria-labelledby="ph-title" data-ph>
 	<div class="ph__media">
-		<?php if ( $bytenot_photos ) : ?>
-		<img class="ph__img" src="<?php echo esc_url( $bytenot_photos[0]['src'] ); ?>" alt="" width="2000" height="1333" fetchpriority="high" data-ph-img>
-		<?php endif; ?>
+		<?php foreach ( $bytenot_photos as $bytenot_i => $bytenot_ph ) : ?>
+		<img class="ph__img<?php echo 0 === $bytenot_i ? ' is-on' : ''; ?>" src="<?php echo esc_url( $bytenot_ph['src'] ); ?>" alt="" width="2000" height="1333"<?php echo 0 === $bytenot_i ? ' fetchpriority="high"' : ' loading="lazy"'; ?> data-ph-slide>
+		<?php endforeach; ?>
 		<div class="ph__shade" aria-hidden="true"></div>
 		<?php if ( $bytenot_n > 1 ) : ?>
-		<button class="ph__all" type="button" data-open-photo="0">
-			<?php bytenot_the_icon( 'grid' ); ?>
-			<?php echo esc_html( sprintf( /* translators: %d: photos. */ _n( 'All %d photo', 'All %d photos', $bytenot_n, 'bytenot-estate' ), $bytenot_n ) ); ?>
-		</button>
+		<div class="ph__tools">
+			<button class="arrow arrow--sm ph__arrow" type="button" aria-label="<?php esc_attr_e( 'Previous photo', 'bytenot-estate' ); ?>" data-ph-prev><?php bytenot_the_icon( 'arrow-left' ); ?></button>
+			<p class="ph__count"><span data-ph-index>01</span> / <?php echo esc_html( sprintf( '%02d', $bytenot_n ) ); ?></p>
+			<button class="arrow arrow--sm ph__arrow" type="button" aria-label="<?php esc_attr_e( 'Next photo', 'bytenot-estate' ); ?>" data-ph-next><?php bytenot_the_icon( 'arrow' ); ?></button>
+			<button class="ph__all" type="button" data-open-photo="0">
+				<?php bytenot_the_icon( 'grid' ); ?>
+				<?php echo esc_html( sprintf( /* translators: %d: photos. */ _n( 'All %d photo', 'All %d photos', $bytenot_n, 'bytenot-estate' ), $bytenot_n ) ); ?>
+			</button>
+		</div>
 		<?php endif; ?>
 	</div>
 	<div class="container ph__inner">
-		<p class="ph__status"><span class="ph__status-dot" aria-hidden="true"></span><span data-status><?php echo esc_html( $bytenot_d['status'] ); ?></span></p>
+		<p class="ph__status"><span data-status><?php echo esc_html( $bytenot_d['status'] ); ?></span></p>
 		<nav class="ph__crumbs" aria-label="<?php esc_attr_e( 'Breadcrumb', 'bytenot-estate' ); ?>">
 			<ol>
 				<?php if ( $bytenot_d['parent'] ) : ?>
@@ -147,7 +152,11 @@ $bytenot_links      = array_filter(
 	<div class="strip" data-strip>
 		<div class="strip__head">
 			<p class="fig-label"><?php esc_html_e( 'All photos', 'bytenot-estate' ); ?></p>
-			<p class="strip__count"><span data-strip-index>01</span> / <span data-strip-total><?php echo esc_html( sprintf( '%02d', $bytenot_n ) ); ?></span></p>
+			<div class="strip__nav">
+				<p class="strip__count"><span data-strip-index>01</span> / <span data-strip-total><?php echo esc_html( sprintf( '%02d', $bytenot_n ) ); ?></span></p>
+				<button class="arrow arrow--sm" type="button" aria-label="<?php esc_attr_e( 'Previous photo', 'bytenot-estate' ); ?>" data-strip-prev><?php bytenot_the_icon( 'arrow-left' ); ?></button>
+				<button class="arrow arrow--sm" type="button" aria-label="<?php esc_attr_e( 'Next photo', 'bytenot-estate' ); ?>" data-strip-next><?php bytenot_the_icon( 'arrow' ); ?></button>
+			</div>
 		</div>
 		<ul class="strip__track" data-strip-track>
 			<?php foreach ( $bytenot_photos as $bytenot_i => $bytenot_ph ) : ?>

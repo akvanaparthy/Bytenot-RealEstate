@@ -142,3 +142,20 @@ setting, not `+91` in the theme; the inquiry form carries a real consent box.
 **Alternatives rejected.** A separate post type per kind (three editors, three
 archives, no shared fields or filters); apartments as rows inside a project
 without their own pages (no unit-level URLs, enquiries or SEO).
+
+## 2026-11-11 — Motion without a library; the people row as Customizer content
+
+**Decision.** Page changes use the browser's cross-document View Transitions (a
+`@view-transition` rule, the header pinned, a card photo growing into the listing
+opening) and parallax uses CSS scroll-driven animations (`animation-timeline`),
+both in `theme.css` only. No GSAP: its licence is not GPL-compatible, which would
+keep the theme off WordPress.org, and it adds ~30 KB of script for effects the
+browser now composites itself. Firefox and older browsers load pages and lay
+them out exactly as before. Everything is off under `prefers-reduced-motion` and
+the parallax is off under 721px.
+
+**Decision.** The three people cards under the about statement are Customizer
+settings (photo, name, role × 3), like the rest of the about section, rather
+than Advisor posts: they are brand copy for the home page, not records the site
+queries. A card shows when it has any of the three; a blank photo renders a
+placeholder frame.
