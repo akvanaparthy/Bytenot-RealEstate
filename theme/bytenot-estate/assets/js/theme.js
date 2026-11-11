@@ -19,14 +19,17 @@
 	 * ------------------------------------------------------------------ */
 	// where the menu follows the page, a reload starts at the top: the rendered menu state is then right from
 	// the first frame and nothing shifts under a restored position
-	if ($('[data-header] a[href*="#"]') && 'scrollRestoration' in history && performance.getEntriesByType('navigation')[0]?.type === 'reload' && !location.hash) {
+	if ($('[data-about], [data-inquiry]') && $('[data-header] a[href*="#"]') && 'scrollRestoration' in history && performance.getEntriesByType('navigation')[0]?.type === 'reload' && !location.hash) {
 		history.scrollRestoration = 'manual';
 		scrollTo({ top: 0, behavior: 'instant' });
 	}
 
 	const header = $('[data-header]');
 	if (header) {
-		const update = () => header.classList.toggle('is-scrolled', window.scrollY > 40);
+		const update = () => {
+			const y = window.scrollY, on = header.classList.contains('is-scrolled');
+			if (y > 40 && !on) header.classList.add('is-scrolled'); else if (y < 8 && on) header.classList.remove('is-scrolled'); // hysteresis: no flutter at rest near the line
+		};
 		update();
 		window.addEventListener('scroll', update, { passive: true });
 	}
@@ -75,7 +78,7 @@
 			spy.forEach((l) => {
 				const active = l.hash === hit;
 				l.a.classList.toggle('is-active', active && l.a.classList.contains('nav__link'));
-				if (active) l.a.setAttribute('aria-current', 'page'); else l.a.removeAttribute('aria-current');
+				if (active) l.a.setAttribute('aria-current', 'location'); else l.a.removeAttribute('aria-current');
 			});
 			placeNavHl();
 		};
@@ -114,26 +117,38 @@
 	if (drawer) {
 		const opener = $('[data-drawer-open]');
 		const closers = $$('[data-drawer-close]', drawer);
-		let lastFocus = null;
+		let lastFocus = null, closing = 0;
 		const open = () => {
+			clearTimeout(closing);
 			lastFocus = opener;
 			drawer.hidden = false;
 			requestAnimationFrame(() => drawer.classList.add('is-open'));
+			document.documentElement.classList.add('is-locked');
 			document.body.classList.add('is-locked');
 			opener.setAttribute('aria-expanded', 'true');
 			$('.drawer__close', drawer).focus();
 		};
 		const close = () => {
 			drawer.classList.remove('is-open');
+			document.documentElement.classList.remove('is-locked');
 			document.body.classList.remove('is-locked');
 			opener.setAttribute('aria-expanded', 'false');
 			const done = () => { drawer.hidden = true; lastFocus && lastFocus.focus(); };
-			reduced ? done() : setTimeout(done, 300);
+			reduced ? done() : (closing = setTimeout(done, 300));
 		};
 		opener.addEventListener('click', open);
 		closers.forEach((c) => c.addEventListener('click', close));
 		$$('.drawer__nav a, .drawer__cta', drawer).forEach((a) => a.addEventListener('click', close));
-		document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !drawer.hidden) close(); });
+		document.addEventListener('keydown', (e) => {
+			if (drawer.hidden) return;
+			if (e.key === 'Escape') { close(); return; }
+			if (e.key !== 'Tab') return;
+			// the dialog keeps focus: Tab wraps inside the panel
+			const f = $$('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])', drawer).filter((el) => el.offsetParent);
+			if (!f.length) return;
+			const first = f[0], last = f[f.length - 1];
+			if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+		});
 	}
 
 	/* ------------------------------------------------------------------
@@ -210,7 +225,8 @@
 		const rail = $('[data-rail]', spot);
 		let index = 0, top = 0;
 
-		FEATURED.forEach((p) => { const i = new Image(); i.src = p.stage; });
+		const warm = () => FEATURED.forEach((p) => { const i = new Image(); i.src = p.stage; });
+		if ('IntersectionObserver' in window) { const io = new IntersectionObserver((en) => { if (en[0].isIntersecting) { warm(); io.disconnect(); } }, { rootMargin: '600px' }); io.observe(spot); } else warm();
 
 		const rows = $$('.rail__row', rail);
 		rows.forEach((row, i) => {
@@ -302,21 +318,27 @@
 		let speed = BASE, target = BASE, offset = 0, last = performance.now();
 		const slow = () => { target = SLOW; };
 		const fast = () => { target = BASE; };
-		marquee.addEventListener('pointerenter', slow);
-		marquee.addEventListener('pointerleave', fast);
+		if (canHover) { marquee.addEventListener('pointerenter', slow); marquee.addEventListener('pointerleave', fast); }
 		marquee.addEventListener('focusin', slow);
 		marquee.addEventListener('focusout', fast);
+		let loop = first.getBoundingClientRect().width;
+		if ('ResizeObserver' in window) new ResizeObserver(() => { loop = first.getBoundingClientRect().width; }).observe(first);
+		let running = false, visible = true;
 		const tick = (now) => {
+			if (!visible || document.hidden) { running = false; return; }
 			const dt = Math.min(0.05, (now - last) / 1000);
 			last = now;
 			speed += (target - speed) * Math.min(1, dt * 3);
 			offset += speed * dt;
-			const loop = first.getBoundingClientRect().width;
 			if (loop && offset >= loop) offset -= loop;
 			inner.style.transform = `translate3d(${-offset}px, 0, 0)`;
 			requestAnimationFrame(tick);
 		};
-		requestAnimationFrame(tick);
+		const start = () => { if (!running && visible && !document.hidden) { running = true; last = performance.now(); requestAnimationFrame(tick); } };
+		// it only runs while the strip is on screen and the tab is in front
+		if ('IntersectionObserver' in window) new IntersectionObserver((en) => { visible = en[0].isIntersecting; start(); }, { rootMargin: '80px' }).observe(marquee);
+		document.addEventListener('visibilitychange', start);
+		start();
 	}
 
 	/* ------------------------------------------------------------------
@@ -355,6 +377,7 @@
 			animateTo(Math.min(index * step(), maxScroll()));
 			update();
 		};
+		['pointerdown', 'touchstart', 'wheel'].forEach((ev) => tTrack.addEventListener(ev, () => { cancelAnimationFrame(raf); tTrack.style.scrollSnapType = ''; }, { passive: true }));
 		let idle;
 		tTrack.addEventListener('scroll', () => {
 			update();
@@ -370,7 +393,14 @@
 	/* ------------------------------------------------------------------
 	 * Card hover state as one class (desktop hover, keyboard focus).
 	 * ------------------------------------------------------------------ */
+	const cardSizer = 'ResizeObserver' in window ? new ResizeObserver((entries) => entries.forEach((e) => {
+		// the details area grows with a long title or wrapped facts; the photo window above it must end where it starts
+		const card = e.target.closest('.card');
+		if (card) card.style.setProperty('--card-body', `${Math.ceil(e.target.getBoundingClientRect().height)}px`);
+	})) : null;
 	const liveCards = (root) => $$('.card', root).forEach((card) => {
+		const body = $('.card__body', card);
+		if (body && cardSizer && !body.dataset.sized) { body.dataset.sized = '1'; cardSizer.observe(body); }
 		if (canHover) {
 			card.addEventListener('pointerenter', () => card.classList.add('is-open'));
 			card.addEventListener('pointerleave', () => card.classList.remove('is-open'));
@@ -514,7 +544,11 @@
 			if (p === last) return;
 			last = p;
 			const n = Math.round(clamp01(p / 0.9) * words.length);
-			if (n !== lit) { lit = n; words.forEach((w, i) => w.classList.toggle('is-on', i < n)); }
+			if (n !== lit) {
+				if (lit < 0) words.forEach((w, i) => w.classList.toggle('is-on', i < n));
+				else for (let i = Math.min(lit, n); i < Math.max(lit, n); i++) words[i].classList.toggle('is-on', i < n); // only the band that changed
+				lit = n;
+			}
 			floats.forEach(({ el, from, out }) => el.classList.toggle('is-in', p >= from && (out === null || p < out)));
 		};
 		let ticking = false;
@@ -548,7 +582,8 @@
 				});
 				if (!raf) raf = requestAnimationFrame(settle);
 			};
-			stage.addEventListener('pointermove', (e) => aim(e.clientX, e.clientY));
+			let px = 0, py = 0, aimRaf = 0;
+			stage.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; if (!aimRaf) aimRaf = requestAnimationFrame(() => { aimRaf = 0; aim(px, py); }); });
 			stage.addEventListener('pointerleave', () => aim(-9999, -9999));
 			const clamp = (v) => Math.max(-12, Math.min(12, v));
 			$$('.about__pill', statement).forEach((pill) => {
@@ -789,16 +824,16 @@
 		const chapterLinks = $$('[data-chapters] a');
 		const sections = chapterLinks.map((a) => $(a.getAttribute('href'))).filter((s) => s && !s.hidden);
 		const bar = $('[data-prop-bar]');
+		const phoneMq = matchMedia('(max-width: 720px)');
+		let barOn = null, curId = '';
 		const onScroll = () => {
 			zoom();
 			const line = innerHeight * 0.34;
 			let cur = sections[0];
 			sections.forEach((s) => { if (s.getBoundingClientRect().top <= line) cur = s; });
-			if (cur) chapterLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${cur.id}`));
-			const on = ph.getBoundingClientRect().bottom < 0 || matchMedia('(max-width: 720px)').matches;
-			bar.classList.toggle('is-visible', on);
-			bar.setAttribute('aria-hidden', String(!on));
-			bar.toggleAttribute('inert', !on);
+			if (cur && cur.id !== curId) { curId = cur.id; chapterLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${cur.id}`)); }
+			const on = ph.getBoundingClientRect().bottom < 0 || phoneMq.matches;
+			if (on !== barOn) { barOn = on; bar.classList.toggle('is-visible', on); bar.setAttribute('aria-hidden', String(!on)); bar.toggleAttribute('inert', !on); }
 		};
 		let ticking = false;
 		window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; onScroll(); }); } }, { passive: true });
@@ -884,9 +919,10 @@
 		let settleTimer;
 		let userScrolled = false; // never on the browser's own scroll (restoring a position, jumping to a hash)
 		['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, () => { userScrolled = true; }, { passive: true, once: true }));
+		const coarse = matchMedia('(pointer: coarse)').matches; // a flick-scrolled phone must never be pulled about
 		const settle = () => {
 			// never while someone is typing in the form: the browser's own focus scroll is not ours to override
-			if (!userScrolled || inquiry.contains(document.activeElement)) return;
+			if (coarse || !userScrolled || inquiry.contains(document.activeElement)) return;
 			const top = band.getBoundingClientRect().top;
 			const gap = Math.abs(top);
 			// nearer than at the last stop and on the same side of it: a reader who scrolled past is never pulled back

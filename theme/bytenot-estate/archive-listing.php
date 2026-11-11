@@ -41,7 +41,7 @@ $bytenot_cols  = $bytenot_nf <= 4 ? ' filters-bar--four' : ( $bytenot_nf >= 6 ? 
 
 <section class="listing" aria-labelledby="results-title" data-kind="<?php echo esc_attr( $bytenot_kind ); ?>">
 	<div class="container">
-		<script type="application/json" data-listings><?php echo wp_json_encode( bytenot_listings( $bytenot_kind ) ); ?></script>
+		<script type="application/json" data-listings><?php echo wp_json_encode( array_map( static fn( $l ) => array_intersect_key( $l, array_flip( array( 'id', 'title', 'url', 'kind', 'type', 'city', 'area', 'place', 'bhk', 'bhkSet', 'price', 'priceMin', 'priceMax', 'priceText', 'intent', 'possession', 'status', 'img', 'added', 'facts', 'cta', 'ctaHref' ) ) ), bytenot_listings( $bytenot_kind ) ) ); // only what the filters and the cards read ?></script>
 		<form class="filters-bar<?php echo esc_attr( $bytenot_cols ); ?>" method="get" action="<?php echo esc_url( bytenot_archive_url( $bytenot_kind ) ); ?>" data-listing-filters aria-label="<?php echo esc_attr( sprintf( /* translators: %s: what listings are called, e.g. "projects". */ __( 'Filter %s', 'bytenot-estate' ), bytenot_noun() ) ); ?>">
 			<?php if ( count( $bytenot_opts['kinds'] ) > 1 ) : ?>
 			<label class="filters-bar__field">

@@ -236,7 +236,7 @@ $bytenot_links      = array_filter(
 		<div class="drawing__paper">
 			<?php foreach ( $bytenot_d['plans'] as $bytenot_i => $bytenot_pl ) : ?>
 			<div class="drawing__sheet<?php echo $bytenot_i ? '' : ' is-active'; ?>" id="<?php echo esc_attr( $bytenot_pl['key'] ); ?>" role="tabpanel" aria-labelledby="tab-<?php echo esc_attr( $bytenot_pl['key'] ); ?>" data-plan-sheet="<?php echo esc_attr( $bytenot_pl['key'] ); ?>"<?php echo $bytenot_i ? ' hidden' : ''; ?>>
-				<img class="drawing__img" src="<?php echo esc_url( $bytenot_pl['src'] ); ?>" alt="<?php echo esc_attr( $bytenot_pl['title'] ); ?>" loading="lazy">
+				<?php echo wp_get_attachment_image( $bytenot_pl['id'], 'large', false, array( 'class' => 'drawing__img', 'alt' => $bytenot_pl['title'], 'loading' => 'lazy' ) ); ?>
 			</div>
 			<?php endforeach; ?>
 		</div>
@@ -448,7 +448,7 @@ $bytenot_links      = array_filter(
 	</button>
 	<p class="lightbox__count"><span data-lb-index>1</span> / <span data-lb-total><?php echo (int) $bytenot_n; ?></span></p>
 	<div class="lightbox__stage" data-lb-stage>
-		<img class="lightbox__img" src="" alt="" data-lb-img>
+		<img class="lightbox__img" alt="" data-lb-img>
 	</div>
 	<button class="lightbox__arrow lightbox__arrow--prev" type="button" aria-label="<?php esc_attr_e( 'Previous photo', 'bytenot-estate' ); ?>" data-lb-prev>
 		<?php bytenot_the_icon( 'arrow-left', 22 ); ?>

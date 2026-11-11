@@ -53,8 +53,8 @@ $bytenot_json = array_map(
 			<script type="application/json" data-featured-items><?php echo wp_json_encode( $bytenot_json ); ?></script>
 			<div class="spot__stage">
 				<figure class="spot__media">
-					<img class="spot__img is-on" data-spot-img src="<?php echo esc_url( $bytenot_first['stage'] ); ?>" alt="<?php echo esc_attr( $bytenot_first['alt'] ); ?>" width="1200" height="800">
-					<img class="spot__img" data-spot-img-next src="" alt="" width="1200" height="800" aria-hidden="true">
+					<img class="spot__img is-on" data-spot-img src="<?php echo esc_url( $bytenot_first['stage'] ); ?>" alt="<?php echo esc_attr( $bytenot_first['alt'] ); ?>" width="1200" height="800" loading="lazy">
+					<img class="spot__img" data-spot-img-next alt="" width="1200" height="800" aria-hidden="true">
 					<div class="spot__shade"></div>
 				</figure>
 				<p class="spot__why" data-spot-tab><span class="spot__why-text" data-spot-why><?php echo esc_html( $bytenot_first['why'] ); ?></span></p>

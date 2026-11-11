@@ -72,14 +72,17 @@
 	 * ------------------------------------------------------------------ */
 	// where the menu follows the page, a reload starts at the top: the rendered menu state is then right from
 	// the first frame and nothing shifts under a restored position
-	if ($('[data-header] a[href*="#"]') && 'scrollRestoration' in history && performance.getEntriesByType('navigation')[0]?.type === 'reload' && !location.hash) {
+	if ($('[data-about], [data-inquiry]') && $('[data-header] a[href*="#"]') && 'scrollRestoration' in history && performance.getEntriesByType('navigation')[0]?.type === 'reload' && !location.hash) {
 		history.scrollRestoration = 'manual';
 		scrollTo({ top: 0, behavior: 'instant' });
 	}
 
 	const header = $('[data-header]');
 	if (header) {
-		const update = () => header.classList.toggle('is-scrolled', window.scrollY > 40);
+		const update = () => {
+			const y = window.scrollY, on = header.classList.contains('is-scrolled');
+			if (y > 40 && !on) header.classList.add('is-scrolled'); else if (y < 8 && on) header.classList.remove('is-scrolled'); // hysteresis: no flutter at rest near the line
+		};
 		update();
 		window.addEventListener('scroll', update, { passive: true });
 	}
@@ -128,7 +131,7 @@
 			spy.forEach((l) => {
 				const active = l.hash === hit;
 				l.a.classList.toggle('is-active', active && l.a.classList.contains('nav__link'));
-				if (active) l.a.setAttribute('aria-current', 'page'); else l.a.removeAttribute('aria-current');
+				if (active) l.a.setAttribute('aria-current', 'location'); else l.a.removeAttribute('aria-current');
 			});
 			placeNavHl();
 		};
@@ -206,7 +209,16 @@
 		opener.addEventListener('click', open);
 		closers.forEach((c) => c.addEventListener('click', close));
 		$$('.drawer__nav a, .drawer__cta', drawer).forEach((a) => a.addEventListener('click', close));
-		document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !drawer.hidden) close(); });
+		document.addEventListener('keydown', (e) => {
+			if (drawer.hidden) return;
+			if (e.key === 'Escape') { close(); return; }
+			if (e.key !== 'Tab') return;
+			// the dialog keeps focus: Tab wraps inside the panel
+			const f = $$('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])', drawer).filter((el) => el.offsetParent);
+			if (!f.length) return;
+			const first = f[0], last = f[f.length - 1];
+			if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+		});
 	}
 
 	/* ------------------------------------------------------------------
@@ -472,6 +484,7 @@
 			animateTo(Math.min(index * step(), maxScroll()));
 			update();
 		};
+		['pointerdown', 'touchstart', 'wheel'].forEach((ev) => tTrack.addEventListener(ev, () => { cancelAnimationFrame(raf); tTrack.style.scrollSnapType = ''; }, { passive: true }));
 		let idle;
 		tTrack.addEventListener('scroll', () => {
 			update();
@@ -682,7 +695,8 @@
 				});
 				if (!raf) raf = requestAnimationFrame(settle);
 			};
-			stage.addEventListener('pointermove', (e) => aim(e.clientX, e.clientY));
+			let px = 0, py = 0, aimRaf = 0;
+			stage.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; if (!aimRaf) aimRaf = requestAnimationFrame(() => { aimRaf = 0; aim(px, py); }); });
 			stage.addEventListener('pointerleave', () => aim(-9999, -9999));
 
 			const clamp = (v) => Math.max(-12, Math.min(12, v));
@@ -1234,9 +1248,10 @@
 		let settleTimer;
 		let userScrolled = false; // never on the browser's own scroll (restoring a position, jumping to a hash)
 		['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, () => { userScrolled = true; }, { passive: true, once: true }));
+		const coarse = matchMedia('(pointer: coarse)').matches; // a flick-scrolled phone must never be pulled about
 		const settle = () => {
 			// never while someone is typing in the form: the browser's own focus scroll is not ours to override
-			if (!userScrolled || inquiry.contains(document.activeElement)) return;
+			if (coarse || !userScrolled || inquiry.contains(document.activeElement)) return;
 			const top = band.getBoundingClientRect().top;
 			const gap = Math.abs(top);
 			// nearer than at the last stop and on the same side of it: a reader who scrolled past is never pulled back

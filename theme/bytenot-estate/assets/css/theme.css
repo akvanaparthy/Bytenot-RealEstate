@@ -21,7 +21,8 @@ body {
 	background: var(--wp--preset--color--base);
 	-webkit-font-smoothing: antialiased;
 }
-body.is-locked { overflow: hidden; }
+html.is-locked, body.is-locked { overflow: hidden; }
+html { scrollbar-gutter: stable; overflow-x: clip; }
 img { display: block; max-width: 100%; height: auto; }
 [hidden] { display: none !important; } /* the attribute must win over component display rules */
 a { color: inherit; text-decoration: none; }
@@ -222,12 +223,12 @@ legend { padding: 0; }
 	border-radius: 14px; background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink);
 	box-shadow: var(--wp--custom--shadow--float);
 }
-.lang__menu button {
+.lang__menu a {
 	display: flex; width: 100%; align-items: center; justify-content: space-between;
 	padding: 10px 12px; border: 0; border-radius: 8px; background: none; font-size: var(--wp--preset--font-size--small); text-align: left;
 }
-.lang__menu button:hover { background: var(--wp--preset--color--surface); }
-.lang__menu button[aria-checked="true"]::after { content: "✓"; font-size: 13px; }
+.lang__menu a:hover { background: var(--wp--preset--color--surface); }
+.lang__menu a[aria-checked="true"]::after { content: "✓"; font-size: 13px; }
 
 .menu-toggle { display: none; }
 
@@ -236,7 +237,8 @@ legend { padding: 0; }
 .drawer__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45); }
 .drawer__panel {
 	position: absolute; top: 0; right: 0; bottom: 0; width: min(86vw, 360px);
-	display: flex; flex-direction: column; gap: 24px; padding: 20px 24px 32px;
+	display: flex; flex-direction: column; gap: 24px; padding: 20px 24px calc(32px + env(safe-area-inset-bottom));
+	overflow-y: auto; overscroll-behavior: contain;
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink);
 	box-shadow: var(--wp--custom--shadow--float);
 	transform: translateX(100%); transition: transform .3s ease;
@@ -376,7 +378,7 @@ legend { padding: 0; }
 	-webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 	mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 }
-.marquee__inner { display: flex; flex: none; will-change: transform; } /* moved by app.js; eases to a crawl on hover */
+.marquee__inner { display: flex; flex: none; will-change: transform; } /* moved by the script; eases to a crawl on hover */
 .marquee__track { display: flex; flex: none; align-items: center; gap: 96px; padding-right: 96px; }
 .partner {
 	display: flex; align-items: center; gap: 12px; flex: none;
@@ -444,10 +446,10 @@ legend { padding: 0; }
 .about__float {
 	position: absolute; z-index: 1; width: 270px; aspect-ratio: 1;
 	transform: translate(var(--mx, 0px), var(--my, 0px));
-	will-change: transform; pointer-events: none;
+	pointer-events: none;
 }
 .about__float-in {
-	width: 100%; height: 100%; border-radius: 20px; overflow: hidden;
+	width: 100%; height: 100%; border-radius: 20px; overflow: hidden; isolation: isolate;
 	box-shadow: var(--wp--custom--shadow--float);
 	transform: rotate(var(--r, 0deg)) scale(0.2); opacity: 0;
 	transition: transform .55s cubic-bezier(.5, 0, .75, 0), opacity .4s ease .1s;
@@ -619,7 +621,6 @@ legend { padding: 0; }
 	background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base);
 	font-size: var(--wp--preset--font-size--small); line-height: 1.5; box-shadow: var(--wp--custom--shadow--float);
 }
-.toast code { display: block; margin-top: 4px; font-family: ui-monospace, Consolas, monospace; font-size: 13px; word-break: break-all; color: var(--wp--preset--color--primary); }
 
 
 /* ---------- testimonials ---------- */
@@ -759,7 +760,7 @@ legend { padding: 0; }
 @property --card-r   { syntax: "<length>"; inherits: true; initial-value: 14px; }  /* window radius */
 @property --card-rtl { syntax: "<length>"; inherits: true; initial-value: 14px; }  /* window top-left radius */
 .card {
-	--card-body: 150px;   /* height of the details area */
+	--card-body: 166px;   /* height of the details area: a two-line title, a row of facts, the price row */
 	--card-f: 12px;
 	--card-bb: calc(var(--card-body) + 12px);
 	--card-r: 14px;
@@ -801,12 +802,12 @@ legend { padding: 0; }
 .card__status { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp--preset--color--ink-soft); }
 .card__body {
 	position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
-	display: flex; flex-direction: column; height: var(--card-body); padding: 14px 16px 16px;
+	display: flex; flex-direction: column; min-height: var(--card-body); padding: 14px 16px 16px; /* grows with its content; the script copies the measured height back into --card-body so the photo window follows */
 	color: var(--wp--preset--color--ink);
 	transition: color 0.18s ease 0.1s;
 }
 .card__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.card__title { font-size: 17px; font-weight: 600; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card__title { font-size: 17px; font-weight: 600; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } /* two lines, then an ellipsis: long project names stay readable */
 .card__place { display: inline-flex; align-items: center; gap: 4px; flex: none; font-size: 12px; color: var(--wp--preset--color--ink-muted); white-space: nowrap; transition: color 0.18s ease 0.1s; }
 .card__facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .fact {
@@ -817,7 +818,7 @@ legend { padding: 0; }
 .card__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; }
 .card__price { font-size: 18px; font-weight: 600; color: var(--wp--preset--color--ink); transition: color 0.18s ease; }
 
-/* open state: app.js adds .is-open on hover (pointer devices) and on keyboard focus.
+/* open state: the script adds .is-open on hover (pointer devices) and on keyboard focus.
    The window's bottom edge travels down over the details in ~0.3s, so each row switches
    colour when the photo reaches it: title first, chips next, price last. Closing reverses
    the order (base transitions above). */
@@ -1051,7 +1052,7 @@ legend { padding: 0; }
 /* opening */
 .ph { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: max(92svh, 680px); color: var(--wp--preset--color--base); }
 .ph__media { position: absolute; inset: var(--frame); border-radius: var(--wp--custom--radius--card); overflow: hidden; background: var(--wp--preset--color--contrast); }
-.ph__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; transform: scale(var(--ph-zoom, 1.08)); will-change: transform; }
+.ph__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; transform: scale(var(--ph-zoom, 1.08)); }
 .ph__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 32%, rgba(0,0,0,.08) 58%, rgba(0,0,0,.62) 100%); }
 .ph__status {
 	display: inline-flex; align-items: center; gap: 8px; height: 30px; margin-bottom: 16px; padding: 0 12px 0 10px;
@@ -1127,7 +1128,7 @@ legend { padding: 0; }
 .chapter.is-in { opacity: 1; transform: none; }
 .chapter--flip .chapter__fig { order: 2; }
 .chapter--flip .chapter__text { order: 1; }
-.chapter__fig { margin: 0; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; background: var(--wp--preset--color--surface); }
+.chapter__fig { margin: 0; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; isolation: isolate; background: var(--wp--preset--color--surface); }
 .chapter__open { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
 .chapter__img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 1.2s cubic-bezier(.2, .8, .2, 1); }
 .chapter.is-in .chapter__img { transform: none; }
@@ -1174,15 +1175,6 @@ legend { padding: 0; }
 }
 .drawing__sheet { animation: fade-in .4s ease both; }
 .drawing__sheet[hidden] { display: none; }
-.drawing__svg { display: block; width: 100%; height: auto; }
-.drawing__svg g[data-room] rect { fill: rgba(255, 255, 255, 0.92); stroke: var(--wp--preset--color--contrast); stroke-width: 1.2; transition: fill .25s ease; }
-.drawing__svg g[data-room] text { font: 500 12px var(--wp--preset--font-family--body); letter-spacing: 0.06em; text-transform: uppercase; fill: var(--wp--preset--color--ink-soft); text-anchor: middle; pointer-events: none; transition: fill .25s ease; }
-.drawing__svg g[data-room]:hover rect, .drawing__svg g.is-hot rect { fill: var(--wp--preset--color--primary); }
-.drawing__svg g[data-room]:hover text, .drawing__svg g.is-hot text { fill: var(--wp--preset--color--contrast); }
-.drawing__vtext { writing-mode: vertical-rl; }
-.drawing__dims line { stroke: var(--wp--preset--color--ink-muted); stroke-width: 1; }
-.drawing__dims text { font: 500 11px var(--wp--preset--font-family--body); fill: var(--wp--preset--color--ink-muted); text-anchor: middle; }
-.drawing__doors path { fill: none; stroke: var(--wp--preset--color--ink-muted); stroke-width: 1; stroke-dasharray: 2 3; }
 .ledger--rooms > div { margin: 0 -8px; padding: 12px 8px; border-radius: 8px; transition: background-color var(--wp--custom--transition); }
 .ledger--rooms > div:first-child { border-top-color: var(--wp--preset--color--contrast); }
 .ledger--rooms > div:hover, .ledger--rooms > div.is-hot { background: var(--wp--preset--color--surface); }
@@ -1298,7 +1290,7 @@ legend { padding: 0; }
 .prop-bar__call { width: 36px; padding: 0; }
 
 /* lightbox */
-.lightbox { width: 100vw; max-width: 100vw; height: 100vh; max-height: 100vh; margin: 0; padding: 0; border: 0; background: rgba(10, 10, 10, 0.97); color: var(--wp--preset--color--base); }
+.lightbox { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: 100vh; max-height: 100dvh; margin: 0; padding: 0; border: 0; background: rgba(10, 10, 10, 0.97); color: var(--wp--preset--color--base); }
 .lightbox::backdrop { background: transparent; }
 .lightbox__stage { position: absolute; inset: 64px 88px 112px; display: flex; align-items: center; justify-content: center; touch-action: pan-y; }
 .lightbox__img { max-width: 100%; max-height: 100%; border-radius: 16px; object-fit: contain; animation: fade-in .35s ease; }
@@ -1312,7 +1304,7 @@ legend { padding: 0; }
 .lightbox__count { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); font-size: 13px; color: rgba(255, 255, 255, 0.7); font-variant-numeric: tabular-nums; }
 .lightbox__arrow { top: 50%; width: 52px; height: 52px; transform: translateY(-50%); }
 .lightbox__arrow--prev { left: 20px; } .lightbox__arrow--next { right: 20px; }
-.lightbox__strip { position: absolute; left: 0; right: 0; bottom: 20px; display: flex; justify-content: center; gap: 8px; padding: 0 20px; overflow-x: auto; list-style: none; scrollbar-width: none; }
+.lightbox__strip { position: absolute; left: 0; right: 0; bottom: calc(20px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 8px; padding: 0 20px; overflow-x: auto; list-style: none; scrollbar-width: none; }
 .lightbox__strip::-webkit-scrollbar { display: none; }
 .lightbox__strip button { flex: none; width: 72px; height: 48px; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: none; opacity: 0.5; cursor: pointer; transition: opacity var(--wp--custom--transition), border-color var(--wp--custom--transition); }
 .lightbox__strip button img { width: 100%; height: 100%; object-fit: cover; }
@@ -1332,7 +1324,7 @@ legend { padding: 0; }
 	.hero__lede { width: 340px; }
 	.about__float { display: none; }
 	.faq__inner { gap: 40px; }
-	.inquiry__card { grid-template-columns: 320px 420px; }
+	.inquiry__card { grid-template-columns: minmax(0, 320px) minmax(0, 420px); }
 	.ph__price { min-width: 200px; padding: 18px 22px 18px 20px; }
 	.ph__amount { font-size: 28px; }
 	.ledger--glance { gap: 0 28px; }
@@ -1391,7 +1383,6 @@ legend { padding: 0; }
 	.partner--mark img { height: 32px; }
 	.partner--tall img { height: 40px; }
 	.partner--wide img { height: 20px; }
-	.partner span { font-size: 18px; }
 	.partner span { font-size: 16px; }
 	.hero__inner { padding-top: 48px; padding-bottom: 16px; }
 	.search-wrap { width: 100%; padding: 0; background: transparent; border-radius: 0; }
@@ -1416,7 +1407,6 @@ legend { padding: 0; }
 	.about__statement--multi { font-size: 19px; line-height: 1.45; }
 	.about__pill { width: 56px; height: 28px; }
 	.about__pill-img { border-radius: 14px; }
-	.intro { padding: 64px 0 48px; }
 	.featured__head { flex-direction: column; align-items: flex-start; gap: 24px; }
 	.site-header .btn__long { display: none; }
 	.site-header .btn__short { display: inline; }
@@ -1461,9 +1451,7 @@ legend { padding: 0; }
 	.results-head { flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 24px; }
 	.cards { grid-template-columns: 1fr; gap: 32px; margin-top: 20px; }
 
-	.card { --card-body: 164px; }
 	.card__head { flex-direction: column; align-items: flex-start; gap: 4px; }
-	.card__title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 
 	.site-footer { padding-top: 56px; border-radius: 24px 24px 0 0; }
 	.site-footer__cta { margin-bottom: 36px; }
@@ -1479,7 +1467,6 @@ legend { padding: 0; }
 	.site-footer__cell--center, .site-footer__cell--right { text-align: left; }
 	.site-footer__wordmark { --wordmark-size: calc((100cqw - 2 * var(--wp--custom--layout--gutter)) / 5.05); }
 
-	.drawer__panel { width: min(86vw, 360px); }
 	.modal__close { right: 0; top: -52px; }
 
 	/* faq + inquiry */
@@ -1562,7 +1549,6 @@ legend { padding: 0; }
 	.lightbox__stage { inset: 56px 0 92px; }
 	.lightbox__img { border-radius: 0; }
 	.lightbox__arrow { display: none; }
-}	.lightbox__arrow { display: none; }
 }
 
 /* ---------- a project's apartments ---------- */
@@ -1593,4 +1579,68 @@ legend { padding: 0; }
 	.units__go { grid-column: 1 / -1; text-align: left; }
 	.units__table td:nth-child(2)::after, .units__table td:nth-child(3)::after, .units__table td:nth-child(4)::after { content: " · "; color: var(--wp--preset--color--ink-muted); }
 	.units__table td:nth-child(2), .units__table td:nth-child(3), .units__table td:nth-child(4), .units__table td:nth-child(5) { display: inline; font-size: 13px; color: var(--wp--preset--color--ink-soft); }
+}
+
+/* ---------- tablets: the desktop nav cannot share one row with the logo and the button below ~960px ---------- */
+@media (max-width: 960px) {
+	.site-header { --header-piece: 52px; }
+	.nav, .lang { display: none; }
+	.menu-toggle {
+		display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 44px; height: 44px; padding: 0 12px;
+		border: 0; border-radius: 50%; background: var(--wp--preset--color--glass);
+		-webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+	}
+	.menu-toggle span { display: block; height: 2px; background: currentColor; border-radius: 2px; }
+	.site-header.is-scrolled .menu-toggle, .site-header--dark .menu-toggle { background: rgba(0, 0, 0, 0.06); }
+	.site-header .btn__long { display: none; }
+	.site-header .btn__short { display: inline; }
+	.site-header .btn--cta { padding: 0 20px; }
+}
+/* narrow phones: the logo and the menu button keep their room; the header button waits in the drawer */
+@media (max-width: 400px) {
+	.site-header .btn--cta { display: none; }
+	.brand__logo { height: 28px; }
+}
+/* phones: cards stack their facts on two rows */
+@media (max-width: 720px) {
+	.card { --card-body: 188px; }
+}
+/* touch: inline links and small buttons get a finger-sized hit area without moving the layout */
+@media (pointer: coarse) {
+	.link-arrow, .link-btn, .site-footer__links a, .site-footer__cta-link, .ph__crumbs a, .units__name, .ph__partof a, .site-footer__meta a, .site-footer__label a { padding-top: 10px; padding-bottom: 10px; margin-top: -10px; margin-bottom: -10px; }
+	.toggle__btn { min-height: 40px; }
+	.consent input, .visit__consent input { width: 20px; height: 20px; }
+}
+/* the photo window never shrinks below 220px, however tall the details grow on a narrow card */
+.card { width: 100%; min-height: calc(var(--card-body) + 232px); } /* width stated, so the min-height cannot transfer into the width through the aspect ratio */
+
+/* ---------- from the front-end audit ---------- */
+/* phones: no browser zoom on focus (iOS zooms any control under 16px), and headlines that wrap */
+@media (max-width: 720px) {
+	.filters-bar__select, .results-sort__select, .vf__input, .uf__input, .field__input, .dd__button { font-size: 16px; }
+	.inquiry__title, .inquiry__tag { white-space: normal; text-wrap: balance; }
+	/* frosted layers that move with every scroll frame cost the most on a phone GPU */
+	.chapters ul { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, 0.96); }
+	.prop-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, 0.97); }
+	.site-footer__panel { -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+}
+/* tablets: the spotlight and the inquiry card stack the way phones do */
+@media (max-width: 960px) {
+	.spot { grid-template-columns: 1fr; gap: 16px; }
+	.spot__stage { min-height: 0; aspect-ratio: 4 / 5; }
+	.spot__info { right: 24px; }
+	.inquiry__card { grid-template-columns: minmax(0, 560px); width: 100%; justify-content: center; }
+	.inquiry__glass { padding: 18px 20px; }
+	.inquiry__glass-text { font-size: 22px; }
+	.inquiry__glass-text em { display: inline; }
+}
+/* touch: the remaining small controls */
+@media (pointer: coarse) {
+	.social a, .prop-bar__call, .ph__all, .lightbox__strip button { min-width: 44px; min-height: 44px; }
+	.results-sort__select { height: 44px; }
+}
+/* reduced motion: the statement is lit from the start, so the section does not pin and scroll in place */
+@media (prefers-reduced-motion: reduce) {
+	.about { height: auto; }
+	.about__stage { position: static; height: auto; min-height: 0; padding: 96px 0; }
 }

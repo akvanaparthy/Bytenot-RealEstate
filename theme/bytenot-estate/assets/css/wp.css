@@ -61,6 +61,6 @@ form.is-busy button[type="submit"] { opacity: 0.6; pointer-events: none; }
 .wp-caption-text { margin-top: 8px; font-size: 13px; color: var(--wp--preset--color--ink-muted); }
 
 @media (max-width: 720px) {
-	.page-shell { padding-top: calc(72px + 32px); padding-bottom: 72px; }
+	.page-shell { padding-top: calc(var(--wp--custom--header--height) + 32px); padding-bottom: 72px; }
 	.entries { grid-template-columns: 1fr; }
 }

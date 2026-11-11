@@ -28,7 +28,7 @@ $bytenot_rights  = trim( get_bloginfo( 'name' ) . ' ' . get_bloginfo( 'descripti
 <footer class="site-footer" id="contact">
 	<div class="brand-motif" aria-hidden="true"></div>
 	<div class="site-footer__bg" aria-hidden="true">
-		<?php bytenot_mod_image( 'footer_image', 'full', array( 'width' => 2000, 'height' => 2000, 'loading' => 'lazy' ), get_theme_file_uri( 'assets/images/footer-placeholder.jpg' ) ); ?>
+		<?php bytenot_mod_image( 'footer_image', 'full', array( 'width' => 2000, 'height' => 2000, 'loading' => 'lazy', 'sizes' => '(max-width: 720px) 200vw, 100vw' ), get_theme_file_uri( 'assets/images/footer-placeholder.jpg' ) ); ?>
 	</div>
 
 	<div class="container site-footer__cta">

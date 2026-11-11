@@ -204,7 +204,7 @@ function bytenot_listing_page( $id ) {
 		}
 		/* translators: %d: plan number. */
 		$title   = $att->post_title ?: sprintf( __( 'Plan %d', 'bytenot-estate' ), $i + 1 );
-		$plans[] = array( 'key' => 'plan-' . ( $i + 1 ), 'title' => $title, 'src' => $src, 'rooms' => $rooms, 'fig' => sprintf( /* translators: 1: figure number, 2: plan title. */ __( 'Fig. %1$d — %2$s', 'bytenot-estate' ), $i + 1, $title ) );
+		$plans[] = array( 'key' => 'plan-' . ( $i + 1 ), 'id' => (int) $pid, 'title' => $title, 'src' => $src, 'rooms' => $rooms, 'fig' => sprintf( /* translators: 1: figure number, 2: plan title. */ __( 'Fig. %1$d — %2$s', 'bytenot-estate' ), $i + 1, $title ) );
 	}
 	$brochure = (int) $inh( 'brochure_id' ) ? wp_get_attachment_url( (int) $inh( 'brochure_id' ) ) : '';
 	$video    = (string) $inh( 'video_url' );

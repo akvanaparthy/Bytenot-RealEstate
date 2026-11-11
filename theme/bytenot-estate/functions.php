@@ -72,6 +72,18 @@ function bytenot_assets() {
 add_action( 'wp_enqueue_scripts', 'bytenot_assets' );
 
 /**
+ * The body font is fetched before the stylesheet asks for it, so the first paint uses it.
+ *
+ * @param array $resources Preload entries.
+ * @return array
+ */
+function bytenot_preload_font( $resources ) {
+	$resources[] = array( 'href' => get_theme_file_uri( 'assets/fonts/figtree-latin.woff2' ), 'as' => 'font', 'type' => 'font/woff2', 'crossorigin' => 'anonymous' );
+	return $resources;
+}
+add_filter( 'wp_preload_resources', 'bytenot_preload_font' );
+
+/**
  * What the script needs from the server: the agency's vocabulary, the leads endpoint
  * and translatable strings.
  *
