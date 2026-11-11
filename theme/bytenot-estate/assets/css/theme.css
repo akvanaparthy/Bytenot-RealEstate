@@ -760,6 +760,8 @@ legend { padding: 0; }
 
 /* cards */
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 44px 24px; margin-top: 28px; }
+@keyframes card-in { from { opacity: 0; transform: translateY(14px); } }
+.card.is-entering { animation: card-in .4s cubic-bezier(.22, 1, .36, 1) both; } /* a card that a filter brings back */
 /* Listing card. The photo is a window (.card__media) that at rest sits inside a white
    frame above the details; when open (hover / focus) the window's edges move out to the
    card edges so the photo fills the card and the details sit on a dark gradient.

@@ -519,7 +519,7 @@ function bytenot_card( $p ) {
 	$p     = $p ?: array( 'url' => '#', 'img' => '', 'title' => '', 'area' => '', 'status' => '', 'place' => '', 'priceText' => '', 'facts' => array( '', '', '' ), 'kind' => '', 'cta' => '', 'ctaHref' => '#' );
 	$icons = array( 'area', 'bed', 'project' === $p['kind'] ? 'units' : 'bath' );
 	?>
-	<li class="card" data-kind="<?php echo esc_attr( $p['kind'] ); ?>">
+	<li class="card" data-kind="<?php echo esc_attr( $p['kind'] ); ?>"<?php echo $p['id'] ? ' data-id="' . (int) $p['id'] . '"' : ''; ?>>
 		<a class="card__media" href="<?php echo esc_url( $p['url'] ); ?>">
 			<img class="card__img" src="<?php echo esc_url( $p['img'] ); ?>" alt="<?php echo esc_attr( $empty ? '' : $p['title'] . ', ' . $p['area'] ); ?>" width="900" height="660" loading="lazy">
 		</a>

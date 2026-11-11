@@ -401,7 +401,7 @@
 		const card = e.target.closest('.card');
 		if (card) card.style.setProperty('--card-body', `${Math.ceil(e.target.getBoundingClientRect().height)}px`);
 	})) : null;
-	const liveCards = (root) => $$('.card', root).forEach((card) => {
+	const liveCards = (root) => (root.matches && root.matches('.card') ? [root] : $$('.card', root)).forEach((card) => {
 		const body = $('.card__body', card);
 		if (body && cardSizer && !body.dataset.sized) { body.dataset.sized = '1'; cardSizer.observe(body); }
 		if (canHover) {
@@ -454,27 +454,43 @@
 			return out;
 		};
 
+		// one node per listing, kept for the life of the page: the server-rendered cards seed the set,
+		// the rest are built from the template on first use, so a filter change moves cards instead of
+		// rebuilding the grid (no blank grid, no photos loading again)
+		const nodes = new Map($$('.card[data-id]', cardsEl).map((el) => [Number(el.dataset.id), el]));
+		const build = (p) => {
+			const frag = tpl.content.cloneNode(true);
+			const el = $('.card', frag);
+			const img = $('.card__img', el);
+			img.src = p.img; img.alt = `${p.title}, ${p.area}`;
+			el.dataset.kind = p.kind; el.dataset.id = p.id;
+			$('.card__status', el).textContent = p.status;
+			const link = $('.card__title a', el); link.textContent = p.title; link.href = p.url;
+			$('.card__media', el).href = p.url;
+			$('[data-cta]', el).href = p.ctaHref;
+			$('[data-cta-text]', el).textContent = p.cta;
+			$('.card__place span', el).textContent = p.place;
+			p.facts.forEach((text, i) => { const f = $(`[data-fact="${i}"]`, el); f.textContent = text; f.closest('.fact').hidden = !text; });
+			$$('[data-icon]', el).forEach((ic) => { ic.hidden = ic.dataset.icon !== (p.kind === 'project' ? 'units' : 'bath'); });
+			$('.card__price', el).textContent = p.priceText;
+			liveCards(el);
+			return el;
+		};
+		let first = true;
 		const render = () => {
 			const f = current();
 			const list = filtered();
-			cardsEl.innerHTML = '';
-			list.slice(0, shown).forEach((p) => {
-				const node = tpl.content.cloneNode(true);
-				const img = $('.card__img', node);
-				img.src = p.img; img.alt = `${p.title}, ${p.area}`;
-				$('.card', node).dataset.kind = p.kind;
-				$('.card__status', node).textContent = p.status;
-				const link = $('.card__title a', node); link.textContent = p.title; link.href = p.url;
-				$('.card__media', node).href = p.url;
-				$('[data-cta]', node).href = p.ctaHref;
-				$('[data-cta-text]', node).textContent = p.cta;
-				$('.card__place span', node).textContent = p.place;
-				p.facts.forEach((text, i) => { const el = $(`[data-fact="${i}"]`, node); el.textContent = text; el.closest('.fact').hidden = !text; });
-				$$('[data-icon]', node).forEach((ic) => { ic.hidden = ic.dataset.icon !== (p.kind === 'project' ? 'units' : 'bath'); });
-				$('.card__price', node).textContent = p.priceText;
-				cardsEl.append(node);
+			const keep = new Set();
+			list.slice(0, shown).forEach((p, i) => {
+				let el = nodes.get(p.id);
+				if (!el) { el = build(p); nodes.set(p.id, el); }
+				keep.add(el);
+				const entering = !el.isConnected && !first && !reduced;
+				if (cardsEl.children[i] !== el) cardsEl.insertBefore(el, cardsEl.children[i] || null); // appending an existing node moves it: its photo stays loaded
+				if (entering) { el.classList.add('is-entering'); el.addEventListener('animationend', () => el.classList.remove('is-entering'), { once: true }); }
 			});
-			liveCards(cardsEl);
+			Array.from(cardsEl.children).forEach((el) => { if (!keep.has(el)) el.remove(); });
+			if (first) { liveCards(cardsEl); first = false; }
 			label.textContent = `${(f.type && CFG.types?.[f.type]) || T.allListings}${f.location && CFG.locations?.[f.location] ? fmt(T.in, CFG.locations[f.location]) : ''}${f.intent === 'for-rent' ? T.forRent : ''}`;
 			count.textContent = fmt(list.length === 1 ? T.result : T.results, list.length);
 			empty.hidden = list.length > 0;
