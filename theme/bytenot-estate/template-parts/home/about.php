@@ -27,7 +27,7 @@ $bytenot_pill  = 0;
 		<?php endforeach; ?>
 		<div class="container about__inner">
 			<h2 class="visually-hidden" id="about-title"><?php echo esc_html( sprintf( /* translators: %s: site name. */ __( 'About %s', 'bytenot-estate' ), get_bloginfo( 'name' ) ) ); ?></h2>
-			<div class="about__statement" data-reveal-words>
+			<div class="about__statement<?php echo count( $bytenot_paras ) > 1 ? ' ' . esc_attr( bytenot_class( 'about__statement--multi' ) ) : ''; ?>" data-reveal-words>
 				<?php foreach ( $bytenot_paras as $bytenot_para ) : ?>
 				<p>
 					<?php

@@ -108,13 +108,13 @@ function bytenot_brand( $classes = '', $link = true ) {
 	$sub  = get_bloginfo( 'description' );
 	$logo = (int) get_theme_mod( 'custom_logo' );
 	if ( $logo && 'mark' !== bytenot_logo_shape( $logo ) ) {
-		// a wordmark or lockup already carries the name: it stands alone, 36px tall
+		// a wordmark or lockup already carries the name: it stands alone, 40px tall
 		$size = wp_get_attachment_metadata( $logo );
 		if ( empty( $size['height'] ) ) {
 			$size = bytenot_svg_size( $logo );
 		}
-		$w     = ! empty( $size['height'] ) ? (int) round( 36 * $size['width'] / $size['height'] ) : 120;
-		$inner = '<img class="brand__logo" src="' . esc_url( wp_get_attachment_url( $logo ) ) . '" alt="' . esc_attr( $name ) . '" width="' . $w . '" height="36">';
+		$w     = ! empty( $size['height'] ) ? (int) round( 40 * $size['width'] / $size['height'] ) : 160;
+		$inner = '<img class="brand__logo" src="' . esc_url( wp_get_attachment_url( $logo ) ) . '" alt="' . esc_attr( $name ) . '" width="' . $w . '" height="40">';
 	} else {
 		$mark  = $logo
 			? wp_get_attachment_image( $logo, 'full', false, array( 'class' => 'brand__mark', 'alt' => '', 'width' => 42, 'height' => 26 ) )
