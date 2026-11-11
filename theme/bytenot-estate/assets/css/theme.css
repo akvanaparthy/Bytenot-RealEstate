@@ -1636,21 +1636,15 @@ legend { padding: 0; }
 }
 
 /* ------------------------------------------------------------------
-   Page transitions: the browser cross-fades documents, the header stays
-   put, and a listing's photo grows from the card it was clicked on.
-   Browsers without view transitions simply load the page as before.
+   Page transitions: nothing morphs between pages; the new page simply
+   opens with a short rise and fade over the old one. Browsers without
+   view transitions load the page as before.
    ------------------------------------------------------------------ */
 @view-transition { navigation: auto; }
 @media (prefers-reduced-motion: no-preference) {
-	@keyframes vt-out { to { opacity: 0; transform: translateY(-10px); } }
 	@keyframes vt-in { from { opacity: 0; transform: translateY(14px); } }
-	::view-transition-old(root) { animation: vt-out .22s cubic-bezier(.4, 0, 1, 1) both; }
+	::view-transition-old(root) { animation: none; }
 	::view-transition-new(root) { animation: vt-in .42s cubic-bezier(.22, 1, .36, 1) both; }
-	.site-header { view-transition-name: site-header; }
-	::view-transition-old(site-header), ::view-transition-new(site-header) { animation-duration: .3s; }
-	.ph__media { view-transition-name: listing-opening; }
-	::view-transition-group(listing-opening) { animation-duration: .5s; animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
-	::view-transition-old(listing-opening), ::view-transition-new(listing-opening) { height: 100%; object-fit: cover; }
 }
 @media (prefers-reduced-motion: reduce) {
 	::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }

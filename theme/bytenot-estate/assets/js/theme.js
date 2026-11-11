@@ -1113,11 +1113,3 @@
 		});
 	}
 })();
-
-/* A card's photo carries the shared transition name while the page leaves, so the next page's opening grows out of it. */
-document.addEventListener('click', (e) => {
-	const a = e.target.closest('.card a[href], .rail__row, [data-spot-link]');
-	if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.button) return;
-	const img = a.closest('.card, .spot')?.querySelector('.card__img, .spot__img.is-on, .spot__img');
-	if (img) img.style.viewTransitionName = 'listing-opening';
-});

@@ -146,8 +146,8 @@ without their own pages (no unit-level URLs, enquiries or SEO).
 ## 2026-11-11 — Motion without a library; the people row as Customizer content
 
 **Decision.** Page changes use the browser's cross-document View Transitions (a
-`@view-transition` rule, the header pinned, a card photo growing into the listing
-opening) and parallax uses CSS scroll-driven animations (`animation-timeline`),
+`@view-transition` rule; the new page rises and fades in over the old one, nothing
+morphs between pages, the owner found the photo-to-opening morph ugly) and parallax uses CSS scroll-driven animations (`animation-timeline`),
 both in `theme.css` only. No GSAP: its licence is not GPL-compatible, which would
 keep the theme off WordPress.org, and it adds ~30 KB of script for effects the
 browser now composites itself. Firefox and older browsers load pages and lay
