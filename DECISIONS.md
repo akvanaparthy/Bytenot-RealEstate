@@ -159,3 +159,16 @@ settings (photo, name, role × 3), like the rest of the about section, rather
 than Advisor posts: they are brand copy for the home page, not records the site
 queries. A card shows when it has any of the three; a blank photo renders a
 placeholder frame.
+
+## 2026-11-11 — Listing page chrome: spine and advisor chip
+
+**Decision.** The chapter pill bar under the header and the bottom bar are gone.
+Chapters live on a spine down the left margin (a line that fills in gold as you
+read, a dot and number per chapter, the active chapter named, the others named
+on hover); the listing page's content keeps a 148px margin either side at 1100px
+and up so the spine never overlaps it. Under 1100px the spine is a 3px progress
+line at the top of the viewport. The call to action is an advisor chip bottom
+right (photo, "Book a visit", the advisor's first name) that opens to call,
+WhatsApp and Book a visit; on phones it opens upward. Chosen by the owner from
+three prototypes in `design/prototype/listing-chrome.html` (the spine from C,
+the chip from B).

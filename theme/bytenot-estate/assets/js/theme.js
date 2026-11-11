@@ -850,17 +850,35 @@
 		const chapterLinks = $$('[data-chapters] a');
 		const sections = chapterLinks.map((a) => $(a.getAttribute('href'))).filter((s) => s && !s.hidden);
 		const bar = $('[data-prop-bar]');
-		const phoneMq = matchMedia('(max-width: 720px)');
-		let barOn = null, curId = '';
+		const spine = $('[data-spine]'), spineBar = $('[data-spine-bar]');
+		let barOn = null, spineOn = null, curId = '', lastP = -1;
 		const onScroll = () => {
 			zoom();
 			const line = innerHeight * 0.34;
-			let cur = sections[0];
-			sections.forEach((s) => { if (s.getBoundingClientRect().top <= line) cur = s; });
-			if (cur && cur.id !== curId) { curId = cur.id; chapterLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${cur.id}`)); }
-			const on = ph.getBoundingClientRect().bottom < 0 || phoneMq.matches;
-			if (on !== barOn) { barOn = on; bar.classList.toggle('is-visible', on); bar.setAttribute('aria-hidden', String(!on)); bar.toggleAttribute('inert', !on); }
+			let cur = sections[0], curIdx = 0;
+			sections.forEach((s, i) => { if (s.getBoundingClientRect().top <= line) { cur = s; curIdx = i; } });
+			if (cur && cur.id !== curId) {
+				curId = cur.id;
+				chapterLinks.forEach((a) => { const i = sections.findIndex((s) => `#${s.id}` === a.getAttribute('href')); a.classList.toggle('is-active', i === curIdx); a.classList.toggle('is-passed', i > -1 && i < curIdx); });
+			}
+			const heroGone = ph.getBoundingClientRect().bottom < 0;
+			if (heroGone !== barOn) { barOn = heroGone; bar.classList.toggle('is-visible', heroGone); bar.setAttribute('aria-hidden', String(!heroGone)); bar.toggleAttribute('inert', !heroGone); if (!heroGone) closeChip(); }
+			// the spine reads progress through the chapters: from the first section's top to the last one's end
+			if (sections.length && (spine || spineBar)) {
+				const first = sections[0].getBoundingClientRect(), last = sections[sections.length - 1].getBoundingClientRect();
+				const p = Math.min(1, Math.max(0, (line - first.top) / Math.max(1, last.bottom - first.top)));
+				if (Math.abs(p - lastP) > 0.002) { lastP = p; (spine || spineBar).style.setProperty('--p', p.toFixed(3)); if (spine && spineBar) spineBar.style.setProperty('--p', p.toFixed(3)); }
+				const on = heroGone && last.bottom > innerHeight * 0.5;
+				if (on !== spineOn) { spineOn = on; spine?.classList.toggle('is-visible', on); spineBar?.classList.toggle('is-visible', on); }
+			}
 		};
+		/* the chip opens on tap and closes on an outside tap or Escape; on hover devices it also opens on hover (stylesheet) */
+		const chipToggle = $('[data-advisor-toggle]', bar);
+		const closeChip = () => { if (bar.classList.contains('is-open')) { bar.classList.remove('is-open'); chipToggle?.setAttribute('aria-expanded', 'false'); } };
+		chipToggle?.addEventListener('click', () => { const on = bar.classList.toggle('is-open'); chipToggle.setAttribute('aria-expanded', String(on)); });
+		document.addEventListener('click', (e) => { if (!bar.contains(e.target)) closeChip(); });
+		document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeChip(); });
+		if (spine) spine.style.setProperty('--p', '0');
 		let ticking = false;
 		window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; onScroll(); }); } }, { passive: true });
 		window.addEventListener('resize', onScroll);

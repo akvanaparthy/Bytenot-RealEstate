@@ -1102,25 +1102,7 @@ legend { padding: 0; }
 .ph__price .btn { align-self: flex-start; margin-top: 14px; }
 
 /* chapter nav: the header's pill, one level down */
-.chapters { pointer-events: none; }
-.chapters--page { position: sticky; top: 76px; z-index: 20; display: flex; justify-content: center; margin-top: 10px; padding: 6px 0; }
-.chapters ul {
-	display: inline-flex; gap: 4px; max-width: 100%; padding: 5px; overflow-x: auto; list-style: none;
-	border-radius: var(--wp--custom--radius--pill); background: rgba(255, 255, 255, 0.82);
-	-webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
-	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.08);
-	pointer-events: auto; scrollbar-width: none;
-}
-.chapters ul::-webkit-scrollbar { display: none; }
-.chapters a {
-	display: inline-flex; align-items: center; height: 36px; padding: 0 14px;
-	border-radius: var(--wp--custom--radius--pill); font-size: 13px; font-weight: 500; white-space: nowrap;
-	color: var(--wp--preset--color--ink-soft);
-	transition: background-color var(--wp--custom--transition), color var(--wp--custom--transition);
-}
-.chapters a:hover { background: rgba(0, 0, 0, 0.05); color: var(--wp--preset--color--ink); }
-.chapters a.is-active { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
-.page--property section[id] { scroll-margin-top: 140px; }
+.page--property section[id] { scroll-margin-top: 100px; }
 
 /* at a glance */
 .meta-line { display: flex; justify-content: space-between; gap: 24px; font-size: 13px; color: var(--wp--preset--color--ink-muted); }
@@ -1286,21 +1268,6 @@ legend { padding: 0; }
 .cards--similar { margin-top: 32px; gap: 24px; }
 
 /* compact bar */
-.prop-bar {
-	position: fixed; left: 50%; bottom: 20px; z-index: 40;
-	display: flex; align-items: center; gap: 24px; padding: 8px 8px 8px 22px;
-	border-radius: var(--wp--custom--radius--pill); background: rgba(255, 255, 255, 0.9);
-	-webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
-	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.12);
-	transform: translate(-50%, calc(100% + 30px)); opacity: 0;
-	transition: transform .45s cubic-bezier(.22,1,.36,1), opacity .3s ease;
-}
-.prop-bar.is-visible { transform: translate(-50%, 0); opacity: 1; }
-.prop-bar__info { display: flex; flex-direction: column; line-height: 1.25; }
-.prop-bar__info b { font-size: 14px; font-weight: 600; }
-.prop-bar__info > span { font-size: 12px; color: var(--wp--preset--color--ink-muted); }
-.prop-bar__actions { display: flex; gap: 8px; }
-.prop-bar__call { width: 36px; padding: 0; }
 
 /* lightbox */
 .lightbox { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: 100vh; max-height: 100dvh; margin: 0; padding: 0; border: 0; background: rgba(10, 10, 10, 0.97); color: var(--wp--preset--color--base); }
@@ -1520,8 +1487,6 @@ legend { padding: 0; }
 	.ph__amount { font-size: 26px; }
 	.ph__psf { flex: 1 1 100%; order: 3; }
 	.ph__price .btn { margin-top: 0; }
-	.chapters--page { top: 72px; justify-content: flex-start; margin: 10px 0 0; padding: 6px var(--wp--custom--layout--gutter); } /* sits directly in <main>, so no negative gutter */
-	.chapters ul { display: flex; }
 	.meta-line { flex-direction: column; gap: 8px; }
 	.ledger--glance { grid-template-columns: 1fr 1fr; gap: 0 20px; margin-top: 20px; }
 	.ledger--glance > div { padding: 14px 0 22px; }
@@ -1551,14 +1516,6 @@ legend { padding: 0; }
 	.visit__submit { width: 100%; }
 	.signature { flex-direction: column; }
 	.cards--similar { grid-template-columns: 1fr; }
-	.prop-bar {
-		left: 0; right: 0; bottom: 0; gap: 12px; padding: 10px var(--wp--custom--layout--gutter) calc(10px + env(safe-area-inset-bottom));
-		border-radius: 0; transform: none; opacity: 1; box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.06), 0 -10px 30px rgba(0, 0, 0, 0.08);
-	}
-	.prop-bar__info { flex: 1; min-width: 0; }
-	.prop-bar__info b, .prop-bar__info > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-	.prop-bar__actions .btn:not(.prop-bar__call) { padding: 0 12px; }
-	.prop-bar__actions .btn--outline:not(.prop-bar__call) { display: none; }
 	.lightbox__stage { inset: 56px 0 92px; }
 	.lightbox__img { border-radius: 0; }
 	.lightbox__arrow { display: none; }
@@ -1580,8 +1537,6 @@ legend { padding: 0; }
 .fact[hidden] { display: none; }
 .inquiry__consent { margin-top: 18px; font-size: 13px; color: var(--wp--preset--color--ink-soft); }
 /* the compact bar is out of the tab order until it shows */
-.prop-bar { visibility: hidden; }
-.prop-bar.is-visible { visibility: visible; }
 @media (max-width: 720px) {
 	.units { padding-top: 48px; }
 	.units__table thead { display: none; }
@@ -1633,8 +1588,6 @@ legend { padding: 0; }
 	.filters-bar__select, .results-sort__select, .vf__input, .uf__input, .field__input, .dd__button { font-size: 16px; }
 	.inquiry__title, .inquiry__tag { white-space: normal; text-wrap: balance; }
 	/* frosted layers that move with every scroll frame cost the most on a phone GPU */
-	.chapters ul { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, 0.96); }
-	.prop-bar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255, 255, 255, 0.97); }
 	.site-footer__panel { -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
 }
 /* tablets: the spotlight and the inquiry card stack the way phones do */
@@ -1649,7 +1602,7 @@ legend { padding: 0; }
 }
 /* touch: the remaining small controls */
 @media (pointer: coarse) {
-	.social a, .prop-bar__call, .ph__all, .lightbox__strip button { min-width: 44px; min-height: 44px; }
+	.social a, .advisor__call, .ph__all, .lightbox__strip button { min-width: 44px; min-height: 44px; }
 	.results-sort__select { height: 44px; }
 }
 /* reduced motion: the statement is lit from the start, so the section does not pin and scroll in place */
@@ -1728,3 +1681,76 @@ legend { padding: 0; }
 	}
 }
 @property --ph-zoom { syntax: '<number>'; inherits: true; initial-value: 1.08; }
+
+/* ------------------------------------------------------------------
+   Listing page chrome. The spine: a thin line down the left margin with a
+   dot and number per chapter, the active chapter named, the others named
+   on hover; the line fills in gold as you read. The chip: the advisor's
+   photo and "Book a visit" bottom-right, opening to call / WhatsApp /
+   book. Both arrive once the opening photo has scrolled away.
+   ------------------------------------------------------------------ */
+@media (min-width: 1100px) {
+	.page--property .container { max-width: min(calc(var(--wp--custom--layout--content-size) + 2 * var(--wp--custom--layout--gutter)), 100% - 2 * 148px); } /* the margins hold the spine and its labels, so nothing overlaps */
+}
+.spine { position: fixed; left: 24px; top: 50%; z-index: 35; transform: translate(-12px, -50%); opacity: 0; transition: opacity .35s ease, transform .5s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
+.spine.is-visible { opacity: 1; transform: translateY(-50%); pointer-events: auto; }
+.spine__track { position: absolute; left: 4.5px; top: 6px; bottom: 6px; width: 2px; border-radius: 1px; background: rgba(20, 47, 63, 0.1); }
+.spine__fill { position: absolute; left: 0; top: 0; width: 100%; height: calc(var(--p, 0) * 100%); background: var(--wp--preset--gradient--brand-gold); transition: height .12s linear; }
+.spine ol { position: relative; display: flex; flex-direction: column; gap: 30px; margin: 0; padding: 0; list-style: none; }
+.spine a { position: relative; display: flex; align-items: center; gap: 10px; height: 12px; color: var(--wp--preset--color--ink-muted); text-decoration: none; }
+.spine__dot { flex: none; width: 11px; height: 11px; border-radius: 50%; background: var(--wp--preset--color--base); box-shadow: inset 0 0 0 1.5px rgba(20, 47, 63, 0.3); transition: background-color .25s ease, box-shadow .25s ease, transform .25s ease; }
+.spine__num { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; color: var(--wp--preset--color--ink-muted); transition: color .25s ease; }
+.spine__label { font-size: 12.5px; font-weight: 500; letter-spacing: 0.01em; white-space: nowrap; color: var(--wp--preset--color--contrast); opacity: 0; transform: translateX(-6px); transition: opacity .25s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+.spine a.is-passed .spine__dot { background: var(--wp--preset--color--contrast); box-shadow: none; }
+.spine a.is-passed .spine__num { color: var(--wp--preset--color--contrast); }
+.spine a.is-active .spine__dot { background: var(--wp--preset--color--contrast); box-shadow: 0 0 0 2px var(--wp--preset--color--base), 0 0 0 3.5px var(--wp--preset--color--primary-dark); transform: scale(1.05); }
+.spine a.is-active .spine__num { color: var(--wp--preset--color--contrast); }
+.spine a.is-active .spine__label, .spine a:hover .spine__label, .spine a:focus-visible .spine__label { opacity: 1; transform: none; }
+.spine a.is-active .spine__label { font-weight: 600; }
+.spine a:hover .spine__dot { box-shadow: inset 0 0 0 1.5px var(--wp--preset--color--contrast); }
+.spine a:hover .spine__num { color: var(--wp--preset--color--contrast); }
+.spine-bar { position: fixed; left: 0; right: 0; top: 0; z-index: 45; display: none; height: 3px; background: rgba(20, 47, 63, 0.08); opacity: 0; transition: opacity .3s ease; }
+.spine-bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--wp--preset--gradient--brand-gold); transition: width .12s linear; }
+.spine-bar.is-visible { opacity: 1; }
+@media (max-width: 1099px) {
+	.spine { display: none; }
+	.spine-bar { display: block; }
+}
+
+.advisor {
+	position: fixed; right: 20px; bottom: 20px; z-index: 40;
+	display: flex; align-items: center; padding: 6px; border-radius: var(--wp--custom--radius--pill);
+	background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink);
+	box-shadow: 0 0 0 1px rgba(20, 47, 63, 0.08), 0 14px 40px rgba(20, 47, 63, 0.22);
+	transform: translateY(calc(100% + 30px)); opacity: 0;
+	transition: transform .45s cubic-bezier(.22, 1, .36, 1), opacity .3s ease;
+}
+.advisor.is-visible { transform: none; opacity: 1; }
+.advisor__face { display: flex; align-items: center; gap: 10px; padding: 0 16px 0 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.advisor__photo { flex: none; width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px var(--wp--preset--color--base), 0 0 0 3px var(--wp--preset--color--primary-dark); }
+.advisor__photo--initial { display: grid; place-items: center; background: var(--wp--preset--gradient--brand-gold); color: var(--wp--preset--color--contrast); font-size: 17px; font-weight: 600; }
+.advisor__text { display: flex; flex-direction: column; line-height: 1.2; white-space: nowrap; border: 0; background: none; }
+.advisor__text b { font-size: 14px; font-weight: 600; }
+.advisor__text small { font-size: 11px; font-weight: 500; color: var(--wp--preset--color--ink-muted); }
+.advisor__acts { display: grid; grid-template-columns: 0fr; transition: grid-template-columns .4s cubic-bezier(.22, 1, .36, 1); }
+.advisor__acts > div { display: flex; gap: 6px; min-width: 0; overflow: hidden; }
+.advisor__acts .btn { height: 40px; padding: 0 14px; font-size: 13px; }
+.advisor__call { width: 40px; padding: 0 !important; }
+.advisor.is-open .advisor__acts { grid-template-columns: 1fr; }
+.advisor.is-open .advisor__acts > div { padding-left: 6px; }
+@media (hover: hover) {
+	.advisor:hover .advisor__acts, .advisor:focus-within .advisor__acts { grid-template-columns: 1fr; }
+	.advisor:hover .advisor__acts > div, .advisor:focus-within .advisor__acts > div { padding-left: 6px; }
+}
+@media (max-width: 720px) {
+	/* the actions open as a row above the chip, so nothing runs off the edge */
+	.advisor { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); flex-direction: column-reverse; align-items: flex-end; border-radius: 28px; }
+	.advisor__text b { font-size: 13px; }
+	.advisor__acts { grid-template-columns: none; grid-template-rows: 0fr; transition: grid-template-rows .4s cubic-bezier(.22, 1, .36, 1); }
+	.advisor__acts > div { min-height: 0; }
+	.advisor.is-open .advisor__acts { grid-template-columns: none; grid-template-rows: 1fr; }
+	.advisor.is-open .advisor__acts > div { padding: 0 0 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.spine, .spine__label, .spine__fill, .spine-bar i, .advisor, .advisor__acts { transition: none; }
+}

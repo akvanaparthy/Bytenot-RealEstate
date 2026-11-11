@@ -99,13 +99,15 @@ $bytenot_links      = array_filter(
 	</aside>
 </section>
 
-<nav class="chapters chapters--page" aria-label="<?php esc_attr_e( 'On this page', 'bytenot-estate' ); ?>" data-chapters>
-	<ul>
-		<?php $bytenot_first = true; foreach ( $bytenot_links as $bytenot_slug => $bytenot_label ) : ?>
-		<li><a href="#<?php echo esc_attr( $bytenot_slug ); ?>"<?php echo $bytenot_first ? ' class="is-active"' : ''; $bytenot_first = false; ?>><?php echo esc_html( $bytenot_label ); ?></a></li>
+<nav class="spine" aria-label="<?php esc_attr_e( 'On this page', 'bytenot-estate' ); ?>" data-chapters data-spine>
+	<span class="spine__track" aria-hidden="true"><span class="spine__fill"></span></span>
+	<ol>
+		<?php $bytenot_i = 0; foreach ( $bytenot_links as $bytenot_slug => $bytenot_label ) : ?>
+		<li><a href="#<?php echo esc_attr( $bytenot_slug ); ?>"<?php echo 0 === $bytenot_i ? ' class="is-active"' : ''; ?>><span class="spine__dot" aria-hidden="true"></span><span class="spine__num" aria-hidden="true"><?php echo esc_html( sprintf( '%02d', ++$bytenot_i ) ); ?></span><span class="spine__label"><?php echo esc_html( $bytenot_label ); ?></span></a></li>
 		<?php endforeach; ?>
-	</ul>
+	</ol>
 </nav>
+<div class="spine-bar" aria-hidden="true" data-spine-bar><i></i></div>
 
 <section class="glance container" id="glance" aria-labelledby="glance-title">
 	<div class="meta-line">
@@ -432,22 +434,24 @@ $bytenot_links      = array_filter(
 
 </main>
 
-<div class="prop-bar" data-prop-bar aria-hidden="true" inert>
-	<div class="prop-bar__info">
-		<b data-title><?php echo esc_html( $bytenot_d['title'] ); ?></b>
-		<span><span data-price><?php echo esc_html( $bytenot_d['priceText'] ); ?></span> · <span data-place><?php echo esc_html( $bytenot_d['place'] ); ?></span></span>
-	</div>
-	<div class="prop-bar__actions">
+<div class="advisor" data-prop-bar data-advisor aria-hidden="true" inert>
+	<button class="advisor__face" type="button" aria-expanded="false" aria-controls="advisor-actions" data-advisor-toggle>
+		<?php if ( $bytenot_d['advisor']['photo'] ) : ?>
+		<?php echo wp_get_attachment_image( $bytenot_d['advisor']['photo'], 'thumbnail', false, array( 'class' => 'advisor__photo', 'alt' => '', 'width' => 88, 'height' => 88, 'loading' => 'lazy' ) ); ?>
+		<?php else : ?>
+		<span class="advisor__photo advisor__photo--initial" aria-hidden="true"><?php echo esc_html( mb_substr( $bytenot_d['advisor']['first'], 0, 1 ) ); ?></span>
+		<?php endif; ?>
+		<span class="advisor__text"><b><?php esc_html_e( 'Book a visit', 'bytenot-estate' ); ?></b><small><?php echo esc_html( sprintf( /* translators: %s: advisor first name. */ __( 'with %s, your advisor', 'bytenot-estate' ), $bytenot_d['advisor']['first'] ) ); ?></small></span>
+	</button>
+	<div class="advisor__acts" id="advisor-actions"><div>
 		<?php if ( $bytenot_d['advisor']['phone'] ) : ?>
-		<a class="btn btn--outline btn--sm prop-bar__call" href="<?php echo esc_url( bytenot_tel( $bytenot_d['advisor']['phone'] ) ); ?>" aria-label="<?php esc_attr_e( 'Call', 'bytenot-estate' ); ?>">
-			<?php bytenot_the_icon( 'phone', 18 ); ?>
-		</a>
+		<a class="btn btn--outline btn--sm advisor__call" href="<?php echo esc_url( bytenot_tel( $bytenot_d['advisor']['phone'] ) ); ?>" aria-label="<?php esc_attr_e( 'Call', 'bytenot-estate' ); ?>"><?php bytenot_the_icon( 'phone', 18 ); ?></a>
 		<?php endif; ?>
 		<?php if ( $bytenot_d['wa'] ) : ?>
 		<a class="btn btn--outline btn--sm" href="<?php echo esc_url( $bytenot_d['wa'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'WhatsApp', 'bytenot-estate' ); ?></a>
 		<?php endif; ?>
 		<a class="btn btn--accent btn--sm" href="#visit" data-go-visit><?php esc_html_e( 'Book a visit', 'bytenot-estate' ); ?></a>
-	</div>
+	</div></div>
 </div>
 
 <?php if ( $bytenot_photos ) : ?>
