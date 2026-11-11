@@ -94,7 +94,8 @@ function bytenot_config() {
 		'leads'      => esc_url_raw( rest_url( 'bytenot/v1/leads' ) ),
 		'pageSize'   => 6,
 		'i18n'       => array(
-			'allProperties' => __( 'All properties', 'bytenot-estate' ),
+			/* translators: %s: what listings are called, e.g. "properties". */
+			'allProperties' => sprintf( __( 'All %s', 'bytenot-estate' ), bytenot_noun() ),
 			/* translators: %s: city name. */
 			'in'            => __( ' in %s', 'bytenot-estate' ),
 			'forRent'       => __( ' for rent', 'bytenot-estate' ),
@@ -192,3 +193,15 @@ function bytenot_image_size_names( $sizes ) {
 	return array_merge( $sizes, array( 'bytenot-card' => __( 'Listing card', 'bytenot-estate' ) ) );
 }
 add_filter( 'image_size_names_choose', 'bytenot_image_size_names' );
+
+/**
+ * The listings archive is titled after what the site calls its listings.
+ *
+ * @param string $title     Archive title.
+ * @param string $post_type Post type.
+ * @return string
+ */
+function bytenot_archive_title( $title, $post_type ) {
+	return 'property' === $post_type ? bytenot_noun( true ) : $title;
+}
+add_filter( 'post_type_archive_title', 'bytenot_archive_title', 10, 2 );

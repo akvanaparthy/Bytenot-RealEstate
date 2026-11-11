@@ -96,7 +96,7 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 					<?php endforeach; ?>
 				</fieldset>
 				<?php endif; ?>
-				<button class="btn btn--dark" type="submit"><?php esc_html_e( 'Search Properties', 'bytenot-estate' ); ?></button>
+				<button class="btn btn--dark" type="submit"><?php echo esc_html( sprintf( /* translators: %s: what listings are called, capitalised, e.g. "Properties". */ __( 'Search %s', 'bytenot-estate' ), bytenot_noun( true ) ) ); ?></button>
 			</div>
 		</form>
 		</div>

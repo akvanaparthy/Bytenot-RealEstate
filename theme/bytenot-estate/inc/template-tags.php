@@ -120,6 +120,21 @@ function bytenot_brand( $classes = '', $link = true ) {
 }
 
 /**
+ * What the site calls its listings, plural: "properties" by default, "projects" for a
+ * developer or channel partner. Set under Customize › Listings page.
+ *
+ * @param bool $capitalised First letter upper-cased, for buttons and menu items.
+ * @return string
+ */
+function bytenot_noun( $capitalised = false ) {
+	$noun = trim( (string) bytenot_mod( 'listing_noun' ) );
+	if ( '' === $noun ) {
+		$noun = __( 'properties', 'bytenot-estate' );
+	}
+	return $capitalised ? mb_strtoupper( mb_substr( $noun, 0, 1 ) ) . mb_substr( $noun, 1 ) : $noun;
+}
+
+/**
  * Default primary menu when none is assigned: Home, About, Properties, Contact.
  *
  * @param array $args Menu args.
@@ -129,7 +144,7 @@ function bytenot_menu_fallback( $args ) {
 	$items = array(
 		array( __( 'Home', 'bytenot-estate' ), $home, is_front_page() ),
 		array( __( 'About Us', 'bytenot-estate' ), $home . '#about', false ),
-		array( __( 'Properties', 'bytenot-estate' ), get_post_type_archive_link( 'property' ) ?: $home, is_post_type_archive( 'property' ) || is_singular( 'property' ) ),
+		array( bytenot_noun( true ), get_post_type_archive_link( 'property' ) ?: $home, is_post_type_archive( 'property' ) || is_singular( 'property' ) ),
 		array( __( 'Contact Us', 'bytenot-estate' ), $home . '#inquiry', false ),
 	);
 	$nav = 'nav__list' === $args['menu_class'];

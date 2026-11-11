@@ -402,6 +402,9 @@ legend { padding: 0; }
 	color: var(--word-off); /* the unlit colour; words inherit it, so nothing shifts when the script wraps them */
 	--word-off: color-mix(in srgb, var(--wp--preset--color--ink-muted) 55%, var(--wp--preset--color--base));
 }
+/* several paragraphs: the first reads as the headline, the rest a step smaller */
+.about__statement p { margin: 0; }
+.about__statement p + p { margin-top: .9em; font-size: .72em; line-height: 1.42; letter-spacing: -0.006em; }
 .about__w { color: var(--word-off); transition: color .45s ease; }
 .about__w.is-on { color: var(--wp--preset--color--contrast); animation: word-lit .9s ease both; } /* passes through brand gold on the way to navy */
 @keyframes word-lit { 0% { color: var(--word-off); } 40% { color: var(--wp--preset--color--primary-dark); } 100% { color: var(--wp--preset--color--contrast); } }
@@ -1399,6 +1402,7 @@ legend { padding: 0; }
 
 	.about { --about-travel: 120vh; }
 	.about__statement { font-size: 24px; line-height: 1.36; }
+	.about__statement p + p { font-size: 18px; line-height: 1.45; }
 	.about__pill { width: 56px; height: 28px; }
 	.about__pill-img { border-radius: 14px; }
 	.intro { padding: 64px 0 48px; }

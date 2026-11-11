@@ -47,7 +47,7 @@ $bytenot_json = array_map(
 			<?php endif; ?>
 		</div>
 
-		<div class="spot" data-featured aria-roledescription="carousel" aria-label="<?php esc_attr_e( 'Featured properties', 'bytenot-estate' ); ?>">
+		<div class="spot" data-featured aria-roledescription="carousel" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'Featured %s', 'bytenot-estate' ), bytenot_noun() ) ); ?>">
 			<script type="application/json" data-featured-items><?php echo wp_json_encode( $bytenot_json ); ?></script>
 			<div class="spot__stage">
 				<figure class="spot__media" aria-hidden="false">
@@ -89,7 +89,7 @@ $bytenot_json = array_map(
 							<?php bytenot_the_icon( 'arrow', 20 ); ?>
 						</button>
 					</div>
-					<a class="link-arrow rail__all" href="<?php echo esc_url( $bytenot_archive ); ?>"><span><?php echo esc_html( sprintf( /* translators: %s: "12 properties". */ __( 'See all %s', 'bytenot-estate' ), sprintf( _n( '%d property', '%d properties', $bytenot_all, 'bytenot-estate' ), $bytenot_all ) ) ); ?></span>
+					<a class="link-arrow rail__all" href="<?php echo esc_url( $bytenot_archive ); ?>"><span><?php echo esc_html( sprintf( /* translators: 1: count, 2: what listings are called, e.g. "properties". */ __( 'See all %1$d %2$s', 'bytenot-estate' ), $bytenot_all, bytenot_noun() ) ); ?></span>
 						<?php bytenot_the_icon( 'arrow' ); ?>
 					</a>
 				</div>

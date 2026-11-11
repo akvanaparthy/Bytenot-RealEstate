@@ -164,7 +164,7 @@ function bytenot_core_install_demo_site( $advisors ) {
 
 	// FAQs
 	$faqs = array(
-		array( 'How do I find the right property?', 'Start with the filters on the properties page: type, location, budget and configuration. Every listing there is verified by us. If you would rather talk it through, an advisor will shortlist homes against what you actually need and set up visits in one trip.' ),
+		array( 'How do I find the right property?', 'Start with the filters on the projects page: type, location, budget and configuration. Every listing there is verified by us. If you would rather talk it through, an advisor will shortlist homes against what you actually need and set up visits in one trip.' ),
 		array( 'How does a site visit work?', 'Pick a date on any listing or ask us here. Your advisor confirms within the hour, meets you at the gate and walks you through the home, the project and the neighbourhood. Visits are free and you can see several homes in one morning.' ),
 		array( "What's included in a listing?", 'Photos, price with the per sq ft rate, carpet and built-up area, floor plan, amenities, the location with nearby landmarks, the RERA registration and the documents we have checked. If something is missing, it is because we could not verify it.' ),
 		array( 'How do I check a project’s RERA registration?', 'Every listing shows its RERA number with a link to the state portal, where you can see the promoter, approvals, timelines and complaints. We check this before a home goes live and again before you sign anything.' ),
@@ -231,8 +231,8 @@ function bytenot_core_install_demo_site( $advisors ) {
 	$home    = home_url( '/' );
 	$archive = get_post_type_archive_link( 'property' );
 	$menus   = array(
-		'primary'      => array( 'Primary', array( array( 'Home', $home ), array( 'About Us', $home . '#about' ), array( 'Properties', $archive ), array( 'Contact Us', $home . '#inquiry' ) ) ),
-		'footer'       => array( 'Footer', array( array( 'Home', $home ), array( 'About Us', $home . '#about' ), array( 'Properties', $archive ), array( 'Contact Us', $home . '#inquiry' ) ) ),
+		'primary'      => array( 'Primary', array( array( 'Home', $home ), array( 'About Us', $home . '#about' ), array( 'Projects', $archive ), array( 'Contact Us', $home . '#inquiry' ) ) ),
+		'footer'       => array( 'Footer', array( array( 'Home', $home ), array( 'About Us', $home . '#about' ), array( 'Projects', $archive ), array( 'Contact Us', $home . '#inquiry' ) ) ),
 		'footer-types' => array( 'Property types', array( array( 'Apartments', add_query_arg( 'type', 'apartment', $archive ) ), array( 'Villas', add_query_arg( 'type', 'villa', $archive ) ), array( 'Plots', add_query_arg( 'type', 'plot', $archive ) ), array( 'Commercial', add_query_arg( 'type', 'commercial', $archive ) ) ) ),
 		'legal'        => array( 'Legal', array( array( 'Terms & Conditions', $home ), array( 'Privacy policy', get_privacy_policy_url() ?: $home ) ) ),
 	);
@@ -259,7 +259,7 @@ function bytenot_core_install_demo_site( $advisors ) {
 		'hero_image'           => $img( 'hero.jpg' ),
 		'hero_title'           => 'Home with Honor, <br>Wealth with Vision.',
 		'hero_lede'            => "Lavenor Realty finds you a home you'll feel lavish in and honored to own, and investments that grow with you. Hyderabad, Bangalore and beyond.",
-		'about_statement'      => 'Lavenor Realty is a Hyderabad real-estate firm helping individuals, families {pill} and investors find the right home {pill} with confidence. Buying, selling, renting or investing, we walk every step with you, from the first viewing to the final signature, with deep local knowledge {pill} and a client-first approach, so every property journey is smooth, transparent and successful.',
+		'about_statement'      => "Redefining the real estate experience through trust, transparency and integrity.\n\nWe are committed to helping customers {pill} make confident property decisions through honest guidance, carefully selected opportunities and clear market insights. {pill} Our approach is built on understanding individual needs, providing fair market value and offering complete information without bias or pressure.\n\nWe believe in putting customers first, building lasting relationships {pill} and ensuring every property decision is backed by transparency, trust and genuine value.",
 		'about_pill_1'         => $img( 't2.jpg' ),
 		'about_pill_2'         => $img( 'p3.jpg' ),
 		'about_pill_3'         => $img( 'p7.jpg' ),
@@ -271,7 +271,8 @@ function bytenot_core_install_demo_site( $advisors ) {
 		'testimonials_lede'    => 'Honest advice, clear paperwork and a home that feels right. Here is what buyers and investors across Hyderabad and Bangalore say about working with Lavenor.',
 		'inquiry_image'        => $img( 'p7.jpg' ),
 		'listing_pill'         => $img( 'house-small.jpg' ),
-		'listing_lede'         => "Welcome to Lavenor's full collection of verified homes and investment properties across Hyderabad and Bangalore, updated daily, priced transparently and ready to view. Use the filters to narrow by type, location, budget or configuration, and book a site visit in a few clicks.",
+		'listing_noun'         => 'projects',
+		'listing_lede'         => "Welcome to Lavenor's full collection of verified projects across Hyderabad and Bangalore, updated daily, priced transparently and ready to view. Use the filters to narrow by type, location, budget or configuration, and book a site visit in a few clicks.",
 		'footer_cta_lede'      => "Tell us what you're looking for. A Lavenor advisor will shortlist homes, arrange visits and handle the paperwork.",
 		'footer_slogan'        => 'Home with Honor',
 		'contact_email'        => 'hello@lavenorrealty.com',

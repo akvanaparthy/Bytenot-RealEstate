@@ -65,6 +65,7 @@ function bytenot_customizer_fields() {
 			'inquiry_tag'   => array( __( 'Bottom tagline', 'bytenot-estate' ), 'html', __( "Let's find <em>your perfect</em> home", 'bytenot-estate' ) ),
 		),
 		'listing'      => array(
+			'listing_noun'    => array( __( 'What listings are called (plural, lower case)', 'bytenot-estate' ), 'text', __( 'properties', 'bytenot-estate' ) ),
 			'listing_title_1' => array( __( 'Title, first line', 'bytenot-estate' ), 'html', __( 'Find the home', 'bytenot-estate' ) ),
 			'listing_pill'    => array( __( 'Small photo in the title', 'bytenot-estate' ), 'image', 0 ),
 			'listing_title_2' => array( __( 'Title, second line', 'bytenot-estate' ), 'html', __( '<em>that feels</em> like yours.', 'bytenot-estate' ) ),
@@ -126,8 +127,8 @@ function bytenot_customize_register( $wp_customize ) {
 		'testimonials' => __( 'Home: testimonials', 'bytenot-estate' ),
 		'faq'          => __( 'Home: FAQ', 'bytenot-estate' ),
 		'inquiry'      => __( 'Home: inquiry', 'bytenot-estate' ),
-		'listing'      => __( 'Properties page', 'bytenot-estate' ),
-		'property'     => __( 'Property page', 'bytenot-estate' ),
+		'listing'      => __( 'Listings page', 'bytenot-estate' ),
+		'property'     => __( 'Listing page', 'bytenot-estate' ),
 		'footer'       => __( 'Footer', 'bytenot-estate' ),
 		'contact'      => __( 'Contact and social', 'bytenot-estate' ),
 	);

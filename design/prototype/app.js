@@ -608,7 +608,8 @@
 		const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 		const stage = $('.about__stage', about);
 		const statement = $('[data-reveal-words]', about);
-		[...statement.childNodes].forEach((node) => {
+		const paras = $$('p', statement);
+		(paras.length ? paras : [statement]).forEach((para) => [...para.childNodes].forEach((node) => {
 			if (node.nodeType !== Node.TEXT_NODE) { node.classList.add('about__w'); return; }
 			const frag = document.createDocumentFragment();
 			node.textContent.split(/(\s+)/).forEach((part) => {
@@ -620,7 +621,7 @@
 				frag.append(w);
 			});
 			node.replaceWith(frag);
-		});
+		}));
 		const words = $$('.about__w', statement);
 		const floats = $$('[data-float]', about).map((el) => ({
 			el, from: +el.dataset.in, out: el.dataset.out ? +el.dataset.out : null,

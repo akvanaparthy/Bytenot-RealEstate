@@ -13,7 +13,7 @@ get_header();
 
 $bytenot_opts  = bytenot_core_search_options();
 $bytenot_q     = static fn( $k ) => sanitize_text_field( (string) get_query_var( $k ) );
-$bytenot_label = $bytenot_q( 'type' ) && isset( $bytenot_opts['types'][ $bytenot_q( 'type' ) ] ) ? bytenot_type_plurals( array( $bytenot_q( 'type' ) ) )[ $bytenot_q( 'type' ) ] : __( 'All properties', 'bytenot-estate' );
+$bytenot_label = $bytenot_q( 'type' ) && isset( $bytenot_opts['types'][ $bytenot_q( 'type' ) ] ) ? bytenot_type_plurals( array( $bytenot_q( 'type' ) ) )[ $bytenot_q( 'type' ) ] : sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'All %s', 'bytenot-estate' ), bytenot_noun() );
 if ( $bytenot_q( 'location' ) && isset( $bytenot_opts['locations'][ $bytenot_q( 'location' ) ] ) ) {
 	$bytenot_label .= sprintf( /* translators: %s: city. */ __( ' in %s', 'bytenot-estate' ), $bytenot_opts['locations'][ $bytenot_q( 'location' ) ] );
 }
@@ -38,7 +38,7 @@ $bytenot_found = (int) $GLOBALS['wp_query']->found_posts;
 <section class="listing" aria-labelledby="results-title">
 	<div class="container">
 		<script type="application/json" data-listings><?php echo wp_json_encode( bytenot_listings() ); ?></script>
-		<form class="filters-bar<?php echo $bytenot_opts['has_config'] ? '' : ' filters-bar--four'; ?>" method="get" action="<?php echo esc_url( get_post_type_archive_link( 'property' ) ); ?>" data-listing-filters aria-label="<?php esc_attr_e( 'Filter properties', 'bytenot-estate' ); ?>">
+		<form class="filters-bar<?php echo $bytenot_opts['has_config'] ? '' : ' filters-bar--four'; ?>" method="get" action="<?php echo esc_url( get_post_type_archive_link( 'property' ) ); ?>" data-listing-filters aria-label="<?php echo esc_attr( sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'Filter %s', 'bytenot-estate' ), bytenot_noun() ) ); ?>">
 			<label class="filters-bar__field">
 				<span class="filters-bar__label"><?php esc_html_e( 'Looking for', 'bytenot-estate' ); ?></span>
 				<span class="field__select">
@@ -123,7 +123,7 @@ $bytenot_found = (int) $GLOBALS['wp_query']->found_posts;
 			?>
 		</ul>
 
-		<p class="results-empty" data-results-empty<?php echo have_posts() ? ' hidden' : ''; ?>><?php esc_html_e( 'No properties match these filters yet.', 'bytenot-estate' ); ?> <button type="button" class="link-btn" data-results-reset><?php esc_html_e( 'Clear filters', 'bytenot-estate' ); ?></button> <?php esc_html_e( "or tell us what you're looking for.", 'bytenot-estate' ); ?></p>
+		<p class="results-empty" data-results-empty<?php echo have_posts() ? ' hidden' : ''; ?>><?php echo esc_html( sprintf( /* translators: %s: what listings are called, e.g. "properties". */ __( 'No %s match these filters yet.', 'bytenot-estate' ), bytenot_noun() ) ); ?> <button type="button" class="link-btn" data-results-reset><?php esc_html_e( 'Clear filters', 'bytenot-estate' ); ?></button> <?php esc_html_e( "or tell us what you're looking for.", 'bytenot-estate' ); ?></p>
 
 		<div class="results-more">
 			<button class="btn btn--outline" type="button" data-load-more hidden><?php esc_html_e( 'Load more', 'bytenot-estate' ); ?></button>
