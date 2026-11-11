@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en" data-v="a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listing page chrome — three directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<style>
+/* ======================================================================
+   Prototype-only styles. Everything here layers over style.css.
+   Variants are switched with html[data-v="a|b|c"]; the three chromes are
+   all in the markup and shown per variant.
+   ====================================================================== */
+html:not([data-v="a"]) .v-a, html:not([data-v="b"]) .v-b, html:not([data-v="c"]) .v-c { display: none !important; }
+.chapters, .prop-bar { display: none !important; } /* the current chrome, off */
+
+/* ---------- switcher ---------- */
+.sw { position: fixed; right: 18px; bottom: 18px; z-index: 90; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(20, 47, 63, 0.92); color: #fff; box-shadow: 0 10px 30px rgba(20, 47, 63, 0.3); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; }
+.sw button { width: 38px; height: 32px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; }
+.sw button[aria-pressed="true"] { background: var(--wp--preset--color--primary); color: var(--wp--preset--color--contrast); }
+.sw__name { align-self: center; padding: 0 12px 0 10px; font-weight: 500; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.75); white-space: nowrap; }
+html[data-v="b"] .sw, html[data-v="a"] .sw { bottom: auto; top: 96px; }
+@media (max-width: 720px) { .sw__name { display: none; } html[data-v] .sw { top: auto; bottom: 86px; right: 12px; } }
+
+/* ---------- page content (simplified real page) ---------- */
+.pf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 48px; }
+.pf > div { padding: 22px 0 28px; border-top: 1px solid var(--wp--preset--color--border); }
+.pf dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wp--preset--color--ink-muted); }
+.pf dd { margin: 10px 0 0; font-size: clamp(28px, 2.6vw, 40px); font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; }
+.pf dd small { font-size: 15px; color: var(--wp--preset--color--ink-muted); letter-spacing: 0; }
+.chapter { padding-top: 0; }
+.chapter + .chapter { margin-top: 96px; }
+.deal-sm { margin-top: 110px; padding: 40px 44px; border-radius: 24px; background: var(--wp--preset--color--contrast); color: #fff; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; }
+.deal-sm b { display: block; font-size: clamp(36px, 3.6vw, 52px); font-weight: 600; line-height: 1; letter-spacing: -0.03em; }
+.deal-sm p { margin-top: 8px; font-size: 14px; opacity: 0.7; }
+.end-space { height: 40vh; }
+.proto-foot { padding: 60px 0 120px; border-top: 1px solid var(--wp--preset--color--border); font-size: 13px; color: var(--wp--preset--color--ink-muted); }
+.page--property section[id] { scroll-margin-top: 120px; }
+@media (max-width: 720px) {
+	.pf { grid-template-columns: 1fr 1fr; gap: 0 24px; }
+	.chapter + .chapter { margin-top: 56px; }
+	.deal-sm { grid-template-columns: 1fr; padding: 28px; }
+}
+
+/* ======================================================================
+   A — EDITORIAL INDEX
+   Three columns: numbered index | content | deal card. No pill, no bar.
+   ====================================================================== */
+html[data-v="a"] .a-grid { display: grid; grid-template-columns: 148px minmax(0, 1fr) 300px; gap: 0 56px; align-items: start; }
+html[data-v="a"] .a-idx { position: sticky; top: 110px; align-self: start; }
+.idx { margin: 0; padding: 0; list-style: none; }
+.idx li { border-top: 1px solid var(--wp--preset--color--border); }
+.idx li:last-child { border-bottom: 1px solid var(--wp--preset--color--border); }
+.idx a { position: relative; display: grid; grid-template-columns: 26px 1fr; align-items: baseline; gap: 10px; padding: 11px 0 11px 14px; font-size: 13px; color: var(--wp--preset--color--ink-muted); transition: color .25s ease, padding-left .35s cubic-bezier(.22, 1, .36, 1); }
+.idx a::before { content: ""; position: absolute; left: 0; top: 50%; width: 0; height: 2px; margin-top: -1px; background: var(--wp--preset--gradient--brand-gold); transition: width .35s cubic-bezier(.22, 1, .36, 1); }
+.idx a span:first-child { font-size: 11px; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; }
+.idx a:hover { color: var(--wp--preset--color--ink); }
+.idx a.is-active { color: var(--wp--preset--color--contrast); font-weight: 600; padding-left: 22px; }
+.idx a.is-active::before { width: 12px; }
+.idx__cap { margin-top: 16px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wp--preset--color--ink-muted); }
+.a-deal { position: sticky; top: 110px; padding: 26px 26px 24px; border-radius: 20px; background: var(--wp--preset--color--base); box-shadow: 0 0 0 1px rgba(20, 47, 63, 0.08), 0 20px 50px -20px rgba(20, 47, 63, 0.25); }
+.a-deal__lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wp--preset--color--ink-muted); }
+.a-deal__price { margin-top: 8px; font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: -0.025em; }
+.a-deal__psf { margin-top: 6px; font-size: 13px; color: var(--wp--preset--color--ink-muted); }
+.a-deal__emi { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--wp--preset--color--border); font-size: 14px; line-height: 1.5; color: var(--wp--preset--color--ink-soft); }
+.a-deal__emi b { color: var(--wp--preset--color--ink); font-weight: 600; }
+.a-deal .btn { width: 100%; margin-top: 18px; }
+.a-deal__links { display: flex; gap: 18px; margin-top: 14px; font-size: 13px; }
+.a-deal__links a { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(20, 47, 63, 0.3); }
+.a-deal__links a:hover { text-decoration-color: currentColor; }
+.a-deal__adv { display: flex; align-items: center; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--wp--preset--color--border); font-size: 12px; color: var(--wp--preset--color--ink-muted); }
+.a-deal__adv img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.a-deal__adv b { display: block; font-size: 13px; color: var(--wp--preset--color--ink); font-weight: 600; }
+.a-row, .a-sheet { display: none; }
+@media (max-width: 1100px) {
+	html[data-v="a"] .a-grid { grid-template-columns: 1fr; }
+	html[data-v="a"] .idx, html[data-v="a"] .a-deal { display: none; }
+	/* the index becomes one quiet row under the header, on the page sheet, no pill */
+	html[data-v="a"] .a-row { position: sticky; top: 0; z-index: 30; display: block; width: 100%; padding: 72px 0 0; background: rgba(255, 255, 255, 0.96); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transform: translateY(-100%); transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
+	html[data-v="a"].is-past-hero .a-row { transform: none; }
+	.a-row ol { display: flex; gap: 22px; margin: 0; padding: 0 var(--wp--custom--layout--gutter) 12px; list-style: none; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+	.a-row ol::-webkit-scrollbar { display: none; }
+	.a-row a { display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 0 6px; border-bottom: 2px solid transparent; font-size: 13px; white-space: nowrap; color: var(--wp--preset--color--ink-muted); transition: color .25s ease, border-color .25s ease; }
+	.a-row a span:first-child { font-size: 10px; letter-spacing: 0.06em; }
+	.a-row a.is-active { color: var(--wp--preset--color--contrast); font-weight: 600; border-bottom-color: var(--wp--preset--color--primary-dark); }
+	/* deal card → one-line bottom sheet */
+	html[data-v="a"] .a-sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: block; padding: 0 16px calc(12px + env(safe-area-inset-bottom)); transform: translateY(110%); transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+	html[data-v="a"].is-past-hero .a-sheet { transform: none; }
+	.a-sheet__card { border-radius: 18px; background: var(--wp--preset--color--base); box-shadow: 0 0 0 1px rgba(20, 47, 63, 0.08), 0 -10px 40px rgba(20, 47, 63, 0.18); overflow: hidden; }
+	.a-sheet__row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 10px 10px 16px; border: 0; background: none; text-align: left; }
+	.a-sheet__row b { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+	.a-sheet__row small { display: block; font-size: 12px; color: var(--wp--preset--color--ink-muted); }
+	.a-sheet__row > span:first-child { flex: 1; min-width: 0; }
+	.a-sheet__row .btn { pointer-events: none; }
+	.a-sheet__more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s cubic-bezier(.22, 1, .36, 1); }
+	.a-sheet.is-open .a-sheet__more { grid-template-rows: 1fr; }
+	.a-sheet__more > div { overflow: hidden; }
+	.a-sheet__more p { padding: 0 16px; font-size: 13px; line-height: 1.5; color: var(--wp--preset--color--ink-soft); }
+	.a-sheet__acts { display: flex; gap: 8px; padding: 12px 10px 10px; }
+	.a-sheet__acts .btn { flex: 1; }
+	.a-sheet__caret { width: 36px; height: 36px; display: grid; place-items: center; color: var(--wp--preset--color--ink-muted); transition: transform .35s ease; }
+	.a-sheet.is-open .a-sheet__caret { transform: rotate(180deg); }
+	html[data-v="a"] .end-space { height: 20vh; }
+}
+
+/* ======================================================================
+   B — ONE BAR
+   The header's centre pill crossfades to the chapter list once the hero
+   is gone. Advisor chip bottom-right replaces the bar.
+   ====================================================================== */
+@media (min-width: 961px) {
+	html[data-v="b"] .nav { position: relative; display: grid; }
+	html[data-v="b"] .nav > * { grid-area: 1 / 1; }
+	html[data-v="b"] .nav__list { justify-self: center; }
+}
+html[data-v="b"] .nav__list, html[data-v="b"] .b-chap { transition: opacity .3s ease, transform .45s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .3s; }
+.b-chap { display: inline-flex; align-items: center; gap: 2px; height: 48px; padding: 0 4px 0 2px; justify-self: center; border-radius: 999px; background: rgba(255, 255, 255, 0.78); box-shadow: 0 0 0 1px rgba(20, 47, 63, 0.06), 0 10px 30px rgba(20, 47, 63, 0.12); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); opacity: 0; visibility: hidden; transform: translateY(6px); pointer-events: auto; }
+.b-chap__back { display: inline-grid; place-items: center; width: 36px; height: 36px; margin: 0 2px 0 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(20, 47, 63, 0.06); color: var(--wp--preset--color--contrast); transition: background-color .2s ease; }
+.b-chap__back:hover { background: rgba(20, 47, 63, 0.12); }
+.b-chap a { display: inline-flex; align-items: center; height: 40px; padding: 0 13px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--wp--preset--color--ink-soft); white-space: nowrap; transition: background-color .2s ease, color .2s ease; }
+.b-chap a:hover { background: rgba(20, 47, 63, 0.06); color: var(--wp--preset--color--ink); }
+.b-chap a.is-active { background: var(--wp--preset--color--contrast); color: #fff; }
+/* past the hero and not asking for the menu: the chapters replace the menu */
+html[data-v="b"].is-past-hero:not(.b-menu) .nav__list { opacity: 0; visibility: hidden; transform: translateY(-6px); pointer-events: none; transition: opacity .25s ease, transform .4s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .25s; }
+html[data-v="b"].is-past-hero:not(.b-menu) .b-chap { opacity: 1; visibility: visible; transform: none; transition: opacity .3s ease .1s, transform .45s cubic-bezier(.22, 1, .36, 1) .1s, visibility 0s; }
+/* the logo side hints that the menu is one hover away */
+html[data-v="b"].is-past-hero .site-header .brand::after { content: "Menu"; position: absolute; right: -2px; top: 50%; transform: translate(100%, -50%); padding: 0 10px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--wp--preset--color--ink-muted); opacity: 0; transition: opacity .25s ease; }
+html[data-v="b"].is-past-hero:not(.b-menu) .site-header .brand:hover::after { opacity: 1; }
+.b-chip { position: fixed; right: 20px; bottom: 20px; z-index: 40; display: flex; align-items: center; gap: 0; padding: 6px; border-radius: 999px; background: var(--wp--preset--color--base); box-shadow: 0 0 0 1px rgba(20, 47, 63, 0.08), 0 14px 40px rgba(20, 47, 63, 0.22); transform: translateY(calc(100% + 30px)); opacity: 0; transition: transform .45s cubic-bezier(.22, 1, .36, 1), opacity .3s ease; }
+html[data-v="b"].is-past-hero .b-chip { transform: none; opacity: 1; }
+.b-chip__face { display: flex; align-items: center; gap: 10px; padding: 0 16px 0 0; border: 0; background: none; }
+.b-chip__face img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--wp--preset--color--primary-dark); }
+.b-chip__face span { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.b-chip__face small { display: block; font-size: 11px; font-weight: 500; color: var(--wp--preset--color--ink-muted); }
+.b-chip__acts { display: grid; grid-template-columns: 0fr; transition: grid-template-columns .4s cubic-bezier(.22, 1, .36, 1); }
+.b-chip__acts > div { display: flex; gap: 6px; min-width: 0; overflow: hidden; }
+.b-chip__acts .btn { height: 40px; padding: 0 14px; font-size: 13px; }
+.b-chip__call { width: 40px; padding: 0 !important; }
+.b-chip:hover .b-chip__acts, .b-chip:focus-within .b-chip__acts, .b-chip.is-open .b-chip__acts { grid-template-columns: 1fr; }
+.b-chip:hover .b-chip__acts > div, .b-chip:focus-within .b-chip__acts > div, .b-chip.is-open .b-chip__acts > div { padding-left: 6px; }
+.b-row { display: none; }
+@media (max-width: 960px) {
+	/* no centre pill on tablets and phones: the chapters ride as a slim row on the header sheet */
+	html[data-v="b"] .b-row { position: fixed; top: 0; left: 0; right: 0; z-index: 45; display: block; padding-top: 62px; background: rgba(255, 255, 255, 0.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(20, 47, 63, 0.08); transform: translateY(-100%); transition: transform .4s cubic-bezier(.22, 1, .36, 1); pointer-events: none; }
+	html[data-v="b"].is-past-hero .b-row { transform: none; pointer-events: auto; }
+	.b-row ol { display: flex; gap: 2px; margin: 0; padding: 4px 10px 8px; list-style: none; overflow-x: auto; scrollbar-width: none; }
+	.b-row ol::-webkit-scrollbar { display: none; }
+	.b-row a { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 999px; font-size: 13px; white-space: nowrap; color: var(--wp--preset--color--ink-soft); }
+	.b-row a.is-active { background: var(--wp--preset--color--contrast); color: #fff; }
+	html[data-v="b"].is-past-hero .site-header { z-index: 46; }
+	.b-chip { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); }
+	.b-chip__face span { font-size: 13px; }
+}
+
+/* ======================================================================
+   C — SPINE
+   Progress line at the left edge, labels on hover; the header's pill
+   gives way to a title · price strip once scrolled.
+   ====================================================================== */
+.spine { position: fixed; left: 24px; top: 50%; z-index: 35; transform: translateY(-50%); opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+html[data-v="c"].is-past-hero .spine { opacity: 1; pointer-events: auto; }
+.spine__track { position: absolute; left: 5px; top: 0; bottom: 0; width: 1px; background: rgba(20, 47, 63, 0.14); }
+.spine__fill { position: absolute; left: 5px; top: 0; width: 1px; height: calc(var(--p, 0) * 100%); background: var(--wp--preset--color--contrast); transition: height .15s linear; }
+.spine ol { position: relative; display: flex; flex-direction: column; gap: 34px; margin: 0; padding: 0; list-style: none; }
+.spine a { position: relative; display: flex; align-items: center; gap: 14px; height: 11px; color: var(--wp--preset--color--ink-muted); font-size: 12px; letter-spacing: 0.02em; white-space: nowrap; }
+.spine a::before { content: ""; flex: none; width: 11px; height: 11px; border-radius: 50%; background: var(--wp--preset--color--base); box-shadow: inset 0 0 0 1px rgba(20, 47, 63, 0.3); transition: box-shadow .25s ease, transform .25s ease; }
+.spine a span { opacity: 0; transform: translateX(-6px); transition: opacity .25s ease, transform .35s cubic-bezier(.22, 1, .36, 1); }
+.spine a span i { font-style: normal; margin-right: 8px; font-size: 10px; letter-spacing: 0.08em; color: var(--wp--preset--color--primary-dark); }
+.spine:hover a span, .spine a.is-active span, .spine a:focus-visible span { opacity: 1; transform: none; }
+.spine a.is-active { color: var(--wp--preset--color--contrast); font-weight: 600; }
+.spine a.is-active::before { background: var(--wp--preset--color--contrast); box-shadow: 0 0 0 4px rgba(20, 47, 63, 0.08); transform: scale(1.1); }
+.spine a:hover::before { box-shadow: inset 0 0 0 1px var(--wp--preset--color--contrast); }
+.c-strip { position: fixed; left: 50%; top: 12px; z-index: 55; display: flex; align-items: center; gap: 22px; height: 48px; padding: 4px 4px 4px 22px; border-radius: 999px; background: rgba(255, 255, 255, 0.84); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 0 0 1px rgba(20, 47, 63, 0.06), 0 10px 30px rgba(20, 47, 63, 0.12); transform: translate(-50%, -140%); opacity: 0; transition: transform .5s cubic-bezier(.22, 1, .36, 1), opacity .3s ease; pointer-events: auto; }
+.c-strip__t { display: flex; align-items: baseline; gap: 12px; font-size: 14px; white-space: nowrap; }
+.c-strip__t b { font-weight: 600; }
+.c-strip__t .dot { color: rgba(20, 47, 63, 0.3); }
+.c-strip__t em { font-style: normal; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+.c-strip__t small { font-size: 12px; color: var(--wp--preset--color--ink-muted); }
+.c-strip .btn { height: 40px; }
+html[data-v="c"].is-past-hero .c-strip { transform: translate(-50%, 0); opacity: 1; }
+html[data-v="c"].is-past-hero .nav__list { opacity: 0; visibility: hidden; transform: translateY(-8px); pointer-events: none; }
+html[data-v="c"] .nav__list { transition: opacity .25s ease, transform .4s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .25s; }
+.c-bar { display: none; }
+@media (max-width: 960px) {
+	html[data-v="c"] .spine { display: none; }
+	html[data-v="c"] .c-bar { position: fixed; left: 0; right: 0; top: 0; z-index: 45; display: block; height: 3px; background: rgba(20, 47, 63, 0.08); opacity: 0; transition: opacity .3s ease; }
+	html[data-v="c"].is-past-hero .c-bar { opacity: 1; }
+	.c-bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--wp--preset--gradient--brand-gold); transition: width .15s linear; }
+	html[data-v="c"] .c-strip { top: auto; bottom: calc(12px + env(safe-area-inset-bottom)); left: 12px; right: 12px; width: auto; transform: translateY(140%); gap: 12px; padding-left: 16px; }
+	html[data-v="c"].is-past-hero .c-strip { transform: none; }
+	.c-strip__t { flex: 1; min-width: 0; flex-direction: column; gap: 1px; line-height: 1.2; }
+	.c-strip__t b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; font-size: 13px; }
+	.c-strip__t .dot, .c-strip__t small { display: none; }
+	.c-strip__t em { font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .idx a, .a-row, .a-sheet, .b-chip, .b-chap, .nav__list, .c-strip, .spine a span { transition: none !important; } }
+</style>
+</head>
+<body class="page--property">
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="site-header" data-header>
+	<div class="container site-header__inner">
+		<a class="brand" href="index.html" aria-label="Lavenor Realty, home">
+			<img class="brand__mark" src="assets/logo-mark.svg" alt="" width="42" height="26">
+			<span class="brand__text"><span class="brand__name">Lavenor</span><span class="brand__sub">Realty</span></span>
+		</a>
+		<nav class="nav" aria-label="Primary">
+			<ul class="nav__list"><li class="nav__hl" aria-hidden="true"></li>
+				<li><a class="nav__link" href="index.html">Home</a></li>
+				<li><a class="nav__link" href="index.html#about">About Us</a></li>
+				<li><a class="nav__link is-active" href="properties.html">Projects</a></li>
+				<li><a class="nav__link" href="#contact">Contact Us</a></li>
+			</ul>
+			<!-- B: the chapter list that takes the pill's place -->
+			<div class="b-chap v-b" data-chapter-links aria-label="On this page">
+				<button class="b-chap__back" type="button" aria-label="Show the site menu" data-b-menu>
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+				</button>
+				<a href="#glance" data-chap="glance">At a glance</a><a href="#home" data-chap="home">The home</a><a href="#plan" data-chap="plan">The plan</a><a href="#numbers" data-chap="numbers">The numbers</a><a href="#place" data-chap="place">The place</a><a href="#papers" data-chap="papers">Papers</a><a href="#nearby" data-chap="nearby">Nearby</a>
+			</div>
+		</nav>
+		<div class="site-header__right">
+			<a class="btn btn--accent btn--cta" href="#visit"><span class="btn__long">Talk to an advisor</span><span class="btn__short">Enquire</span></a>
+			<button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+		</div>
+	</div>
+</header>
+
+<!-- C: progress bar (phones) and the title · price strip -->
+<div class="c-bar v-c" aria-hidden="true"><i></i></div>
+<div class="c-strip v-c" role="region" aria-label="This home">
+	<p class="c-strip__t"><b>3 BHK, Tower B 1204</b><span class="dot">·</span><em>₹1.85 Cr</em><small>Kokapet, Hyderabad</small></p>
+	<a class="btn btn--accent btn--sm" href="#visit">Book a visit</a>
+</div>
+<!-- B: slim chapter row on phones and tablets -->
+<nav class="b-row v-b" aria-label="On this page" data-chapter-links>
+	<ol><li><a href="#glance" data-chap="glance">At a glance</a></li><li><a href="#home" data-chap="home">The home</a></li><li><a href="#plan" data-chap="plan">The plan</a></li><li><a href="#numbers" data-chap="numbers">The numbers</a></li><li><a href="#place" data-chap="place">The place</a></li><li><a href="#papers" data-chap="papers">Papers</a></li><li><a href="#nearby" data-chap="nearby">Nearby</a></li></ol>
+</nav>
+
+<main id="main" data-property>
+
+<section class="ph" aria-labelledby="ph-title" data-ph>
+	<div class="ph__media">
+		<img class="ph__img" src="assets/house-large.jpg" alt="" width="2000" height="1333" fetchpriority="high">
+		<div class="ph__shade" aria-hidden="true"></div>
+		<button class="ph__all" type="button">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+			All 8 photos
+		</button>
+	</div>
+	<div class="container ph__inner">
+		<p class="ph__status" style="background:#fff;color:var(--wp--preset--color--contrast)"><span>Possession Dec 2026</span></p>
+		<nav class="ph__crumbs" aria-label="Breadcrumb"><ol><li><a href="properties.html">Projects</a></li><li><a href="#">Rajapushpa Provincia</a></li><li aria-current="page">Kokapet</li></ol></nav>
+		<h1 class="ph__title" id="ph-title">3 BHK, Tower B 1204</h1>
+		<p class="ph__line">3 BHK · 1,850 sq ft · East facing · Under construction</p>
+	</div>
+	<aside class="ph__price" aria-label="Price">
+		<p class="ph__amount">₹1.85 Cr</p>
+		<p class="ph__psf">₹10,000 per sq ft</p>
+		<a class="btn btn--dark btn--sm" href="#visit">Book a visit</a>
+	</aside>
+</section>
+
+<!-- A: slim chapter row (phones/tablets) -->
+<nav class="a-row v-a" aria-label="On this page" data-chapter-links>
+	<ol><li><a href="#glance" data-chap="glance"><span>01</span><span>At a glance</span></a></li><li><a href="#home" data-chap="home"><span>02</span><span>The home</span></a></li><li><a href="#plan" data-chap="plan"><span>03</span><span>The plan</span></a></li><li><a href="#numbers" data-chap="numbers"><span>04</span><span>The numbers</span></a></li><li><a href="#place" data-chap="place"><span>05</span><span>The place</span></a></li><li><a href="#papers" data-chap="papers"><span>06</span><span>Papers</span></a></li><li><a href="#nearby" data-chap="nearby"><span>07</span><span>Nearby</span></a></li></ol>
+</nav>
+
+<div class="container a-grid" data-article>
+	<!-- A: the numbered index -->
+	<aside class="a-idx v-a" aria-label="On this page" data-chapter-links>
+		<ol class="idx">
+			<li><a href="#glance" data-chap="glance"><span>01</span><span>At a glance</span></a></li>
+			<li><a href="#home" data-chap="home"><span>02</span><span>The home</span></a></li>
+			<li><a href="#plan" data-chap="plan"><span>03</span><span>The plan</span></a></li>
+			<li><a href="#numbers" data-chap="numbers"><span>04</span><span>The numbers</span></a></li>
+			<li><a href="#place" data-chap="place"><span>05</span><span>The place</span></a></li>
+			<li><a href="#papers" data-chap="papers"><span>06</span><span>Papers</span></a></li>
+			<li><a href="#nearby" data-chap="nearby"><span>07</span><span>Nearby</span></a></li>
+		</ol>
+		<p class="idx__cap">Ref HYD-0001 · Verified</p>
+	</aside>
+
+	<article>
+		<section id="glance" aria-label="At a glance" style="padding-top:44px">
+			<div class="meta-line">
+				<p>Ref <b>HYD-0001</b> <span class="dot" aria-hidden="true">·</span> <span class="meta-line__ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5l5 5L20 7"/></svg>Verified by Lavenor</span> <span class="dot" aria-hidden="true">·</span> Updated 50 minutes ago</p>
+				<p class="meta-line__tools"><button class="link-btn" type="button">Save</button> <button class="link-btn" type="button">Share</button></p>
+			</div>
+			<dl class="pf" style="margin-top:28px">
+				<div><dt>Configuration</dt><dd>3 BHK</dd></div>
+				<div><dt>Carpet area</dt><dd>1,850 <small>sq ft</small></dd></div>
+				<div><dt>Bathrooms</dt><dd>3</dd></div>
+				<div><dt>Facing</dt><dd>East</dd></div>
+				<div><dt>Floors</dt><dd>12 of 19</dd></div>
+				<div><dt>Possession</dt><dd>Dec 2026</dd></div>
+			</dl>
+		</section>
+
+		<section id="home" aria-labelledby="home-title" style="padding-top:110px">
+			<div class="sec-head"><p class="fig-label">01 — 03</p><h2 class="sec-head__title" id="home-title">The home</h2></div>
+			<div class="chapter is-in" style="margin-top:48px">
+				<figure class="chapter__fig"><img class="chapter__img" src="assets/p1.jpg" alt="" loading="lazy"></figure>
+				<div class="chapter__text"><p class="fig-label">01</p><h3 class="chapter__title">The home</h3><p class="chapter__body">On the 12th floor of Tower B, with the living room and two balconies facing east. Well-proportioned rooms, good light through the day and a utility off the kitchen.</p><p class="chapter__cap">Fig. 1 · The home, Kokapet</p></div>
+			</div>
+			<div class="chapter chapter--flip is-in">
+				<figure class="chapter__fig"><img class="chapter__img" src="assets/p2.jpg" alt="" loading="lazy"></figure>
+				<div class="chapter__text"><p class="fig-label">02</p><h3 class="chapter__title">The living room</h3><p class="chapter__body">Double-height glazing on the east wall, a floating stair to the study loft and a kitchen that opens to the balcony. The floor is engineered oak throughout.</p><p class="chapter__cap">Fig. 2 · Living, east wall</p></div>
+			</div>
+		</section>
+
+		<section id="plan" aria-labelledby="plan-title" style="padding-top:110px">
+			<div class="sec-head"><p class="fig-label">The plan</p><h2 class="sec-head__title" id="plan-title">The plan</h2></div>
+			<div class="chapter is-in" style="margin-top:48px">
+				<figure class="chapter__fig"><img class="chapter__img" src="assets/p3.jpg" alt="" loading="lazy"></figure>
+				<div class="chapter__text"><p class="fig-label">03</p><h3 class="chapter__title">1,850 sq ft, three bedrooms</h3><p class="chapter__body">The master suite sits on the quiet west side with a walk-in wardrobe; the two other bedrooms share the east balcony. Servant quarters and a powder room by the entry.</p><p class="chapter__cap">Fig. 3 · Floor plan, Tower B</p></div>
+			</div>
+		</section>
+
+		<section id="numbers" aria-labelledby="numbers-title" style="padding-top:110px">
+			<div class="sec-head"><p class="fig-label">The numbers</p><h2 class="sec-head__title" id="numbers-title">What it costs</h2></div>
+			<div class="deal-sm" style="margin-top:40px">
+				<div><b>₹1.85 Cr</b><p>₹10,000 per sq ft · registration and GST extra</p></div>
+				<div><p style="margin:0;font-size:15px;opacity:.85">About <b style="display:inline;font-size:22px">₹1.4 L</b> a month over 20 years at 8.5%</p></div>
+			</div>
+		</section>
+
+		<section id="place" aria-labelledby="place-title" style="padding-top:110px">
+			<div class="sec-head"><p class="fig-label">The place</p><h2 class="sec-head__title" id="place-title">Kokapet</h2></div>
+			<div class="chapter chapter--flip is-in" style="margin-top:48px">
+				<figure class="chapter__fig"><img class="chapter__img" src="assets/p4.jpg" alt="" loading="lazy"></figure>
+				<div class="chapter__text"><p class="fig-label">04</p><h3 class="chapter__title">Twelve minutes to the Financial District</h3><p class="chapter__body">Outer Ring Road exit at Narsingi, international schools within 4 km, and the lake walk at the end of the road. Groceries and a hospital inside the township.</p><p class="chapter__cap">Fig. 4 · Kokapet, from the tower</p></div>
+			</div>
+		</section>
+
+		<section id="papers" aria-labelledby="papers-title" style="padding-top:110px">
+			<div class="sec-head"><p class="fig-label">Papers</p><h2 class="sec-head__title" id="papers-title">Papers</h2></div>
+			<dl class="pf" style="margin-top:28px">
+				<div><dt>RERA</dt><dd style="font-size:22px">P02400001234</dd></div>
+				<div><dt>Title</dt><dd style="font-size:22px">Clear, verified</dd></div>
+				<div><dt>Bank approvals</dt><dd style="font-size:22px">SBI, HDFC, ICICI</dd></div>
+			</dl>
+		</section>
+
+		<section id="nearby" aria-labelledby="nearby-title" style="padding-top:110px">
+			<div class="sec-head"><p class="fig-label">Nearby</p><h2 class="sec-head__title" id="nearby-title">Similar homes</h2></div>
+			<dl class="pf" style="margin-top:28px">
+				<div><dt>Aparna Zenon</dt><dd style="font-size:22px">₹1.35 – 2.1 Cr</dd></div>
+				<div><dt>SMR Vinay Iconia</dt><dd style="font-size:22px">₹98 L – 1.42 Cr</dd></div>
+				<div><dt>Jayabheri Orange County</dt><dd style="font-size:22px">₹2.7 – 3.4 Cr</dd></div>
+			</dl>
+			<div class="end-space"></div>
+		</section>
+	</article>
+
+	<!-- A: the deal card -->
+	<aside class="a-deal v-a" aria-label="Price and visit">
+		<p class="a-deal__lbl">Asking</p>
+		<p class="a-deal__price">₹1.85 Cr</p>
+		<p class="a-deal__psf">₹10,000 per sq ft · all-in except registration</p>
+		<p class="a-deal__emi">About <b>₹1.4 L</b> a month over 20 years at 8.5%</p>
+		<a class="btn btn--accent" href="#visit">Book a visit</a>
+		<p class="a-deal__links"><a href="tel:+919876543210">Call</a><a href="https://wa.me/919876543210">WhatsApp</a><a href="#visit">Ask a question</a></p>
+		<p class="a-deal__adv"><img src="assets/t1.jpg" alt=""><span><b>Priya Reddy</b>Your advisor for Kokapet</span></p>
+	</aside>
+</div>
+
+<footer class="container proto-foot">Prototype · Lavenor Realty · the real footer goes here</footer>
+</main>
+
+<!-- A: bottom sheet (phones) -->
+<div class="a-sheet v-a" data-a-sheet>
+	<div class="a-sheet__card">
+		<button class="a-sheet__row" type="button" aria-expanded="false" data-a-toggle>
+			<span><b>₹1.85 Cr</b><small>3 BHK, Tower B 1204 · Kokapet</small></span>
+			<span class="a-sheet__caret" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></span>
+			<span class="btn btn--accent btn--sm">Book a visit</span>
+		</button>
+		<div class="a-sheet__more"><div>
+			<p>About ₹1.4 L a month over 20 years at 8.5%. Priya Reddy is your advisor for Kokapet.</p>
+			<div class="a-sheet__acts"><a class="btn btn--outline btn--sm" href="tel:+919876543210">Call</a><a class="btn btn--outline btn--sm" href="https://wa.me/919876543210">WhatsApp</a><a class="btn btn--dark btn--sm" href="#visit">Ask a question</a></div>
+		</div></div>
+	</div>
+</div>
+
+<!-- B: advisor chip -->
+<div class="b-chip v-b" data-b-chip>
+	<button class="b-chip__face" type="button" aria-expanded="false" data-b-chip-toggle>
+		<img src="assets/t1.jpg" alt="">
+		<span>Book a visit<small>with Priya, your advisor</small></span>
+	</button>
+	<div class="b-chip__acts"><div>
+		<a class="btn btn--outline btn--sm b-chip__call" href="tel:+919876543210" aria-label="Call"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a>
+		<a class="btn btn--outline btn--sm" href="https://wa.me/919876543210">WhatsApp</a>
+		<a class="btn btn--accent btn--sm" href="#visit">Book a visit</a>
+	</div></div>
+</div>
+
+<!-- C: the spine -->
+<nav class="spine v-c" aria-label="On this page" data-chapter-links>
+	<span class="spine__track" aria-hidden="true"></span><span class="spine__fill" aria-hidden="true"></span>
+	<ol>
+		<li><a href="#glance" data-chap="glance"><span><i>01</i>At a glance</span></a></li>
+		<li><a href="#home" data-chap="home"><span><i>02</i>The home</span></a></li>
+		<li><a href="#plan" data-chap="plan"><span><i>03</i>The plan</span></a></li>
+		<li><a href="#numbers" data-chap="numbers"><span><i>04</i>The numbers</span></a></li>
+		<li><a href="#place" data-chap="place"><span><i>05</i>The place</span></a></li>
+		<li><a href="#papers" data-chap="papers"><span><i>06</i>Papers</span></a></li>
+		<li><a href="#nearby" data-chap="nearby"><span><i>07</i>Nearby</span></a></li>
+	</ol>
+</nav>
+
+<!-- variant switcher -->
+<div class="sw" role="group" aria-label="Chrome variant">
+	<span class="sw__name" data-sw-name>A · Editorial index</span>
+	<button type="button" data-sw="a" aria-pressed="true">A</button>
+	<button type="button" data-sw="b" aria-pressed="false">B</button>
+	<button type="button" data-sw="c" aria-pressed="false">C</button>
+</div>
+
+<script>
+(() => {
+	const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+	const html = document.documentElement;
+	const NAMES = { a: 'A · Editorial index', b: 'B · One bar', c: 'C · Spine' };
+
+	/* ---- variant switcher: ?v=, then localStorage, then A ---- */
+	const setV = (v, store = true) => {
+		if (!NAMES[v]) v = 'a';
+		html.dataset.v = v;
+		$$('[data-sw]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sw === v)));
+		$('[data-sw-name]').textContent = NAMES[v];
+		if (store) try { localStorage.setItem('listing-chrome', v); } catch (e) {}
+		html.classList.remove('b-menu');
+		paint();
+	};
+	const q = new URLSearchParams(location.search).get('v');
+	let saved = null; try { saved = localStorage.getItem('listing-chrome'); } catch (e) {}
+	$$('[data-sw]').forEach((b) => b.addEventListener('click', () => setV(b.dataset.sw)));
+	addEventListener('keydown', (e) => { if (['1', '2', '3'].includes(e.key) && !/input|textarea/i.test(e.target.tagName)) setV('abc'[+e.key - 1]); });
+
+	/* ---- header: scrolled state with hysteresis ---- */
+	const header = $('[data-header]');
+	const hdr = () => { const y = scrollY, on = header.classList.contains('is-scrolled'); if (y > 40 && !on) header.classList.add('is-scrolled'); else if (y < 8 && on) header.classList.remove('is-scrolled'); };
+	/* the active site link pill */
+	const navList = $('.nav__list'), navHl = $('.nav__hl');
+	const placeHl = () => { const on = $('.nav__link.is-active', navList); if (!on) return; navList.style.setProperty('--hl-x', `${on.offsetLeft}px`); navList.style.setProperty('--hl-w', `${on.offsetWidth}px`); navList.classList.add('is-placed'); };
+	document.fonts?.ready.then(placeHl); placeHl(); addEventListener('resize', placeHl);
+
+	/* ---- past the hero: every chrome arrives then ---- */
+	const ph = $('[data-ph]');
+	new IntersectionObserver((en) => html.classList.toggle('is-past-hero', !en[0].isIntersecting), { rootMargin: '-72px 0px 0px 0px', threshold: 0 }).observe(ph);
+
+	/* ---- chapter spy: one source, every list repaints (idx, row, pill, spine) ---- */
+	const sections = $$('article section[id]');
+	const links = () => $$('[data-chapter-links] a[data-chap]');
+	let current = '';
+	const paint = () => links().forEach((a) => a.classList.toggle('is-active', a.dataset.chap === current));
+	const spy = () => {
+		const line = innerHeight * 0.34; let hit = sections[0];
+		sections.forEach((s) => { if (s.getBoundingClientRect().top <= line) hit = s; });
+		if (hit && hit.id !== current) { current = hit.id; paint(); }
+	};
+	/* C: progress through the article */
+	const article = $('[data-article]');
+	const progress = () => {
+		const r = article.getBoundingClientRect();
+		const total = r.height - innerHeight * 0.6;
+		const p = Math.min(1, Math.max(0, (-r.top + innerHeight * 0.34) / total));
+		html.style.setProperty('--p', p.toFixed(4));
+	};
+	let tick = false;
+	const onScroll = () => { if (tick) return; tick = true; requestAnimationFrame(() => { tick = false; hdr(); spy(); progress(); }); };
+	addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll);
+	/* chapter links scroll smoothly and the hash does not jump the page */
+	document.addEventListener('click', (e) => {
+		const a = e.target.closest('[data-chapter-links] a[data-chap]'); if (!a) return;
+		e.preventDefault(); const t = document.getElementById(a.dataset.chap); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
+		html.classList.remove('b-menu');
+	});
+
+	/* ---- A: bottom sheet ---- */
+	const sheet = $('[data-a-sheet]');
+	$('[data-a-toggle]').addEventListener('click', (e) => { if (e.target.closest('.btn')) { location.hash = 'visit'; return; } const on = sheet.classList.toggle('is-open'); $('[data-a-toggle]').setAttribute('aria-expanded', String(on)); });
+
+	/* ---- B: the back arrow brings the site menu for a moment ---- */
+	let menuTimer;
+	const showMenu = () => { html.classList.add('b-menu'); clearTimeout(menuTimer); menuTimer = setTimeout(() => html.classList.remove('b-menu'), 4000); };
+	$('[data-b-menu]').addEventListener('click', showMenu);
+	$('.site-header .brand').addEventListener('mouseenter', () => { if (html.dataset.v === 'b' && html.classList.contains('is-past-hero')) showMenu(); });
+	$('.nav').addEventListener('mouseleave', () => { if (html.classList.contains('b-menu')) { clearTimeout(menuTimer); menuTimer = setTimeout(() => html.classList.remove('b-menu'), 600); } });
+	const chip = $('[data-b-chip]');
+	$('[data-b-chip-toggle]').addEventListener('click', () => { const on = chip.classList.toggle('is-open'); $('[data-b-chip-toggle]').setAttribute('aria-expanded', String(on)); });
+	document.addEventListener('click', (e) => { if (!chip.contains(e.target)) chip.classList.remove('is-open'); });
+
+	setV(q || saved || 'a', !!q);
+	onScroll();
+})();
+</script>
+</body>
+</html>
