@@ -20,7 +20,7 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 
 	<div class="container hero__inner">
 		<div class="hero__content">
-			<?php if ( $bytenot_opts['types'] ) : ?>
+			<?php if ( $bytenot_opts['types'] && bytenot_mod( 'hero_tags' ) ) : ?>
 			<ul class="tags" aria-label="<?php esc_attr_e( 'Quick property type', 'bytenot-estate' ); ?>">
 				<?php foreach ( array_slice( $bytenot_opts['types'], 0, 4, true ) as $bytenot_slug => $bytenot_name ) : ?>
 				<li><button class="tag" type="button" data-type="<?php echo esc_attr( $bytenot_slug ); ?>"><?php echo esc_html( $bytenot_name ); ?></button></li>
@@ -88,7 +88,7 @@ $bytenot_partners = get_posts( array( 'post_type' => 'partner', 'posts_per_page'
 			</div>
 
 			<div class="search__footer">
-				<?php if ( count( $bytenot_opts['intents'] ) > 1 ) : ?>
+				<?php if ( count( $bytenot_opts['intents'] ) > 1 && bytenot_mod( 'hero_intents' ) ) : ?>
 				<fieldset class="filters">
 					<legend class="filters__label"><?php esc_html_e( 'Filter:', 'bytenot-estate' ); ?></legend>
 					<?php $bytenot_i = 0; foreach ( $bytenot_opts['intents'] as $bytenot_slug => $bytenot_name ) : ?>

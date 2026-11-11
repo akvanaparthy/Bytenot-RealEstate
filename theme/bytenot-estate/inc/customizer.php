@@ -21,9 +21,12 @@ function bytenot_customizer_fields() {
 			'header_cta_text'  => array( __( 'Button text', 'bytenot-estate' ), 'text', __( 'Talk to an advisor', 'bytenot-estate' ) ),
 			'header_cta_short' => array( __( 'Button text (phones)', 'bytenot-estate' ), 'text', __( 'Enquire', 'bytenot-estate' ) ),
 			'header_cta_url'   => array( __( 'Button link', 'bytenot-estate' ), 'text', '#inquiry' ),
+			'header_logo_light' => array( __( 'Logo on photos (light version, shown while the header is transparent)', 'bytenot-estate' ), 'image', 0 ),
 		),
 		'hero'         => array(
 			'hero_image'      => array( __( 'Background photo', 'bytenot-estate' ), 'image', 0 ),
+			'hero_tags'       => array( __( 'Show the quick property-type tags', 'bytenot-estate' ), 'toggle', 1 ),
+			'hero_intents'    => array( __( 'Show the buy / rent / resale filter', 'bytenot-estate' ), 'toggle', 1 ),
 			'hero_title'      => array( __( 'Title', 'bytenot-estate' ), 'html', __( 'Find a home you will <br>be proud to own.', 'bytenot-estate' ) ),
 			'hero_lede'       => array( __( 'Lede', 'bytenot-estate' ), 'textarea', __( 'We find you the right home and investments that grow with you, with honest advice at every step.', 'bytenot-estate' ) ),
 			'search_title'    => array( __( 'Search box title', 'bytenot-estate' ), 'text', __( 'Find your perfect home', 'bytenot-estate' ) ),
@@ -139,6 +142,7 @@ function bytenot_customize_register( $wp_customize ) {
 		'url'      => 'esc_url_raw',
 		'email'    => 'sanitize_email',
 		'image'    => 'absint',
+		'toggle'   => 'rest_sanitize_boolean',
 	);
 	foreach ( bytenot_customizer_fields() as $section => $fields ) {
 		$wp_customize->add_section( 'bytenot_' . $section, array( 'title' => $sections[ $section ], 'panel' => 'bytenot' ) );
@@ -148,7 +152,7 @@ function bytenot_customize_register( $wp_customize ) {
 			if ( 'image' === $f[1] ) {
 				$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, $id, array( 'label' => $f[0], 'section' => 'bytenot_' . $section, 'mime_type' => 'image' ) ) );
 			} else {
-				$types = array( 'text' => 'text', 'textarea' => 'textarea', 'html' => 'textarea', 'url' => 'url', 'email' => 'email' );
+				$types = array( 'text' => 'text', 'textarea' => 'textarea', 'html' => 'textarea', 'url' => 'url', 'email' => 'email', 'toggle' => 'checkbox' );
 				$wp_customize->add_control( $id, array( 'label' => $f[0], 'section' => 'bytenot_' . $section, 'type' => $types[ $f[1] ] ) );
 			}
 		}

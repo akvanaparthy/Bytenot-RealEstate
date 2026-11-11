@@ -865,18 +865,20 @@
 	const inquiry = $('[data-inquiry]');
 	if (inquiry) {
 		const band = inquiry.closest('.inquiry');
-		let lastGap = Infinity;
+		let lastTop = null;
 		let settleTimer;
 		let userScrolled = false; // never on the browser's own scroll (restoring a position, jumping to a hash)
 		['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, () => { userScrolled = true; }, { passive: true, once: true }));
 		const settle = () => {
-			if (!userScrolled) return;
+			// never while someone is typing in the form: the browser's own focus scroll is not ours to override
+			if (!userScrolled || inquiry.contains(document.activeElement)) return;
 			const top = band.getBoundingClientRect().top;
 			const gap = Math.abs(top);
-			const approaching = gap < lastGap;
-			lastGap = gap;
+			// nearer than at the last stop and on the same side of it: a reader who scrolled past is never pulled back
+			const approaching = lastTop === null ? top > 0 : gap < Math.abs(lastTop) && top * lastTop > 0;
+			lastTop = top;
 			if (gap > 2 && gap < innerHeight * 0.22 && approaching) {
-				lastGap = 0;
+				lastTop = 0;
 				scrollTo({ top: scrollY + top, behavior: reduced ? 'instant' : 'smooth' });
 			}
 		};

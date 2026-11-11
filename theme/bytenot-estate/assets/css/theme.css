@@ -154,6 +154,12 @@ legend { padding: 0; }
 .brand { display: inline-flex; align-items: center; gap: 12px; line-height: 1; }
 .brand__mark { flex: none; width: 42px; height: auto; }
 .brand__logo { display: block; height: 40px; width: auto; } /* a wordmark or lockup stands alone */
+/* light and dark versions stacked; the light one shows while the header is transparent over a photo */
+.brand__logos { display: grid; }
+.brand__logos .brand__logo { grid-area: 1 / 1; transition: opacity .28s ease; }
+.brand__logo--light { opacity: 0; }
+.site-header:not(.is-scrolled):not(.site-header--dark) .brand__logo--light { opacity: 1; }
+.site-header:not(.is-scrolled):not(.site-header--dark) .brand__logo--dark { opacity: 0; }
 .brand__text { display: inline-flex; flex-direction: column; justify-content: center; }
 .brand__name { font-size: 21px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .brand__sub { margin-top: 3px; font-size: 10px; font-weight: 400; letter-spacing: .34em; text-transform: uppercase; opacity: .9; }
@@ -269,7 +275,7 @@ legend { padding: 0; }
 	display: flex; flex-direction: column; justify-content: flex-end; flex: 1;
 	padding-bottom: 0;
 }
-.hero__content { margin-bottom: 38px; }
+.hero__content { width: min(100% - 80px, 1080px); margin: 0 auto 38px; } /* shares the search card's edges: title flush left, lede flush right */
 
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .tag {
@@ -1391,6 +1397,7 @@ legend { padding: 0; }
 	.search-wrap::before, .search-wrap::after { display: none; }
 	.hero__content { margin-top: auto; margin-bottom: 24px; }
 	.tag { height: 44px; padding: 0 16px; font-size: 14px; }
+	.hero__content { width: auto; }
 	.hero__row { flex-direction: column; align-items: flex-start; gap: 18px; margin-top: 14px; }
 	.hero__title { line-height: 1.12; max-width: none; }
 	.hero__title br, .featured__title br { display: none; }

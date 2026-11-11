@@ -204,6 +204,10 @@ function bytenot_core_install_demo_site( $advisors ) {
 	if ( $logo ) {
 		set_theme_mod( 'custom_logo', $logo );
 	}
+	$light = bytenot_core_demo_image( 'logo-light.svg' );
+	if ( $light ) {
+		set_theme_mod( 'bytenot_header_logo_light', $light );
+	}
 	remove_filter( 'upload_mimes', $svg_mimes );
 	remove_filter( 'wp_check_filetype_and_ext', $svg_check, 10 );
 
@@ -264,7 +268,9 @@ function bytenot_core_install_demo_site( $advisors ) {
 		'hero_image'           => $img( 'hero.jpg' ),
 		'hero_title'           => 'Home with Honor, <br>Wealth with Vision.',
 		'hero_lede'            => "Lavenor Realty finds you a home you'll feel lavish in and honored to own, and investments that grow with you. Hyderabad, Bangalore and beyond.",
-		'about_statement'      => "Redefining the real estate experience through trust, transparency and integrity. We are committed to helping customers {pill} make confident property decisions through honest guidance, carefully selected opportunities and clear market insights. {pill} Our approach is built on understanding individual needs, providing fair market value and offering complete information without bias or pressure.\n\nWe believe in putting customers first, building lasting relationships {pill} and ensuring every property decision is backed by transparency, trust and genuine value.",
+		'hero_tags'            => 0,
+		'hero_intents'         => 0,
+		'about_statement'      => "Redefining the real estate experience through trust, transparency and integrity.\n\nWe are committed to helping customers {pill} make confident property decisions through honest guidance, carefully selected opportunities and clear market insights. {pill} Our approach is built on understanding individual needs, providing fair market value and offering complete information without bias or pressure.\n\nWe believe in putting customers first, building lasting relationships {pill} and ensuring every property decision is backed by transparency, trust and genuine value.",
 		'about_pill_1'         => $img( 't2.jpg' ),
 		'about_pill_2'         => $img( 'p3.jpg' ),
 		'about_pill_3'         => $img( 'p7.jpg' ),

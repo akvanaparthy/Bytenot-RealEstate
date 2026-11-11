@@ -108,13 +108,20 @@ function bytenot_brand( $classes = '', $link = true ) {
 	$sub  = get_bloginfo( 'description' );
 	$logo = (int) get_theme_mod( 'custom_logo' );
 	if ( $logo && 'mark' !== bytenot_logo_shape( $logo ) ) {
-		// a wordmark or lockup already carries the name: it stands alone, 40px tall
-		$size = wp_get_attachment_metadata( $logo );
-		if ( empty( $size['height'] ) ) {
-			$size = bytenot_svg_size( $logo );
-		}
-		$w     = ! empty( $size['height'] ) ? (int) round( 40 * $size['width'] / $size['height'] ) : 160;
-		$inner = '<img class="brand__logo" src="' . esc_url( wp_get_attachment_url( $logo ) ) . '" alt="' . esc_attr( $name ) . '" width="' . $w . '" height="40">';
+		// a wordmark or lockup already carries the name: it stands alone, 40px tall. A light
+		// version, when set, shows over photos while the header is transparent.
+		$img = static function ( $id, $class, $alt ) {
+			$size = wp_get_attachment_metadata( $id );
+			if ( empty( $size['height'] ) ) {
+				$size = bytenot_svg_size( $id );
+			}
+			$w = ! empty( $size['height'] ) ? (int) round( 40 * $size['width'] / $size['height'] ) : 160;
+			return '<img class="' . esc_attr( bytenot_class( $class ) ) . '" src="' . esc_url( wp_get_attachment_url( $id ) ) . '" alt="' . esc_attr( $alt ) . '" width="' . $w . '" height="40"' . ( '' === $alt ? ' aria-hidden="true"' : '' ) . '>';
+		};
+		$light = false === strpos( $classes, 'brand--dark' ) ? (int) bytenot_mod( 'header_logo_light' ) : 0;
+		$inner = $light
+			? '<span class="brand__logos">' . $img( $logo, 'brand__logo brand__logo--dark', $name ) . $img( $light, 'brand__logo brand__logo--light', '' ) . '</span>'
+			: $img( $logo, 'brand__logo', $name );
 	} else {
 		$mark  = $logo
 			? wp_get_attachment_image( $logo, 'full', false, array( 'class' => 'brand__mark', 'alt' => '', 'width' => 42, 'height' => 26 ) )
