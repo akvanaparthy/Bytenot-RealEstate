@@ -70,16 +70,18 @@
 	addEventListener('resize', placeNavHl);
 	if (spyTargets.length) {
 		let current = null;
+		const pageCurrent = new Set($$('.nav__link.is-active, .drawer__nav a[aria-current]')); // what the page itself marked current (the Projects item on listing pages)
 		const paint = () => {
 			const line = innerHeight * 0.4;
 			let hit = '';
 			spyTargets.forEach((t) => { if (t.el.getBoundingClientRect().top <= line) hit = t.hash; });
 			if (hit === current) return;
 			current = hit;
-			spy.forEach((l) => {
-				const active = l.hash === hit;
-				l.a.classList.toggle('is-active', active && l.a.classList.contains('nav__link'));
-				if (active) l.a.setAttribute('aria-current', 'location'); else l.a.removeAttribute('aria-current');
+			spyLinks.forEach((a) => {
+				const entry = spy.find((l) => l.a === a);
+				const active = hit ? !!entry && entry.hash === hit : pageCurrent.has(a);
+				a.classList.toggle('is-active', active && a.classList.contains('nav__link'));
+				if (active) a.setAttribute('aria-current', hit ? 'location' : 'page'); else a.removeAttribute('aria-current');
 			});
 			placeNavHl();
 		};
@@ -866,7 +868,9 @@
 			// the spine reads progress through the chapters: from the first section's top to the last one's end
 			if (sections.length && (spine || spineBar)) {
 				const first = sections[0].getBoundingClientRect(), last = sections[sections.length - 1].getBoundingClientRect();
-				const p = Math.min(1, Math.max(0, (line - first.top) / Math.max(1, last.bottom - first.top)));
+				const curR = cur.getBoundingClientRect();
+				const within = line < first.top ? 0 : Math.min(1, Math.max(0, (line - curR.top) / Math.max(1, curR.height)));
+				const p = sections.length > 1 ? Math.min(1, (curIdx + within) / (sections.length - 1)) : 1; // dot to dot, so the fill sits on the active dot at a chapter's start
 				if (Math.abs(p - lastP) > 0.002) { lastP = p; (spine || spineBar).style.setProperty('--p', p.toFixed(3)); if (spine && spineBar) spineBar.style.setProperty('--p', p.toFixed(3)); }
 				const on = heroGone && last.bottom > innerHeight * 0.5;
 				if (on !== spineOn) { spineOn = on; spine?.classList.toggle('is-visible', on); spineBar?.classList.toggle('is-visible', on); }
