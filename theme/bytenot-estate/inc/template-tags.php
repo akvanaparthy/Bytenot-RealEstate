@@ -106,16 +106,26 @@ function bytenot_inline( $html ) {
 function bytenot_brand( $classes = '', $link = true ) {
 	$name = get_bloginfo( 'name' );
 	$sub  = get_bloginfo( 'description' );
-	$logo = get_theme_mod( 'custom_logo' );
-	$mark = $logo
-		? wp_get_attachment_image( $logo, 'full', false, array( 'class' => 'brand__mark', 'alt' => '', 'width' => 42, 'height' => 26 ) )
-		: '<img class="brand__mark" src="' . esc_url( get_theme_file_uri( 'assets/images/mark.svg' ) ) . '" alt="" width="42" height="26">';
-	$text = '<span class="brand__text"><span class="brand__name">' . esc_html( $name ) . '</span>' . ( $sub ? '<span class="brand__sub">' . esc_html( $sub ) . '</span>' : '' ) . '</span>';
+	$logo = (int) get_theme_mod( 'custom_logo' );
+	if ( $logo && 'mark' !== bytenot_logo_shape( $logo ) ) {
+		// a wordmark or lockup already carries the name: it stands alone, 36px tall
+		$size = wp_get_attachment_metadata( $logo );
+		if ( empty( $size['height'] ) ) {
+			$size = bytenot_svg_size( $logo );
+		}
+		$w     = ! empty( $size['height'] ) ? (int) round( 36 * $size['width'] / $size['height'] ) : 120;
+		$inner = '<img class="brand__logo" src="' . esc_url( wp_get_attachment_url( $logo ) ) . '" alt="' . esc_attr( $name ) . '" width="' . $w . '" height="36">';
+	} else {
+		$mark  = $logo
+			? wp_get_attachment_image( $logo, 'full', false, array( 'class' => 'brand__mark', 'alt' => '', 'width' => 42, 'height' => 26 ) )
+			: '<img class="brand__mark" src="' . esc_url( get_theme_file_uri( 'assets/images/mark.svg' ) ) . '" alt="" width="42" height="26">';
+		$inner = $mark . '<span class="brand__text"><span class="brand__name">' . esc_html( $name ) . '</span>' . ( $sub ? '<span class="brand__sub">' . esc_html( $sub ) . '</span>' : '' ) . '</span>';
+	}
 	if ( $link ) {
 		/* translators: %s: site name. */
-		printf( '<a class="brand %1$s" href="%2$s" aria-label="%3$s">%4$s%5$s</a>', esc_attr( $classes ), esc_url( home_url( '/' ) ), esc_attr( sprintf( __( '%s, home', 'bytenot-estate' ), $name ) ), $mark, $text ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts.
+		printf( '<a class="brand %1$s" href="%2$s" aria-label="%3$s">%4$s</a>', esc_attr( $classes ), esc_url( home_url( '/' ) ), esc_attr( sprintf( __( '%s, home', 'bytenot-estate' ), $name ) ), $inner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts.
 	} else {
-		printf( '<span class="brand %1$s">%2$s%3$s</span>', esc_attr( $classes ), $mark, $text ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		printf( '<span class="brand %1$s">%2$s</span>', esc_attr( $classes ), $inner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }
 

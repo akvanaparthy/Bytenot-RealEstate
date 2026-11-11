@@ -199,6 +199,11 @@ function bytenot_core_install_demo_site( $advisors ) {
 			set_post_thumbnail( $id, $img );
 		}
 	}
+	// the site logo: the wordmark alone until the logomark's trademark comes through
+	$logo = bytenot_core_demo_image( 'logo.svg' );
+	if ( $logo ) {
+		set_theme_mod( 'custom_logo', $logo );
+	}
 	remove_filter( 'upload_mimes', $svg_mimes );
 	remove_filter( 'wp_check_filetype_and_ext', $svg_check, 10 );
 

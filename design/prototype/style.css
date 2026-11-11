@@ -201,6 +201,7 @@ legend { padding: 0; }
 
 .brand { display: inline-flex; align-items: center; gap: 12px; line-height: 1; }
 .brand__mark { flex: none; width: 42px; height: auto; }
+.brand__logo { display: block; height: 36px; width: auto; } /* a wordmark or lockup stands alone */
 .brand__text { display: inline-flex; flex-direction: column; justify-content: center; }
 .brand__name { font-size: 21px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .brand__sub { margin-top: 3px; font-size: 10px; font-weight: 400; letter-spacing: .34em; text-transform: uppercase; opacity: .9; }
@@ -1406,6 +1407,7 @@ legend { padding: 0; }
 	.site-header.is-scrolled .site-header__inner { height: 64px; }
 	.nav, .lang { display: none; }
 	.site-header .brand { left: calc(var(--header-edge) - 14px); padding: 0 14px; }
+	.brand__logo { height: 30px; }
 	.site-header__right { right: calc(var(--header-edge) - 10px); padding: 0 10px; gap: 12px; }
 	.site-header.is-scrolled .brand { padding: 0 16px 0 14px; }
 	.site-header.is-scrolled .site-header__right { padding: 0 8px 0 12px; gap: 10px; }

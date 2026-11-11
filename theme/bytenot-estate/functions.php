@@ -57,9 +57,9 @@ add_action( 'after_setup_theme', 'bytenot_setup' );
 function bytenot_assets() {
 	wp_enqueue_style( 'bytenot-estate', get_theme_file_uri( 'assets/css/theme.css' ), array(), BYTENOT_VERSION );
 	wp_enqueue_style( 'bytenot-estate-wp', get_theme_file_uri( 'assets/css/wp.css' ), array( 'bytenot-estate' ), BYTENOT_VERSION );
-	// The brand motif (faint logomark on dark panels) is the site icon or the logo: content, not code.
+	// The brand motif (faint logomark on dark panels) is the site icon or a mark-shaped logo: content, not code.
 	$motif = get_site_icon_url( 512 );
-	if ( ! $motif && has_custom_logo() ) {
+	if ( ! $motif && has_custom_logo() && 'mark' === bytenot_logo_shape( (int) get_theme_mod( 'custom_logo' ) ) ) {
 		$motif = wp_get_attachment_image_url( get_theme_mod( 'custom_logo' ), 'full' );
 	}
 	$vars = $motif ? '--bytenot-motif:url("' . esc_url( $motif ) . '");' : '';
