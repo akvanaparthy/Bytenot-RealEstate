@@ -31,7 +31,7 @@ $bytenot_json = array_map(
 	$bytenot_items
 );
 ?>
-<section class="featured" id="properties" aria-labelledby="featured-title">
+<section class="featured" id="<?php echo esc_attr( basename( (string) wp_parse_url( $bytenot_archive, PHP_URL_PATH ) ) ?: 'properties' ); ?>" aria-labelledby="featured-title">
 	<div class="container">
 		<div class="featured__head">
 			<div>

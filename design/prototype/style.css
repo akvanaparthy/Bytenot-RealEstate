@@ -117,9 +117,16 @@ legend { padding: 0; }
 .btn--accent::before {
 	content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; /* covers the border strip too */
 	background: var(--wp--preset--gradient--brand-gold);
-	opacity: 0; transition: opacity var(--wp--custom--transition);
+	opacity: 0; transition: opacity .45s cubic-bezier(.22, 1, .36, 1);
 }
-.btn--accent:hover::before { opacity: 1; }
+.btn--accent { transition: transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s cubic-bezier(.22, 1, .36, 1), color var(--wp--custom--transition); }
+.btn--accent .icon, .btn--accent svg { transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) {
+	.btn--accent:hover::before { opacity: 1; }
+	.btn--accent:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -8px rgba(60, 40, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.45); }
+	.btn--accent:hover .icon, .btn--accent:hover svg { transform: translateX(3px); }
+}
+.btn--accent:active { transform: translateY(1px); box-shadow: none; }
 .btn--dark { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
 .btn--dark:hover { background: var(--wp--preset--color--contrast-hover); }
 .btn--outline { background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); border-color: var(--wp--preset--color--border); }
@@ -603,7 +610,7 @@ legend { padding: 0; }
 	--cap: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 2' preserveAspectRatio='none'%3E%3Cpath d='M1 0C1 .552 .552 1 0 1V2H1Z'/%3E%3C/svg%3E");
 	position: absolute; right: calc(-1 * var(--bleed)); bottom: calc(-1 * var(--bleed)); z-index: 3; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; margin: 0;
 	box-sizing: border-box; height: calc(var(--r) + var(--box-h) + var(--bleed));
-	padding: var(--r) calc(22px + var(--bleed)) var(--bleed) calc(2 * var(--rx) + 6px);
+	padding: calc(var(--r) + 10px) calc(22px + var(--bleed)) var(--bleed) calc(2 * var(--rx) + 6px); /* the extra top padding seats the figures in the visible box, not the cap */
 	background: var(--wp--preset--color--base); color: var(--wp--preset--color--contrast); white-space: nowrap;
 	-webkit-mask: linear-gradient(#000, #000) right bottom / calc(100% - 2 * var(--rx)) calc(var(--box-h) + var(--bleed)) no-repeat,
 		var(--tail) left 0 top var(--r) / calc(3 * var(--rx)) var(--box-h) no-repeat,
@@ -618,8 +625,7 @@ legend { padding: 0; }
 .rail-wrap { display: flex; flex-direction: column; }
 .rail { position: relative; display: flex; flex-direction: column; flex: 1; gap: 4px; margin: 0; padding: 0; list-style: none; }
 .rail__hl { position: absolute; left: 0; right: 0; top: var(--hl-top, 0px); height: var(--hl-h, 0px); z-index: 0; border-radius: 18px; background: var(--wp--preset--color--surface); pointer-events: none; transition: top .45s cubic-bezier(.3, .9, .3, 1), height .45s cubic-bezier(.3, .9, .3, 1); }
-.rail li { position: relative; z-index: 1; }
-.rail li { display: flex; flex: 1 1 auto; max-height: 128px; } /* rows share the stage height, but a short rail does not balloon */
+.rail li:not(.rail__hl) { position: relative; z-index: 1; display: flex; flex: 1 1 auto; max-height: 128px; } /* rows share the stage height, but a short rail does not balloon */
 .rail__row {
 	position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 16px; align-items: center; width: 100%; min-height: 92px;
 	padding: 10px 16px 10px 10px; border: 0; border-radius: 18px; background: none; text-align: left; overflow: hidden;
