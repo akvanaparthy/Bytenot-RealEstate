@@ -181,6 +181,18 @@ function bytenot_core_install_demo_partners() {
 	if ( $light ) {
 		set_theme_mod( 'bytenot_header_logo_light', $light );
 	}
+	// the site icon (favicon, home-screen icon and the faint motif on dark panels), with the sizes WordPress expects
+	if ( ! get_option( 'site_icon' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/class-wp-site-icon.php';
+		$sizes = array( new WP_Site_Icon(), 'additional_sizes' );
+		add_filter( 'intermediate_image_sizes_advanced', $sizes );
+		$icon = bytenot_core_demo_image( 'favicon.png' );
+		remove_filter( 'intermediate_image_sizes_advanced', $sizes );
+		if ( $icon ) {
+			update_post_meta( $icon, '_wp_attachment_context', 'site-icon' );
+			update_option( 'site_icon', $icon );
+		}
+	}
 	remove_filter( 'upload_mimes', $svg_mimes );
 	remove_filter( 'wp_check_filetype_and_ext', $svg_check, 10 );
 	return $ids;
