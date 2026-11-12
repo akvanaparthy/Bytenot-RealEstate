@@ -56,6 +56,7 @@ $bytenot_json = array_map(
 					<img class="spot__img is-on" data-spot-img src="<?php echo esc_url( $bytenot_first['stage'] ); ?>" alt="<?php echo esc_attr( $bytenot_first['alt'] ); ?>" width="1200" height="800" loading="lazy">
 					<img class="spot__img" data-spot-img-next alt="" width="1200" height="800" aria-hidden="true">
 					<div class="spot__shade"></div>
+					<span class="spot__bar" aria-hidden="true" data-spot-bar><i></i></span>
 				</figure>
 				<p class="spot__why" data-spot-tab><span class="spot__why-text" data-spot-why><?php echo esc_html( $bytenot_first['why'] ); ?></span></p>
 				<div class="spot__info" data-spot-info aria-live="polite">

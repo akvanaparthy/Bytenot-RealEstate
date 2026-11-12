@@ -531,8 +531,14 @@ legend { padding: 0; }
 	position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center 45%;
 	opacity: 0; transform: scale(1.06); transition: opacity .4s ease;
 }
-.spot__img.is-on { opacity: 1; z-index: 1; animation: spot-settle 1.6s cubic-bezier(.2, .7, .2, 1) forwards; }
-@keyframes spot-settle { from { transform: scale(1.06); } to { transform: scale(1); } }
+.spot__img { animation: spot-live 16s cubic-bezier(.2, .7, .2, 1) forwards paused; } /* paused, not removed, so a photo leaving never snaps */
+.spot__img.is-on { opacity: 1; z-index: 1; animation-play-state: running; }
+@keyframes spot-live { 0% { transform: scale(1.06); } 10% { transform: scale(1); } 100% { transform: scale(1.05) translate(-1.2%, 0.8%); } } /* a quick settle, then a slow drift */
+.spot__bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; height: 3px; background: rgba(255, 255, 255, 0.18); pointer-events: none; }
+.spot__bar i { display: block; height: 100%; background: var(--wp--preset--gradient--brand-gold); transform-origin: left; transform: scaleX(0); }
+.spot__bar.is-running i { animation: spot-wait 7s linear forwards; }
+@keyframes spot-wait { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .spot__img { animation: none; transform: none; } .spot__bar { display: none; } }
 .spot__shade {
 	position: absolute; inset: 0; z-index: 2;
 	background: linear-gradient(180deg, rgba(20, 47, 63, 0.28) 0%, rgba(20, 47, 63, 0) 32%, rgba(20, 47, 63, 0.08) 55%, rgba(20, 47, 63, 0.82) 100%);
@@ -603,7 +609,7 @@ legend { padding: 0; }
 	padding: 10px 16px 10px 10px; border: 0; border-radius: 18px; background: none; text-align: left; overflow: hidden;
 	transition: background-color .2s ease;
 }
-.rail__row:hover { background: rgba(20, 47, 63, 0.03); }
+.rail__hl::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 2px; background: var(--wp--preset--gradient--brand-gold); }
 .rail:not(.is-placed) .rail__row.is-active { background: var(--wp--preset--color--surface); } /* before the script places the sliding highlight */
 .rail__thumb { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; }
 .rail__name { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; }
@@ -1832,11 +1838,10 @@ legend { padding: 0; }
 	@keyframes arrive-rise { from { transform: translateY(16px); } to { transform: none; } } /* no fade: a faded-in element is not counted as painted until its animation ends, which held the largest paint to 1.3s */
 	.site-header { animation: arrive-fade .6s ease backwards; }
 	.hero .tags { animation: arrive .7s cubic-bezier(.22, 1, .36, 1) .08s backwards; }
-	.hero__title { animation: arrive-rise .7s cubic-bezier(.22, 1, .36, 1) backwards; }
 	.hero__lede { animation: arrive .8s cubic-bezier(.22, 1, .36, 1) .24s backwards; }
 	.search-wrap { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .34s backwards; }
 	.partners { animation: arrive-fade .7s ease .55s backwards; }
-	.listing-intro__title, .listing-intro__lede, .filters-bar { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .2s backwards; }
+	.listing-intro__lede, .filters-bar { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .2s backwards; }
 	.listing-intro__lede { animation-delay: .35s; }
 	.filters-bar { animation-delay: .5s; }
 	.ph__inner > :not(.ph__price) { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .3s backwards; }
@@ -1974,3 +1979,13 @@ legend { padding: 0; }
 	.lost__head { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { .lost__missing { animation: none; } }
+
+/* ------------------------------------------------------------------
+   Masked title reveals: each word is clipped to its own box and rises
+   into it; words on one line share a delay. Set up by the script.
+   ------------------------------------------------------------------ */
+.rv { display: inline-block; overflow: clip; vertical-align: top; padding-bottom: .16em; margin-bottom: -.16em; } /* the clip reaches below the baseline so descenders survive */
+.rv__in { display: inline-block; transform: translateY(118%); }
+.is-rv.is-in .rv__in { animation: rv-up .8s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--l, 0) * 110ms); }
+@keyframes rv-up { to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rv__in { transform: none; animation: none; } }

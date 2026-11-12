@@ -261,6 +261,43 @@
 	}
 
 	/* ------------------------------------------------------------------
+	 * Masked title reveals: every word of a big title is wrapped so it can
+	 * rise from behind its own edge; words on the same line rise together.
+	 * ------------------------------------------------------------------ */
+	const titles = reduced ? [] : $$('.hero__title, .featured__title, .testimonials__title, .faq__title, .team__title, .listing-intro__title, .sec-head__title, .deal__title, .visit__title, .lost__title');
+	if (titles.length) {
+		const wrapWords = (el) => {
+			const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+			const texts = [];
+			while (walker.nextNode()) texts.push(walker.currentNode);
+			texts.forEach((n) => {
+				if (!n.textContent.trim()) return;
+				const frag = document.createDocumentFragment();
+				n.textContent.split(/(\s+)/).forEach((part) => {
+					if (!part) return;
+					if (/^\s+$/.test(part)) { frag.append(part); return; }
+					const w = document.createElement('span'); w.className = 'rv';
+					const inner = document.createElement('span'); inner.className = 'rv__in'; inner.textContent = part;
+					w.append(inner); frag.append(w);
+				});
+				n.replaceWith(frag);
+			});
+		};
+		const lines = (el) => { // which line each word sits on, so a line rises together
+			let top = null, line = -1;
+			$$('.rv', el).forEach((w) => { const t = w.offsetTop; if (top === null || Math.abs(t - top) > 4) { top = t; line++; } w.style.setProperty('--l', line); });
+		};
+		titles.forEach((el) => { wrapWords(el); lines(el); el.classList.add('is-rv'); });
+		const relines = () => titles.forEach(lines);
+		document.fonts?.ready.then(relines);
+		let lineTimer; addEventListener('resize', () => { clearTimeout(lineTimer); lineTimer = setTimeout(relines, 150); });
+		if ('IntersectionObserver' in window) {
+			const io = new IntersectionObserver((en) => en.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+			titles.forEach((el) => io.observe(el));
+		} else titles.forEach((el) => el.classList.add('is-in'));
+	}
+
+	/* ------------------------------------------------------------------
 	 * Search: hero tags prefill the form; submit drops empty fields.
 	 * ------------------------------------------------------------------ */
 	const form = $('[data-search]');
@@ -353,19 +390,21 @@
 
 		const hl = $('[data-rail-hl]', rail);
 		let hlPlaced = false;
-		const moveHl = () => {
-			const li = rows[index].parentElement;
+		const moveHl = (li = rows[index].parentElement) => {
 			if (!hlPlaced) hl.style.transition = 'none';
 			rail.style.setProperty('--hl-top', `${li.offsetTop}px`); rail.style.setProperty('--hl-h', `${li.offsetHeight}px`);
 			if (!hlPlaced) { void hl.offsetHeight; hl.style.transition = ''; hlPlaced = true; rail.classList.add('is-placed'); }
 		};
-		addEventListener('resize', moveHl);
+		addEventListener('resize', () => moveHl());
+		rows.forEach((row) => row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') moveHl(row.parentElement); })); // the marker slides to the row under the pointer
+		rail.addEventListener('pointerleave', () => moveHl());
 
 		const swapImage = (p) => {
 			const incoming = layers[1 - top], outgoing = layers[top];
 			let done = false;
 			const reveal = () => {
 				if (done) return; done = true;
+				incoming.style.animation = 'none'; void incoming.offsetWidth; incoming.style.animation = ''; // the settle and drift start again on the photo coming in
 				incoming.classList.add('is-on'); outgoing.classList.remove('is-on'); top = 1 - top;
 			};
 			incoming.alt = p.alt;
@@ -386,9 +425,29 @@
 			rows.forEach((r, j) => { r.classList.toggle('is-active', j === index); r.setAttribute('aria-pressed', String(j === index)); });
 			moveHl();
 		};
+		/* autoplay: the next home every few seconds while the stage is in view and nothing hovers or focuses it;
+		   the line along the bottom of the photo counts down. Any press restarts the wait */
+		const bar = $('[data-spot-bar]', spot);
+		const WAIT = 7000;
+		let timer = 0, held = false, seen = false;
+		const stopAuto = () => { clearTimeout(timer); timer = 0; bar?.classList.remove('is-running'); };
+		const startAuto = () => {
+			stopAuto();
+			if (reduced || held || !seen || document.hidden || FEATURED.length < 2) return;
+			if (bar) { void bar.offsetWidth; bar.classList.add('is-running'); }
+			timer = setTimeout(() => show(index + 1), WAIT);
+		};
+		spot.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { held = true; stopAuto(); } });
+		spot.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { held = false; startAuto(); } });
+		spot.addEventListener('focusin', () => { held = true; stopAuto(); });
+		spot.addEventListener('focusout', (e) => { if (!spot.contains(e.relatedTarget)) { held = false; startAuto(); } });
+		document.addEventListener('visibilitychange', () => (document.hidden ? stopAuto() : startAuto()));
+		if ('IntersectionObserver' in window) new IntersectionObserver((en) => { seen = en[0].isIntersecting; seen ? startAuto() : stopAuto(); }, { threshold: 0.4 }).observe(spot);
+
 		const show = (i) => {
 			index = (i + FEATURED.length) % FEATURED.length;
 			const p = FEATURED[index];
+			startAuto();
 			swapImage(p);
 			if (reduced) { fill(p); return; }
 			rows.forEach((r, j) => { r.classList.toggle('is-active', j === index); r.setAttribute('aria-pressed', String(j === index)); });
