@@ -146,7 +146,7 @@ if ( ! is_front_page() ) {
 	</div>
 	</div>
 
-	<p class="site-footer__wordmark" aria-hidden="true"><?php bloginfo( 'name' ); ?></p>
+	<p class="site-footer__wordmark" aria-hidden="true"><?php foreach ( mb_str_split( (string) get_bloginfo( 'name' ) ) as $bytenot_i => $bytenot_letter ) : ?><span style="--i: <?php echo (int) $bytenot_i; ?>"><?php echo ' ' === $bytenot_letter ? '&nbsp;' : esc_html( $bytenot_letter ); ?></span><?php endforeach; ?></p>
 </footer>
 
 <div class="toast" role="status" aria-live="polite" data-toast hidden></div>

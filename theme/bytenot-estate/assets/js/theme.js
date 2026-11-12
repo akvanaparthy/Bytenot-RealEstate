@@ -1288,9 +1288,10 @@
 			menu.setAttribute('role', 'listbox');
 			menu.tabIndex = -1;
 			menu.hidden = true;
-			const options = [...select.options].map((opt) => {
+			const options = [...select.options].map((opt, i) => {
 				const o = document.createElement('div');
 				o.className = 'dd__option';
+				o.style.setProperty('--i', i);
 				o.setAttribute('role', 'option');
 				o.tabIndex = -1;
 				o.textContent = opt.text;

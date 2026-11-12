@@ -760,6 +760,10 @@ legend { padding: 0; }
 }
 .dd__menu--up { top: auto; bottom: calc(100% + 6px); transform: translateY(4px); }
 .dd__menu.is-open { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes dd-in { from { opacity: 0; transform: translateY(-6px); } }
+	.dd__menu.is-open .dd__option { animation: dd-in .28s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 28ms); }
+}
 .results-sort .dd__menu { left: auto; right: 0; }
 .dd__option {
 	display: flex; align-items: center; justify-content: space-between; gap: 16px;
@@ -869,7 +873,7 @@ legend { padding: 0; }
 
 /* ---------- footer ---------- */
 .site-footer {
-	position: relative; overflow: hidden; container-type: inline-size;
+	position: relative; overflow: clip; container-type: inline-size; /* clip, not hidden: a scroll container would own the view timelines of the photo drift and the wordmark letters */
 	margin-top: 20px;
 	border-radius: 40px 40px 0 0;
 	padding-top: 72px;
@@ -955,9 +959,10 @@ legend { padding: 0; }
 /* giant wordmark: real text, so it stays editable and translatable. Sized by the
    viewport so the seven letters fill the content width, cropped by the page edge,
    faded at the base like mist. */
+.site-footer__wordmark span { display: inline-block; }
 .site-footer__wordmark {
 	--wordmark-size: calc((100cqw - 2 * var(--wp--custom--layout--gutter)) / 5.05);
-	display: block; width: 100%; height: 0.5em; overflow: hidden;
+	display: block; width: 100%; height: 0.5em; overflow: clip; /* clip, not hidden: hidden would make this a scroll container and the letters' view timeline would track it instead of the page */
 	margin: 36px 0 0;
 	font-size: var(--wordmark-size); font-weight: 700; line-height: 0.9; letter-spacing: -0.01em;
 	text-align: center; text-transform: uppercase; white-space: nowrap;
@@ -1033,7 +1038,9 @@ legend { padding: 0; }
 .inquiry__glass-text em { display: block; }
 .inquiry__form { position: relative; padding: 40px; border-radius: 20px; background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25); }
 .inquiry__lede { font-size: 16px; line-height: 1.55; color: var(--wp--preset--color--ink-soft); }
-.uf { display: block; margin-top: 22px; }
+.uf { position: relative; display: block; margin-top: 22px; }
+.uf::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--wp--preset--gradient--brand-gold); transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.22, 1, .36, 1); pointer-events: none; } /* draws from the left on focus */
+.uf:focus-within::after { transform: scaleX(1); }
 .uf__label { display: block; margin-bottom: 2px; font-size: 13px; font-weight: 600; color: var(--wp--preset--color--ink); }
 .uf__input {
 	width: 100%; height: 40px; padding: 0; border: 0; border-bottom: 1px solid var(--wp--preset--color--border); border-radius: 0;
@@ -1298,9 +1305,23 @@ legend { padding: 0; }
 .vf__phone .vf__input { border-radius: 0 var(--wp--custom--radius--input) var(--wp--custom--radius--input) 0; }
 .visit__submit { height: 52px; }
 .consent { display: flex; gap: 10px; font-size: 12px; line-height: 1.5; color: var(--wp--preset--color--ink-muted); }
-.consent input { flex: none; margin-top: 2px; accent-color: var(--wp--preset--color--primary-dark); }
+.consent input {
+	position: relative; flex: none; width: 18px; height: 18px; margin: 1px 0 0; appearance: none; -webkit-appearance: none;
+	border: 1.5px solid var(--wp--preset--color--border); border-radius: 5px; background: var(--wp--preset--color--base); cursor: pointer;
+	transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+.consent input::after { content: ""; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid var(--wp--preset--color--base); border-width: 0 2px 2px 0; transform: rotate(45deg); opacity: 0; }
+.consent input:hover { border-color: var(--wp--preset--color--ink-muted); }
+.consent input:checked { background: var(--wp--preset--color--contrast); border-color: var(--wp--preset--color--contrast); }
+.consent input:checked::after { opacity: 1; animation: tick .3s cubic-bezier(.22, 1, .36, 1) both; } /* the check draws itself: the short leg, then the long one */
+@keyframes tick { 0% { width: 0; height: 0; } 40% { width: 5px; height: 0; } 100% { width: 5px; height: 10px; } }
+.consent input:focus-visible { outline: 2px solid var(--wp--preset--color--contrast); outline-offset: 2px; }
 .visit__consent { grid-column: 1 / -1; margin-top: 4px; color: rgba(255, 255, 255, 0.7); }
-.visit__consent input { accent-color: var(--wp--preset--color--primary-dark); }
+.visit__consent input { border-color: rgba(255, 255, 255, 0.5); background: rgba(255, 255, 255, 0.08); }
+.visit__consent input:hover { border-color: rgba(255, 255, 255, 0.85); }
+.visit__consent input:checked { background: var(--wp--preset--color--primary); border-color: var(--wp--preset--color--primary); }
+.visit__consent input::after { border-color: var(--wp--preset--color--contrast); }
+.visit__consent input:focus-visible { outline-color: var(--wp--preset--color--base); }
 
 /* nearby */
 .cards--similar { margin-top: 32px; gap: 24px; }
@@ -1621,6 +1642,7 @@ legend { padding: 0; }
 	.link-arrow, .link-btn, .site-footer__links a, .site-footer__cta-link, .ph__crumbs a, .units__name, .ph__partof a, .site-footer__meta a, .site-footer__label a { padding-top: 10px; padding-bottom: 10px; margin-top: -10px; margin-bottom: -10px; }
 	.toggle__btn { min-height: 40px; }
 	.consent input, .visit__consent input { width: 20px; height: 20px; }
+	.consent input::after { left: 6px; top: 2px; }
 }
 /* the photo window never shrinks below 220px, however tall the details grow on a narrow card */
 .card { width: 100%; min-height: calc(var(--card-body) + 232px); } /* width stated, so the min-height cannot transfer into the width through the aspect ratio */
@@ -1720,6 +1742,8 @@ legend { padding: 0; }
 		.faq__item:nth-child(3), .team__card:nth-child(3) { animation-range: entry 16% entry 65%; }
 		.faq__item:nth-child(4) { animation-range: entry 24% entry 75%; }
 		.faq__item:nth-child(n+5) { animation-range: entry 32% entry 85%; }
+		@keyframes letter-rise { from { transform: translateY(70%); } to { transform: none; } }
+		.site-footer__wordmark span { animation: letter-rise both cubic-bezier(.22, 1, .36, 1); animation-timeline: view(); animation-range: entry calc(var(--i, 0) * 3%) entry calc(25% + var(--i, 0) * 3%); } /* each letter a little after the one before; the letters overhang the page end, so only the first half of their entry is ever reachable */
 	}
 }
 @property --ph-zoom { syntax: '<number>'; inherits: true; initial-value: 1.08; }
@@ -1829,6 +1853,7 @@ legend { padding: 0; }
 @keyframes field-shake { 20% { translate: -5px 0; } 40% { translate: 4px 0; } 60% { translate: -3px 0; } 80% { translate: 2px 0; } }
 .is-invalid { animation: field-shake .45s cubic-bezier(.36, .07, .19, .97); }
 .uf.is-invalid .uf__input { border-bottom-color: var(--wp--preset--color--danger); box-shadow: 0 1px 0 var(--wp--preset--color--danger); }
+.uf.is-invalid::after { background: var(--wp--preset--color--danger); transform: scaleX(1); }
 .vf.is-invalid .vf__input { outline: 2px solid var(--wp--preset--color--danger); outline-offset: 1px; }
 .consent.is-invalid input { outline: 2px solid var(--wp--preset--color--danger); outline-offset: 2px; border-radius: 3px; }
 .is-busy [type="submit"] { position: relative; pointer-events: none; color: transparent; }
