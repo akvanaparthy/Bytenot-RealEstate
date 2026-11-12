@@ -877,6 +877,7 @@
 			let i = 0;
 			const show = (k) => {
 				i = (k + P.photos.length) % P.photos.length;
+				resetZoom();
 				img.src = P.photos[i];
 				img.alt = fmt(T.photo, P.title, i + 1, P.photos.length);
 				img.style.animation = 'none'; void img.offsetWidth; img.style.animation = '';
@@ -890,13 +891,94 @@
 			$('[data-lb-close]', lb).addEventListener('click', () => lb.close());
 			$('[data-lb-prev]', lb).addEventListener('click', () => show(i - 1));
 			$('[data-lb-next]', lb).addEventListener('click', () => show(i + 1));
-			lb.addEventListener('close', () => document.body.classList.remove('is-locked'));
+			lb.addEventListener('close', () => { document.body.classList.remove('is-locked'); resetZoom(); });
 			lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
-			lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') show(i + 1); else if (e.key === 'ArrowLeft') show(i - 1); });
-			let x0 = null;
 			const stage = $('[data-lb-stage]', lb);
-			stage.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
-			stage.addEventListener('pointerup', (e) => { if (x0 !== null && Math.abs(e.clientX - x0) > 40) show(e.clientX < x0 ? i + 1 : i - 1); x0 = null; });
+
+			/* zoom and pan: the wheel and a double tap zoom toward the point, two fingers pinch, one finger or
+			   the mouse pans while zoomed; unzoomed, a sideways swipe changes the photo and a downward one closes */
+			let s = 1, tx = 0, ty = 0;
+			const MAX = 4;
+			const apply = (moving) => {
+				const zoomed = s > 1.01;
+				img.classList.toggle('is-moving', !!moving);
+				img.classList.toggle('is-zoomed', zoomed);
+				if (zoomed) lb.classList.add('has-zoomed');
+				img.style.transform = zoomed ? `translate(${tx}px, ${ty}px) scale(${s})` : '';
+			};
+			const resetZoom = () => { s = 1; tx = 0; ty = 0; apply(false); };
+			const clampPan = () => {
+				const st = stage.getBoundingClientRect();
+				const mx = Math.max(0, (img.clientWidth * s - st.width) / 2), my = Math.max(0, (img.clientHeight * s - st.height) / 2);
+				tx = Math.min(mx, Math.max(-mx, tx)); ty = Math.min(my, Math.max(-my, ty));
+			};
+			const zoomAt = (factor, cx, cy) => { // the point under the pointer stays put
+				const st = stage.getBoundingClientRect();
+				const px = cx - (st.left + st.width / 2) - tx, py = cy - (st.top + st.height / 2) - ty;
+				const next = Math.min(MAX, Math.max(1, s * factor));
+				tx -= px * (next / s - 1); ty -= py * (next / s - 1); s = next;
+				clampPan();
+			};
+			stage.addEventListener('wheel', (e) => { e.preventDefault(); zoomAt(Math.exp(-e.deltaY * 0.0016), e.clientX, e.clientY); apply(false); }, { passive: false });
+			lb.addEventListener('keydown', (e) => {
+				const st = stage.getBoundingClientRect();
+				if (e.key === 'ArrowRight') show(i + 1);
+				else if (e.key === 'ArrowLeft') show(i - 1);
+				else if (e.key === '+' || e.key === '=') { zoomAt(1.5, st.left + st.width / 2, st.top + st.height / 2); apply(false); }
+				else if (e.key === '-') { zoomAt(1 / 1.5, st.left + st.width / 2, st.top + st.height / 2); apply(false); }
+				else if (e.key === '0') resetZoom();
+			});
+			const pts = new Map();
+			let pinch = null, drag = null, lastTap = null;
+			stage.addEventListener('pointerdown', (e) => {
+				if (e.pointerType === 'mouse' && e.button !== 0) return;
+				pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+				try { stage.setPointerCapture(e.pointerId); } catch (err) { /* a pointer that cannot be captured still pans */ }
+				if (pts.size === 2) {
+					const [a, b] = [...pts.values()];
+					pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y), s0: s, mx0: (a.x + b.x) / 2, my0: (a.y + b.y) / 2, tx0: tx, ty0: ty };
+					drag = null;
+				} else if (pts.size === 1) {
+					drag = { x: e.clientX, y: e.clientY, tx0: tx, ty0: ty, moved: false, t0: performance.now() };
+				}
+			});
+			stage.addEventListener('pointermove', (e) => {
+				if (!pts.has(e.pointerId)) return;
+				pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+				if (pinch && pts.size >= 2) {
+					const [a, b] = [...pts.values()];
+					const st = stage.getBoundingClientRect();
+					const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+					const next = Math.min(MAX, Math.max(1, pinch.s0 * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d0));
+					const px = pinch.mx0 - (st.left + st.width / 2) - pinch.tx0, py = pinch.my0 - (st.top + st.height / 2) - pinch.ty0;
+					s = next;
+					tx = pinch.tx0 + (mx - pinch.mx0) - px * (next / pinch.s0 - 1);
+					ty = pinch.ty0 + (my - pinch.my0) - py * (next / pinch.s0 - 1);
+					clampPan(); apply(true);
+				} else if (drag && pts.size === 1) {
+					const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+					if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.moved = true;
+					if (s > 1.01) { tx = drag.tx0 + dx; ty = drag.ty0 + dy; clampPan(); apply(true); }
+				}
+			});
+			const lift = (e) => {
+				if (!pts.has(e.pointerId)) return;
+				pts.delete(e.pointerId);
+				if (pinch && pts.size < 2) { pinch = null; drag = null; if (s < 1.05) resetZoom(); else apply(false); return; }
+				if (!drag) return;
+				const dx = e.clientX - drag.x, dy = e.clientY - drag.y, now = performance.now();
+				if (!drag.moved) {
+					const twice = lastTap && now - lastTap.t < 320 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30;
+					if (twice) { if (s > 1.01) resetZoom(); else { zoomAt(2.5, e.clientX, e.clientY); apply(false); } lastTap = null; }
+					else lastTap = { t: now, x: e.clientX, y: e.clientY };
+				} else if (s <= 1.01) {
+					if (Math.abs(dy) > 80 && Math.abs(dy) > Math.abs(dx)) lb.close();
+					else if (Math.abs(dx) > 40) show(dx < 0 ? i + 1 : i - 1);
+				} else apply(false);
+				drag = null;
+			};
+			stage.addEventListener('pointerup', lift);
+			stage.addEventListener('pointercancel', lift);
 		}
 
 		/* --- the plan --- */

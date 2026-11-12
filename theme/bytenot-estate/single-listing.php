@@ -51,7 +51,7 @@ $bytenot_links      = array_filter(
 <section class="ph" aria-labelledby="ph-title" data-ph>
 	<div class="ph__media">
 		<?php foreach ( $bytenot_photos as $bytenot_i => $bytenot_ph ) : ?>
-		<img class="ph__img<?php echo 0 === $bytenot_i ? ' is-on' : ''; ?>" src="<?php echo esc_url( $bytenot_ph['src'] ); ?>" alt="" width="2000" height="1333"<?php echo 0 === $bytenot_i ? ' fetchpriority="high"' : ' loading="lazy"'; ?> data-ph-slide>
+		<img class="ph__img<?php echo 0 === $bytenot_i ? ' is-on' : ''; ?>" src="<?php echo esc_url( $bytenot_ph['src'] ); ?>"<?php $bytenot_set = ! empty( $bytenot_ph['id'] ) ? wp_get_attachment_image_srcset( $bytenot_ph['id'], 'full' ) : ''; echo $bytenot_set ? ' srcset="' . esc_attr( $bytenot_set ) . '" sizes="100vw"' : ''; ?> alt="" width="2000" height="1333"<?php echo 0 === $bytenot_i ? ' fetchpriority="high"' : ' loading="lazy"'; ?> data-ph-slide>
 		<?php endforeach; ?>
 		<div class="ph__shade" aria-hidden="true"></div>
 		<?php if ( $bytenot_n > 1 ) : ?>
@@ -93,11 +93,11 @@ $bytenot_links      = array_filter(
 		<p class="ph__partof"><?php echo esc_html( sprintf( /* translators: %s: kind, e.g. "project". */ __( 'In the %s', 'bytenot-estate' ), bytenot_kind_one( 'project' ) ) ); ?> <a href="<?php echo esc_url( $bytenot_d['parent']['url'] ); ?>"><?php echo esc_html( $bytenot_d['parent']['title'] ); ?></a></p>
 		<?php endif; ?>
 	</div>
-	<aside class="ph__price" aria-label="<?php esc_attr_e( 'Price', 'bytenot-estate' ); ?>">
+	<div class="ph__price" role="group" aria-label="<?php esc_attr_e( 'Price', 'bytenot-estate' ); ?>">
 		<p class="ph__amount" data-price><?php echo esc_html( $bytenot_d['priceText'] ?: __( 'Price on request', 'bytenot-estate' ) ); ?></p>
 		<p class="ph__psf" data-psf><?php echo esc_html( $bytenot_d['psf_long'] ); ?></p>
 		<a class="btn btn--dark btn--sm" href="#visit" data-go-visit><?php esc_html_e( 'Book a visit', 'bytenot-estate' ); ?></a>
-	</aside>
+	</div>
 </section>
 
 <nav class="spine" aria-label="<?php esc_attr_e( 'On this page', 'bytenot-estate' ); ?>" data-chapters data-spine>
@@ -138,7 +138,7 @@ $bytenot_links      = array_filter(
 			<?php if ( $bytenot_ch['photo'] ) : ?>
 			<figure class="chapter__fig">
 				<button class="chapter__open" type="button" aria-label="<?php esc_attr_e( 'Open photo', 'bytenot-estate' ); ?>" data-open-photo="<?php echo (int) min( $bytenot_i, max( 0, $bytenot_n - 1 ) ); ?>">
-					<img class="chapter__img" src="<?php echo esc_url( $bytenot_ch['photo']['large'] ); ?>" alt="<?php echo esc_attr( $bytenot_ch['cap'] ); ?>" width="1200" height="900"<?php echo $bytenot_i ? ' loading="lazy"' : ''; ?>>
+					<img class="chapter__img" src="<?php echo esc_url( $bytenot_ch['photo']['large'] ); ?>"<?php $bytenot_set = ! empty( $bytenot_ch['photo']['id'] ) ? wp_get_attachment_image_srcset( $bytenot_ch['photo']['id'], 'large' ) : ''; echo $bytenot_set ? ' srcset="' . esc_attr( $bytenot_set ) . '" sizes="(max-width: 900px) 100vw, 30vw"' : ''; ?> alt="<?php echo esc_attr( $bytenot_ch['cap'] ); ?>" width="1200" height="900"<?php echo $bytenot_i ? ' loading="lazy"' : ''; ?>>
 				</button>
 			</figure>
 			<?php endif; ?>
@@ -461,6 +461,7 @@ $bytenot_links      = array_filter(
 		<?php bytenot_the_icon( 'close', 22 ); ?>
 	</button>
 	<p class="lightbox__count"><span data-lb-index>1</span> / <span data-lb-total><?php echo (int) $bytenot_n; ?></span></p>
+	<p class="lightbox__hint" aria-hidden="true"><?php esc_html_e( 'Double-tap, pinch or scroll to zoom', 'bytenot-estate' ); ?></p>
 	<div class="lightbox__stage" data-lb-stage>
 		<img class="lightbox__img" alt="" data-lb-img>
 	</div>

@@ -31,7 +31,9 @@ ul { list-style: none; margin: 0; padding: 0; }
 h1, h2, h3, p, figure, fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 legend { padding: 0; }
 :focus-visible { outline: 2px solid var(--wp--preset--color--contrast); outline-offset: 3px; }
-.hero :focus-visible, .site-header:not(.is-scrolled):not(.site-header--dark) :focus-visible { outline-color: var(--wp--preset--color--base); }
+.hero :focus-visible, .site-header:not(.is-scrolled):not(.site-header--dark) :focus-visible,
+.visit :focus-visible, .deal :focus-visible, .site-footer :focus-visible, .lightbox :focus-visible, .inquiry :focus-visible { outline-color: var(--wp--preset--color--base); } /* a ring that shows on the dark panels */
+.inquiry__form :focus-visible, .form-done :focus-visible { outline-color: var(--wp--preset--color--contrast); }
 
 .skip-link {
 	position: absolute; left: 16px; top: -60px; z-index: 100;
@@ -434,7 +436,7 @@ legend { padding: 0; }
 	font-size: clamp(26px, 2.8vw, 40px); font-weight: 400; line-height: 1.32; letter-spacing: -0.012em;
 	text-wrap: pretty;
 	color: var(--word-off); /* the unlit colour; words inherit it, so nothing shifts when the script wraps them */
-	--word-off: color-mix(in srgb, var(--wp--preset--color--ink-muted) 55%, var(--wp--preset--color--base));
+	--word-off: color-mix(in srgb, var(--wp--preset--color--ink-muted) 78%, var(--wp--preset--color--base)); /* still readable (3:1) before a word lights */
 }
 /* several paragraphs: the whole statement steps down a size so it still fits the pinned screen */
 .about__statement p { margin: 0; }
@@ -1234,7 +1236,7 @@ legend { padding: 0; }
 .num:hover { background: rgba(166, 212, 126, 0.18); }
 .num.is-open { background: var(--wp--preset--color--primary); color: var(--wp--preset--color--contrast); }
 .num--static { border-bottom-color: rgba(255, 255, 255, 0.35); color: var(--wp--preset--color--base); font-weight: 600; cursor: default; }
-.deal__hint { display: block; margin-top: 10px; font-size: 13px; letter-spacing: 0; color: rgba(255, 255, 255, 0.45); }
+.deal__hint { display: block; margin-top: 10px; font-size: 13px; letter-spacing: 0; color: rgba(255, 255, 255, 0.62); }
 .num-pop { position: absolute; z-index: 5; width: 260px; padding: 14px 16px 12px; border-radius: 14px; background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); box-shadow: var(--wp--custom--shadow--float); animation: fade-in .2s ease; }
 .num-pop label { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 500; }
 .num-pop output { font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -1308,8 +1310,13 @@ legend { padding: 0; }
 /* lightbox */
 .lightbox { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: 100vh; max-height: 100dvh; margin: 0; padding: 0; border: 0; background: rgba(10, 10, 10, 0.97); color: var(--wp--preset--color--base); }
 .lightbox::backdrop { background: transparent; }
-.lightbox__stage { position: absolute; inset: 64px 88px 112px; display: flex; align-items: center; justify-content: center; touch-action: pan-y; }
-.lightbox__img { max-width: 100%; max-height: 100%; border-radius: 16px; object-fit: contain; animation: fade-in .35s ease; }
+.lightbox__stage { position: absolute; inset: 64px 88px 112px; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
+.lightbox__img { max-width: 100%; max-height: 100%; border-radius: 16px; object-fit: contain; animation: fade-in .35s ease; transition: transform .3s cubic-bezier(.22, 1, .36, 1), border-radius .3s ease; will-change: transform; user-select: none; -webkit-user-drag: none; }
+.lightbox__img.is-moving { transition: none; }
+.lightbox__img.is-zoomed { border-radius: 0; cursor: grab; }
+.lightbox__img.is-zoomed.is-moving { cursor: grabbing; }
+.lightbox__hint { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.5); white-space: nowrap; transition: opacity .4s ease; }
+.lightbox.has-zoomed .lightbox__hint { opacity: 0; }
 .lightbox__close, .lightbox__arrow {
 	position: absolute; display: inline-flex; align-items: center; justify-content: center;
 	border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 50%; background: transparent; color: var(--wp--preset--color--base); cursor: pointer;
@@ -1798,13 +1805,13 @@ legend { padding: 0; }
 @media (prefers-reduced-motion: no-preference) {
 	@keyframes arrive { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 	@keyframes arrive-fade { from { opacity: 0; } to { opacity: 1; } }
-	.site-header { animation: arrive-fade .7s ease .1s backwards; }
-	.hero__media { animation: arrive-fade 1.1s ease backwards; }
-	.hero .tags { animation: arrive .8s cubic-bezier(.22, 1, .36, 1) .25s backwards; }
-	.hero__title { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .35s backwards; }
-	.hero__lede { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .5s backwards; }
-	.search-wrap { animation: arrive 1s cubic-bezier(.22, 1, .36, 1) .6s backwards; }
-	.partners { animation: arrive-fade .8s ease .9s backwards; }
+	@keyframes arrive-rise { from { transform: translateY(16px); } to { transform: none; } } /* no fade: a faded-in element is not counted as painted until its animation ends, which held the largest paint to 1.3s */
+	.site-header { animation: arrive-fade .6s ease backwards; }
+	.hero .tags { animation: arrive .7s cubic-bezier(.22, 1, .36, 1) .08s backwards; }
+	.hero__title { animation: arrive-rise .7s cubic-bezier(.22, 1, .36, 1) backwards; }
+	.hero__lede { animation: arrive .8s cubic-bezier(.22, 1, .36, 1) .24s backwards; }
+	.search-wrap { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .34s backwards; }
+	.partners { animation: arrive-fade .7s ease .55s backwards; }
 	.listing-intro__title, .listing-intro__lede, .filters-bar { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .2s backwards; }
 	.listing-intro__lede { animation-delay: .35s; }
 	.filters-bar { animation-delay: .5s; }

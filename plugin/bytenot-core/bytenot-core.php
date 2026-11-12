@@ -3,7 +3,7 @@
  * Plugin Name:       Bytenot Core
  * Plugin URI:        https://github.com/akvanaparthy/Bytenot-RealEstate
  * Description:       Real-estate data layer: listings (projects, apartments, properties), localities, advisors and lead capture. Companion plugin for the Bytenot Estate theme.
- * Version:           0.6.0
+ * Version:           0.7.0
  * Requires at least: 7.1
  * Requires PHP:      8.1
  * Author:            Bytenot
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BYTENOT_CORE_VERSION', '0.6.0' );
+define( 'BYTENOT_CORE_VERSION', '0.7.0' );
 define( 'BYTENOT_CORE_FILE', __FILE__ );
 define( 'BYTENOT_CORE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BYTENOT_CORE_URL', plugin_dir_url( __FILE__ ) );
