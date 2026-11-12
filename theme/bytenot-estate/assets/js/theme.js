@@ -167,6 +167,40 @@
 		toastTimer = setTimeout(() => { toast.hidden = true; }, 6000);
 	};
 	const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+	/* the lead forms' own feedback: a field that fails goes red and shakes, the button shows it is sending,
+	   and the thanks is drawn where the fields were, with a way back */
+	const SVG = 'http://www.w3.org/2000/svg';
+	const validate = (form) => {
+		$$('.is-invalid', form).forEach((w) => w.classList.remove('is-invalid'));
+		const bad = $$('input, select, textarea', form).filter((el) => !el.validity.valid);
+		if (!bad.length) return true;
+		void form.offsetWidth; // the shake restarts on every try
+		bad.forEach((el) => { (el.closest('label') || el.parentElement).classList.add('is-invalid'); el.setAttribute('aria-invalid', 'true'); });
+		bad[0].reportValidity();
+		return false;
+	};
+	const formDone = (form, html) => {
+		let panel = $('.form-done', form);
+		if (!panel) {
+			panel = document.createElement('div'); panel.className = 'form-done'; panel.setAttribute('role', 'status'); panel.tabIndex = -1;
+			const svg = document.createElementNS(SVG, 'svg'); svg.setAttribute('viewBox', '0 0 52 52'); svg.setAttribute('aria-hidden', 'true'); svg.classList.add('form-done__check');
+			const ring = document.createElementNS(SVG, 'circle'); ring.setAttribute('cx', '26'); ring.setAttribute('cy', '26'); ring.setAttribute('r', '24');
+			const tick = document.createElementNS(SVG, 'path'); tick.setAttribute('d', 'M15 27l8 8 15-16');
+			svg.append(ring, tick);
+			const text = document.createElement('p'); text.className = 'form-done__text';
+			const again = document.createElement('button'); again.type = 'button'; again.className = 'form-done__again'; again.textContent = T.again || '';
+			again.addEventListener('click', () => { form.classList.remove('is-done'); $('input:not([type="hidden"]), textarea', form)?.focus(); });
+			panel.append(svg, text, again);
+			form.append(panel);
+		}
+		$('.form-done__text', panel).innerHTML = html;
+		form.classList.add('is-done');
+		panel.focus({ preventScroll: true });
+	};
+	$$('[data-lead]').forEach((form) => form.addEventListener('input', (e) => {
+		const el = e.target;
+		if (el.validity?.valid) { el.closest('.is-invalid')?.classList.remove('is-invalid'); el.removeAttribute('aria-invalid'); }
+	}));
 	const postLead = async (form, extra) => {
 		const f = new FormData(form);
 		const payload = {
@@ -183,6 +217,48 @@
 			return payload;
 		} finally { form.classList.remove('is-busy'); }
 	};
+
+	/* photos fade in and sharpen as they arrive; ones already in the cache show at once */
+	const FADE = '.card__img, .chapter__img, .t-card__photo, .team__fig img, .strip__track img, .rail__thumb';
+	const fadeIn = (root = document) => $$(FADE, root).forEach((img) => {
+		if (img.dataset.fade) return;
+		img.dataset.fade = '1';
+		if (reduced || (img.complete && img.naturalWidth)) return;
+		img.classList.add('is-fade');
+		const done = () => img.classList.add('is-loaded');
+		img.addEventListener('load', done, { once: true });
+		img.addEventListener('error', done, { once: true });
+	});
+	fadeIn();
+
+	/* a desktop cannot dial: a click on a phone link copies the number instead; an email link copies too, then opens as usual */
+	if (matchMedia('(pointer: fine)').matches && navigator.clipboard) {
+		document.addEventListener('click', (e) => {
+			const a = e.target.closest('a[href^="tel:"], a[href^="mailto:"]');
+			if (!a) return;
+			const href = a.getAttribute('href');
+			const tel = href.startsWith('tel:');
+			const value = tel ? (/\d/.test(a.textContent) ? a.textContent.trim() : href.slice(4)) : decodeURIComponent(href.slice(7).split('?')[0]);
+			if (tel) e.preventDefault();
+			navigator.clipboard.writeText(value).then(() => showToast(`${esc(tel ? T.copiedPhone : T.copiedEmail)} <b>${esc(value)}</b>`)).catch(() => {});
+		});
+	}
+
+	/* gold buttons lean toward the pointer a little (mouse only) */
+	if (matchMedia('(hover: hover) and (pointer: fine)').matches && !reduced) {
+		document.addEventListener('pointermove', (e) => {
+			const b = e.target.closest('.btn--accent');
+			if (!b) return;
+			const r = b.getBoundingClientRect();
+			b.classList.add('is-magnet');
+			b.style.setProperty('--mx', `${((e.clientX - r.left) / r.width - 0.5) * 8}px`);
+			b.style.setProperty('--my', `${((e.clientY - r.top) / r.height - 0.5) * 6}px`);
+		}, { passive: true });
+		document.addEventListener('pointerout', (e) => {
+			const b = e.target.closest('.btn--accent');
+			if (b && !b.contains(e.relatedTarget)) { b.classList.remove('is-magnet'); b.style.removeProperty('--mx'); b.style.removeProperty('--my'); }
+		});
+	}
 
 	/* ------------------------------------------------------------------
 	 * Search: hero tags prefill the form; submit drops empty fields.
@@ -203,6 +279,27 @@
 			typeField.addEventListener('change', () => {
 				$$('.tag').forEach((t) => t.classList.toggle('is-active', t.dataset.type === typeField.value));
 			});
+		}
+		/* the gold pill slides between the filter chips instead of jumping */
+		const chips = $('.filters', form);
+		if (chips) {
+			const hl = document.createElement('i'); hl.className = 'filters__hl'; hl.setAttribute('aria-hidden', 'true');
+			chips.append(hl);
+			let placed = false;
+			const place = () => {
+				const on = $('.chip input:checked', chips)?.parentElement;
+				if (!on) return;
+				if (!placed) hl.style.transition = 'none';
+				chips.style.setProperty('--hl-x', `${on.offsetLeft}px`);
+				chips.style.setProperty('--hl-y', `${on.offsetTop}px`);
+				chips.style.setProperty('--hl-w', `${on.offsetWidth}px`);
+				chips.style.setProperty('--hl-h', `${on.offsetHeight}px`);
+				if (!placed) { void hl.offsetWidth; hl.style.transition = ''; placed = true; chips.classList.add('is-placed'); }
+			};
+			place();
+			document.fonts?.ready.then(place);
+			addEventListener('resize', place);
+			chips.addEventListener('change', place);
 		}
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
@@ -391,6 +488,39 @@
 		next.addEventListener('click', () => go(1));
 		window.addEventListener('resize', update);
 		update();
+
+		/* autoplay: the next card every few seconds, back to the first after the last; paused while the
+		   track is hovered, focused or out of view, and off for good once someone swipes it on a phone */
+		let auto = 0, hold = false, inView = false, swiped = false;
+		const stopAuto = () => { clearTimeout(auto); auto = 0; };
+		const startAuto = () => {
+			stopAuto();
+			if (reduced || hold || swiped || !inView || document.hidden) return;
+			auto = setTimeout(() => { if (next.disabled) index = -1; go(1); startAuto(); }, 5000);
+		};
+		prev.addEventListener('click', startAuto);
+		next.addEventListener('click', startAuto);
+		tTrack.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hold = true; stopAuto(); } });
+		tTrack.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hold = false; startAuto(); } });
+		tTrack.addEventListener('focusin', () => { hold = true; stopAuto(); });
+		tTrack.addEventListener('focusout', (e) => { if (!tTrack.contains(e.relatedTarget)) { hold = false; startAuto(); } });
+		tTrack.addEventListener('touchstart', () => { swiped = true; stopAuto(); }, { passive: true });
+		document.addEventListener('visibilitychange', () => (document.hidden ? stopAuto() : startAuto()));
+		if ('IntersectionObserver' in window) new IntersectionObserver((en) => { inView = en[0].isIntersecting; inView ? startAuto() : stopAuto(); }, { threshold: 0.4 }).observe(tTrack);
+		else { inView = true; startAuto(); }
+
+		/* a mouse can drag the track; the cards snap once it lets go */
+		let drag = null;
+		tTrack.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse' && e.button === 0) { drag = { x: e.clientX, left: tTrack.scrollLeft, moved: false }; tTrack.setPointerCapture(e.pointerId); } });
+		tTrack.addEventListener('pointermove', (e) => {
+			if (!drag) return;
+			const dx = e.clientX - drag.x;
+			if (!drag.moved && Math.abs(dx) > 6) { drag.moved = true; tTrack.classList.add('is-dragging'); tTrack.style.scrollSnapType = 'none'; }
+			if (drag.moved) tTrack.scrollLeft = drag.left - dx;
+		});
+		const endDrag = () => { if (drag?.moved) { tTrack.classList.remove('is-dragging'); tTrack.style.scrollSnapType = ''; } drag = null; };
+		tTrack.addEventListener('pointerup', endDrag);
+		tTrack.addEventListener('pointercancel', endDrag);
 	}
 
 	/* ------------------------------------------------------------------
@@ -412,6 +542,8 @@
 		card.addEventListener('focusout', (e) => { if (!card.contains(e.relatedTarget)) card.classList.remove('is-open'); });
 	});
 
+	$$('[data-live-cards]').forEach(liveCards); // cards outside the listing page (the not-found page)
+
 	/* ------------------------------------------------------------------
 	 * Properties listing: filters read/write the URL so results are
 	 * shareable; the full set comes from the JSON island.
@@ -426,6 +558,15 @@
 		const count = $('[data-results-count]');
 		const empty = $('[data-results-empty]');
 		const more = $('[data-load-more]');
+		let shownCount = null;
+		const tickCount = (n) => { // the count rolls to its new value instead of jumping
+			const paint = (v) => { count.textContent = fmt(v === 1 ? T.result : T.results, v); };
+			if (shownCount === null || reduced || shownCount === n) { shownCount = n; paint(n); return; }
+			const from = shownCount, t0 = performance.now();
+			shownCount = n;
+			const step = (now) => { const k = Math.min(1, (now - t0) / 420); paint(Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(step); };
+			requestAnimationFrame(step);
+		};
 		const tpl = $('#card-template');
 		let shown = PAGE;
 
@@ -474,6 +615,7 @@
 			$$('[data-icon]', el).forEach((ic) => { ic.hidden = ic.dataset.icon !== (p.kind === 'project' ? 'units' : 'bath'); });
 			$('.card__price', el).textContent = p.priceText;
 			liveCards(el);
+			fadeIn(el);
 			return el;
 		};
 		let first = true;
@@ -481,6 +623,7 @@
 			const f = current();
 			const list = filtered();
 			const keep = new Set();
+			const before = first || reduced ? null : new Map(Array.from(cardsEl.children).map((el) => [el, el.getBoundingClientRect()])); // where each card was, so it can glide to where it ends up
 			list.slice(0, shown).forEach((p, i) => {
 				let el = nodes.get(p.id);
 				if (!el) { el = build(p); nodes.set(p.id, el); }
@@ -490,9 +633,16 @@
 				if (entering) { el.classList.add('is-entering'); el.addEventListener('animationend', () => el.classList.remove('is-entering'), { once: true }); }
 			});
 			Array.from(cardsEl.children).forEach((el) => { if (!keep.has(el)) el.remove(); });
+			if (before) Array.from(cardsEl.children).forEach((el) => {
+				const was = before.get(el);
+				if (!was) return;
+				const now = el.getBoundingClientRect();
+				const dx = was.left - now.left, dy = was.top - now.top;
+				if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+			});
 			if (first) { liveCards(cardsEl); first = false; }
 			label.textContent = `${(f.type && CFG.types?.[f.type]) || T.allListings}${f.location && CFG.locations?.[f.location] ? fmt(T.in, CFG.locations[f.location]) : ''}${f.intent === 'for-rent' ? T.forRent : ''}`;
-			count.textContent = fmt(list.length === 1 ? T.result : T.results, list.length);
+			tickCount(list.length);
 			empty.hidden = list.length > 0;
 			more.hidden = list.length <= shown;
 			$$('select', form).forEach((sel) => sel.classList.toggle('is-set', !!sel.value));
@@ -655,13 +805,33 @@
 				if (allBtn) allBtn.dataset.openPhoto = String(cur);
 				const nx = slides[(cur + 1) % slides.length]; if (nx.loading === 'lazy') nx.loading = 'eager'; // the next one is ready before it is asked for
 			};
-			$('[data-ph-prev]', ph)?.addEventListener('click', () => go(cur - 1));
-			$('[data-ph-next]', ph)?.addEventListener('click', () => go(cur + 1));
-			ph.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') go(cur + 1); else if (e.key === 'ArrowLeft') go(cur - 1); });
+			/* autoplay: the next photo every few seconds while the opening is in view and nothing hovers or focuses it;
+			   the line under the photo counts down to it. Any press or swipe restarts the wait */
+			const bar = $('[data-ph-bar]', ph);
+			const WAIT = 6500;
+			let timer = 0, held = false, seen = true;
+			const stop = () => { clearTimeout(timer); timer = 0; bar?.classList.remove('is-running'); };
+			const start = () => {
+				stop();
+				if (reduced || held || !seen || document.hidden) return;
+				if (bar) { void bar.offsetWidth; bar.classList.add('is-running'); }
+				timer = setTimeout(() => goStart(cur + 1), WAIT);
+			};
+			const goStart = (k) => { go(k); start(); };
+			ph.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { held = true; stop(); } });
+			ph.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { held = false; start(); } });
+			ph.addEventListener('focusin', () => { held = true; stop(); });
+			ph.addEventListener('focusout', (e) => { if (!ph.contains(e.relatedTarget)) { held = false; start(); } });
+			document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+			if ('IntersectionObserver' in window) new IntersectionObserver((en) => { seen = en[0].isIntersecting; seen ? start() : stop(); }, { threshold: 0.3 }).observe(ph);
+			else start();
+			$('[data-ph-prev]', ph)?.addEventListener('click', () => goStart(cur - 1));
+			$('[data-ph-next]', ph)?.addEventListener('click', () => goStart(cur + 1));
+			ph.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') goStart(cur + 1); else if (e.key === 'ArrowLeft') goStart(cur - 1); });
 			const media = $('.ph__media', ph);
 			let sx = null, sy = 0;
 			media.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } }, { passive: true });
-			media.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40 && Math.abs(e.clientX - sx) > Math.abs(e.clientY - sy)) go(e.clientX < sx ? cur + 1 : cur - 1); sx = null; }, { passive: true });
+			media.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40 && Math.abs(e.clientX - sx) > Math.abs(e.clientY - sy)) goStart(e.clientX < sx ? cur + 1 : cur - 1); sx = null; }, { passive: true });
 		}
 
 		/* --- chapters --- */
@@ -933,10 +1103,10 @@
 		const enq = $('[data-enquire]');
 		enq.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			if (!enq.reportValidity()) return;
+			if (!validate(enq)) return;
 			try {
 				const payload = await postLead(enq, { form: 'visit', listing_id: P.id });
-				showToast(fmt(T.thanksVisit, esc(payload.name.split(' ')[0]), esc(P.first), `<b>${esc(P.title)}</b>`));
+				formDone(enq, fmt(T.thanksVisit, esc(payload.name.split(' ')[0]), esc(P.first), `<b>${esc(P.title)}</b>`));
 				enq.reset();
 			} catch (err) { showToast(esc(err.message)); }
 		});
@@ -1002,10 +1172,10 @@
 
 		inquiry.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			if (!inquiry.reportValidity()) return;
+			if (!validate(inquiry)) return;
 			try {
 				const payload = await postLead(inquiry, { form: 'inquiry' });
-				showToast(fmt(T.thanks, esc(payload.name.split(' ')[0])));
+				formDone(inquiry, fmt(T.thanks, esc(payload.name.split(' ')[0])));
 				inquiry.reset();
 			} catch (err) { showToast(esc(err.message)); }
 		});

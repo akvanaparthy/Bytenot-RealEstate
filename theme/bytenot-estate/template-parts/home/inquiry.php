@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 			<div class="inquiry__glass">
 				<p class="inquiry__glass-text"><?php echo bytenot_inline( bytenot_mod( 'inquiry_glass' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 			</div>
-			<form class="inquiry__form" method="post" action="<?php echo esc_url( rest_url( 'bytenot/v1/leads' ) ); ?>" data-inquiry data-lead="inquiry">
+			<form class="inquiry__form" method="post" novalidate action="<?php echo esc_url( rest_url( 'bytenot/v1/leads' ) ); ?>" data-inquiry data-lead="inquiry">
 				<p class="inquiry__lede"><?php echo esc_html( bytenot_mod( 'inquiry_lede' ) ); ?></p>
 				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Name', 'bytenot-estate' ); ?></span><input class="uf__input" type="text" name="name" placeholder="<?php esc_attr_e( 'Your name', 'bytenot-estate' ); ?>" autocomplete="name" required></label>
 				<label class="uf"><span class="uf__label"><?php esc_html_e( 'Email', 'bytenot-estate' ); ?></span><input class="uf__input" type="email" name="email" placeholder="<?php esc_attr_e( 'you@example.com', 'bytenot-estate' ); ?>" autocomplete="email" required></label>

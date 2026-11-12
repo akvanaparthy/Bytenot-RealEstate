@@ -172,3 +172,9 @@ right (photo, "Book a visit", the advisor's first name) that opens to call,
 WhatsApp and Book a visit; on phones it opens upward. Chosen by the owner from
 three prototypes in `design/prototype/listing-chrome.html` (the spine from C,
 the chip from B).
+
+## 2026-11-11 — Lead form feedback
+
+**Decision.** The lead forms validate themselves (`novalidate`): a failed field
+shakes and goes red, the button spins while sending, and the thanks is drawn in
+place of the fields with a "Send another enquiry" link.

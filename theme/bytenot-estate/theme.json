@@ -25,6 +25,7 @@
 				{ "slug": "surface", "name": "Surface", "color": "#f3f6f7" },
 				{ "slug": "input", "name": "Input", "color": "#f0f3f5" },
 				{ "slug": "border", "name": "Border", "color": "#dfe6ea" },
+				{ "slug": "danger", "name": "Error", "color": "#b42318" },
 				{ "slug": "glass", "name": "Glass", "color": "rgba(255, 255, 255, 0.22)" }
 			],
 			"gradients": [

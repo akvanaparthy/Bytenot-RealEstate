@@ -64,6 +64,7 @@ $bytenot_links      = array_filter(
 				<?php echo esc_html( sprintf( /* translators: %d: photos. */ _n( 'All %d photo', 'All %d photos', $bytenot_n, 'bytenot-estate' ), $bytenot_n ) ); ?>
 			</button>
 		</div>
+		<span class="ph__bar" aria-hidden="true" data-ph-bar><i></i></span>
 		<?php endif; ?>
 	</div>
 	<div class="container ph__inner">
@@ -388,7 +389,7 @@ $bytenot_links      = array_filter(
 			<h2 class="visit__title" id="visit-title"><?php esc_html_e( 'Walk through it this week.', 'bytenot-estate' ); ?></h2>
 			<p class="visit__lede"><?php echo esc_html( sprintf( /* translators: %s: advisor first name. */ __( 'Free, no obligation. %s confirms within the hour and meets you at the gate.', 'bytenot-estate' ), $bytenot_d['advisor']['first'] ) ); ?></p>
 		</div>
-		<form class="visit__form" method="post" action="<?php echo esc_url( rest_url( 'bytenot/v1/leads' ) ); ?>" data-enquire data-lead="visit" data-listing-id="<?php echo (int) $bytenot_d['id']; ?>">
+		<form class="visit__form" method="post" novalidate action="<?php echo esc_url( rest_url( 'bytenot/v1/leads' ) ); ?>" data-enquire data-lead="visit" data-listing-id="<?php echo (int) $bytenot_d['id']; ?>">
 			<label class="vf">
 				<span class="vf__label"><?php esc_html_e( 'Your name', 'bytenot-estate' ); ?></span>
 				<input class="vf__input" type="text" name="name" autocomplete="name" required>

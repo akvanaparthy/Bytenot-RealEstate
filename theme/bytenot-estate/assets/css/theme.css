@@ -76,7 +76,8 @@ legend { padding: 0; }
 	background: var(--wp--preset--gradient--brand-gold);
 	opacity: 0; transition: opacity .45s cubic-bezier(.22, 1, .36, 1);
 }
-.btn--accent { transition: transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s cubic-bezier(.22, 1, .36, 1), color var(--wp--custom--transition); }
+.btn--accent { translate: var(--mx, 0px) var(--my, 0px); transition: translate .55s cubic-bezier(.22, 1, .36, 1), transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s cubic-bezier(.22, 1, .36, 1), color var(--wp--custom--transition); }
+.btn--accent.is-magnet { transition: translate .12s ease-out, transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s cubic-bezier(.22, 1, .36, 1), color var(--wp--custom--transition); }
 .btn--accent .icon, .btn--accent svg { transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
 @media (hover: hover) {
 	.btn--accent:hover::before { opacity: 1; }
@@ -256,6 +257,18 @@ legend { padding: 0; }
 	transform: translateX(100%); transition: transform .3s ease;
 }
 .drawer.is-open .drawer__panel { transform: none; }
+.drawer__nav li, .drawer__cta { opacity: 0; translate: 18px 0; }
+.drawer__nav li { transition: opacity .35s ease, translate .5s cubic-bezier(.22, 1, .36, 1); }
+.drawer__cta { transition: opacity .35s ease, translate .5s cubic-bezier(.22, 1, .36, 1), background-color .35s ease, color .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .45s cubic-bezier(.22, 1, .36, 1); }
+.drawer.is-open .drawer__nav li, .drawer.is-open .drawer__cta { opacity: 1; translate: 0 0; }
+.drawer.is-open .drawer__nav li:nth-child(1) { transition-delay: .1s; }
+.drawer.is-open .drawer__nav li:nth-child(2) { transition-delay: .16s; }
+.drawer.is-open .drawer__nav li:nth-child(3) { transition-delay: .22s; }
+.drawer.is-open .drawer__nav li:nth-child(4) { transition-delay: .28s; }
+.drawer.is-open .drawer__nav li:nth-child(5) { transition-delay: .34s; }
+.drawer.is-open .drawer__nav li:nth-child(n+6) { transition-delay: .4s; }
+.drawer.is-open .drawer__cta { transition-delay: .46s; }
+@media (prefers-reduced-motion: reduce) { .drawer__nav li, .drawer__cta { opacity: 1; translate: 0 0; transition: none; } }
 .drawer__head { display: flex; align-items: center; justify-content: space-between; height: 44px; }
 .drawer__close { display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: var(--wp--preset--color--surface); }
 .drawer__nav a { display: flex; align-items: center; height: 52px; padding: 0 12px; border-radius: 12px; font-size: 18px; }
@@ -664,6 +677,7 @@ legend { padding: 0; }
 	scrollbar-width: none;
 }
 .t-track::-webkit-scrollbar { display: none; }
+@media (hover: hover) and (pointer: fine) { .t-track { cursor: grab; } .t-track.is-dragging { cursor: grabbing; user-select: none; } }
 .t-track:focus-visible { outline-offset: -3px; }
 .t-card {
 	flex: 0 0 880px; scroll-snap-align: start;
@@ -788,7 +802,7 @@ legend { padding: 0; }
 }
 .card__media {
 	position: absolute; top: var(--card-f); left: var(--card-f); right: var(--card-f); bottom: var(--card-bb);
-	display: block; overflow: hidden;
+	display: block; overflow: hidden; background: var(--wp--preset--color--surface);
 	border-radius: var(--card-rtl) var(--card-r) var(--card-r) var(--card-r);
 }
 .card__img, .card__media::after {
@@ -796,7 +810,9 @@ legend { padding: 0; }
 	top: calc(-1 * var(--card-f)); left: calc(-1 * var(--card-f));
 	width: calc(100% + 2 * var(--card-f)); height: calc(100% + var(--card-f) + var(--card-bb));
 }
-.card__img { max-width: none; object-fit: cover; object-position: center 40%; } /* max-width: none overrides the global img reset */
+.card__img { max-width: none; object-fit: cover; object-position: center 40%; transition: scale 1.6s cubic-bezier(.22, 1, .36, 1); } /* max-width: none overrides the global img reset */
+.card__img.is-fade { transition: scale 1.6s cubic-bezier(.22, 1, .36, 1), opacity .5s ease, filter .9s ease; }
+.card.is-open .card__img { scale: 1.07; }
 .card__media::after { /* gradient that makes the overlaid text readable */
 	content: "";
 	background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.45) 62%, rgba(0, 0, 0, 0.78) 100%);
@@ -812,7 +828,8 @@ legend { padding: 0; }
 .card__tab::before, .card__tab::after { content: ""; position: absolute; width: 14px; height: 14px; }
 .card__tab::before { top: 0; left: 100%; background: radial-gradient(circle at 100% 100%, transparent 13.5px, var(--wp--preset--color--base) 14px); }
 .card__tab::after { top: 100%; left: 0; background: radial-gradient(circle at 100% 100%, transparent 13.5px, var(--wp--preset--color--base) 14px); }
-.card__status { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp--preset--color--ink-soft); }
+.card__status { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp--preset--color--ink-soft); transition: color .3s ease; }
+.card.is-open .card__status { color: var(--wp--preset--color--primary-dark); }
 .card__body {
 	position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
 	display: flex; flex-direction: column; min-height: var(--card-body); padding: 14px 16px 16px; /* grows with its content; the script copies the measured height back into --card-body so the photo window follows */
@@ -980,6 +997,8 @@ legend { padding: 0; }
 .faq__item.is-open .faq__a { grid-template-rows: 1fr; }
 .faq__a-inner { overflow: hidden; }
 .faq__item:not(.is-open) .faq__a-inner { visibility: hidden; transition: visibility 0s .45s; }
+.faq__a-inner > * { opacity: 0; translate: 0 -6px; transition: opacity .3s ease, translate .4s cubic-bezier(.22, 1, .36, 1); }
+.faq__item.is-open .faq__a-inner > * { opacity: 1; translate: 0 0; transition-delay: .12s; }
 .faq__a p { max-width: 58ch; margin-top: -8px; padding: 0 28px 26px; font-size: 15px; line-height: 1.65; color: var(--wp--preset--color--ink-soft); }
 
 /* ---------- inquiry ---------- */
@@ -1010,7 +1029,7 @@ legend { padding: 0; }
 }
 .inquiry__glass-text { font-size: 38px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; }
 .inquiry__glass-text em { display: block; }
-.inquiry__form { padding: 40px; border-radius: 20px; background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25); }
+.inquiry__form { position: relative; padding: 40px; border-radius: 20px; background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25); }
 .inquiry__lede { font-size: 16px; line-height: 1.55; color: var(--wp--preset--color--ink-soft); }
 .uf { display: block; margin-top: 22px; }
 .uf__label { display: block; margin-bottom: 2px; font-size: 13px; font-weight: 600; color: var(--wp--preset--color--ink); }
@@ -1021,7 +1040,7 @@ legend { padding: 0; }
 }
 .uf__input::placeholder { color: var(--wp--preset--color--ink-muted); }
 .uf__input:hover { border-bottom-color: var(--wp--preset--color--ink-muted); }
-.uf__input:focus-visible { outline: 0; border-bottom-color: var(--wp--preset--color--contrast); box-shadow: 0 1px 0 var(--wp--preset--color--contrast); }
+.uf__input:focus-visible { outline: 0; border-bottom-color: var(--wp--preset--color--contrast); box-shadow: 0 1px 0 var(--wp--preset--color--contrast), 0 14px 22px -16px rgba(20, 47, 63, 0.55); }
 .uf__input--area { height: auto; min-height: 88px; padding: 8px 0 6px; line-height: 1.5; resize: vertical; }
 .uf__phone { display: flex; align-items: stretch; gap: 10px; }
 .uf__prefix { display: flex; align-items: center; height: 40px; border-bottom: 1px solid var(--wp--preset--color--border); font-size: 16px; font-weight: 600; }
@@ -1068,6 +1087,15 @@ legend { padding: 0; }
 .ph__media { position: absolute; inset: var(--frame); border-radius: var(--wp--custom--radius--card); overflow: hidden; background: var(--wp--preset--color--contrast); }
 .ph__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; transform: scale(var(--ph-zoom, 1.08)); opacity: 0; transition: opacity .7s cubic-bezier(.22, 1, .36, 1); }
 .ph__img.is-on { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes ph-drift { from { translate: 0 0; scale: 1; } to { translate: -1.5% 1%; scale: 1.06; } }
+	.ph__img { animation: ph-drift 11s ease-in-out infinite alternate paused; } /* paused, not removed, so a photo leaving never snaps back */
+	.ph__img.is-on { animation-play-state: running; }
+}
+.ph__bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; height: 3px; background: rgba(255, 255, 255, 0.18); pointer-events: none; }
+.ph__bar i { display: block; height: 100%; background: var(--wp--preset--gradient--brand-gold); transform-origin: left; transform: scaleX(0); }
+.ph__bar.is-running i { animation: ph-wait 6.5s linear forwards; }
+@keyframes ph-wait { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .ph__tools { position: absolute; right: 24px; bottom: 24px; z-index: 3; display: flex; align-items: center; gap: 8px; }
 .ph__count { margin: 0 4px; font-size: 13px; font-variant-numeric: tabular-nums; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.9); }
 .ph__arrow { border-color: rgba(255, 255, 255, 0.4); background: rgba(255, 255, 255, 0.14); color: var(--wp--preset--color--base); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
@@ -1258,11 +1286,11 @@ legend { padding: 0; }
 .visit .fig-label { color: var(--wp--preset--color--primary); }
 .visit__title { margin-top: 10px; font-size: clamp(32px, 3.4vw, 48px); font-weight: 600; line-height: 1.05; letter-spacing: -0.025em; }
 .visit__lede { margin-top: 14px; max-width: 38ch; font-size: 15px; line-height: 1.6; color: rgba(255, 255, 255, 0.78); }
-.visit__form { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr auto; gap: 12px; align-items: end; }
+.visit__form { position: relative; display: grid; grid-template-columns: 1.2fr 1.2fr 1fr auto; gap: 12px; align-items: end; }
 .vf { display: block; min-width: 0; }
 .vf__label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
-.vf__input { width: 100%; height: 52px; padding: 0 16px; border: 0; border-radius: var(--wp--custom--radius--input); background: rgba(255, 255, 255, 0.94); color: var(--wp--preset--color--ink); font: inherit; font-size: 15px; }
-.vf__input:focus-visible { outline: 2px solid var(--wp--preset--color--primary); outline-offset: 1px; }
+.vf__input { width: 100%; height: 52px; padding: 0 16px; border: 0; border-radius: var(--wp--custom--radius--input); background: rgba(255, 255, 255, 0.94); color: var(--wp--preset--color--ink); font: inherit; font-size: 15px; transition: box-shadow .35s ease; }
+.vf__input:focus-visible { outline: 2px solid var(--wp--preset--color--primary); outline-offset: 1px; box-shadow: 0 0 0 7px rgba(249, 235, 178, 0.22); }
 .vf__phone { display: flex; }
 .vf__prefix { display: flex; align-items: center; padding: 0 12px; border-radius: var(--wp--custom--radius--input) 0 0 var(--wp--custom--radius--input); background: rgba(255, 255, 255, 0.72); color: var(--wp--preset--color--ink); font-size: 14px; font-weight: 600; }
 .vf__phone .vf__input { border-radius: 0 var(--wp--custom--radius--input) var(--wp--custom--radius--input) 0; }
@@ -1764,24 +1792,153 @@ legend { padding: 0; }
 
 /* ------------------------------------------------------------------
    Arrival: the header settles in and the hero's lines and search card
-   rise one after another on the first paint. Off under reduced motion.
+   rise one after another on the first paint. Off under reduced motion. The fill is backwards only: a
+   filled transform would keep a stacking context and trap the filter dropdowns under the cards.
    ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
 	@keyframes arrive { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 	@keyframes arrive-fade { from { opacity: 0; } to { opacity: 1; } }
-	.site-header { animation: arrive-fade .7s ease .1s both; }
-	.hero__media { animation: arrive-fade 1.1s ease both; }
-	.hero .tags { animation: arrive .8s cubic-bezier(.22, 1, .36, 1) .25s both; }
-	.hero__title { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .35s both; }
-	.hero__lede { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .5s both; }
-	.search-wrap { animation: arrive 1s cubic-bezier(.22, 1, .36, 1) .6s both; }
-	.partners { animation: arrive-fade .8s ease .9s both; }
-	.listing-intro__title, .listing-intro__lede, .filters-bar { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .2s both; }
+	.site-header { animation: arrive-fade .7s ease .1s backwards; }
+	.hero__media { animation: arrive-fade 1.1s ease backwards; }
+	.hero .tags { animation: arrive .8s cubic-bezier(.22, 1, .36, 1) .25s backwards; }
+	.hero__title { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .35s backwards; }
+	.hero__lede { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .5s backwards; }
+	.search-wrap { animation: arrive 1s cubic-bezier(.22, 1, .36, 1) .6s backwards; }
+	.partners { animation: arrive-fade .8s ease .9s backwards; }
+	.listing-intro__title, .listing-intro__lede, .filters-bar { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .2s backwards; }
 	.listing-intro__lede { animation-delay: .35s; }
 	.filters-bar { animation-delay: .5s; }
-	.ph__inner > :not(.ph__price) { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .3s both; }
+	.ph__inner > :not(.ph__price) { animation: arrive .9s cubic-bezier(.22, 1, .36, 1) .3s backwards; }
 	.ph__inner > :nth-child(2):not(.ph__price) { animation-delay: .4s; }
 	.ph__inner > :nth-child(3):not(.ph__price) { animation-delay: .5s; }
 	.ph__inner > :nth-child(n+4):not(.ph__price) { animation-delay: .6s; }
-	.ph__price { animation: arrive-fade .9s ease .7s both; } /* it is placed with a transform, so it only fades */
+	.ph__price { animation: arrive-fade .9s ease .7s backwards; } /* it is placed with a transform, so it only fades */
 }
+
+/* ------------------------------------------------------------------
+   Lead form feedback: a failed field shakes and goes red, the button
+   spins while sending, the thanks is drawn where the fields were.
+   ------------------------------------------------------------------ */
+@keyframes field-shake { 20% { translate: -5px 0; } 40% { translate: 4px 0; } 60% { translate: -3px 0; } 80% { translate: 2px 0; } }
+.is-invalid { animation: field-shake .45s cubic-bezier(.36, .07, .19, .97); }
+.uf.is-invalid .uf__input { border-bottom-color: var(--wp--preset--color--danger); box-shadow: 0 1px 0 var(--wp--preset--color--danger); }
+.vf.is-invalid .vf__input { outline: 2px solid var(--wp--preset--color--danger); outline-offset: 1px; }
+.consent.is-invalid input { outline: 2px solid var(--wp--preset--color--danger); outline-offset: 2px; border-radius: 3px; }
+.is-busy [type="submit"] { position: relative; pointer-events: none; color: transparent; }
+.is-busy [type="submit"]::after { content: ""; position: absolute; inset: 0; margin: auto; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--spin, var(--wp--preset--color--base)); border-right-color: transparent; animation: spin .7s linear infinite; }
+.btn--accent { --spin: var(--wp--preset--color--contrast); }
+@keyframes spin { to { rotate: 1turn; } }
+.is-done > :not(.form-done) { visibility: hidden; }
+.form-done { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; border-radius: inherit; text-align: center; background: var(--wp--preset--color--base); color: var(--wp--preset--color--ink); opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility 0s .4s; }
+.is-done .form-done { opacity: 1; visibility: visible; transition: opacity .4s ease; }
+.form-done:focus { outline: 0; }
+.form-done__check { width: 64px; height: 64px; fill: none; stroke: var(--wp--preset--color--primary-dark); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.form-done__check circle { stroke-dasharray: 151; stroke-dashoffset: 151; }
+.form-done__check path { stroke-dasharray: 36; stroke-dashoffset: 36; }
+.is-done .form-done__check circle { animation: draw .7s cubic-bezier(.22, 1, .36, 1) .15s forwards; }
+.is-done .form-done__check path { animation: draw .45s cubic-bezier(.22, 1, .36, 1) .75s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.form-done__text { max-width: 34ch; margin: 0; font-size: 17px; line-height: 1.5; }
+.form-done__again { padding: 0; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--wp--preset--color--primary-dark); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.visit__form .form-done { background: var(--wp--preset--color--contrast); color: var(--wp--preset--color--base); }
+.visit__form .form-done__check { stroke: var(--wp--preset--color--primary); }
+.visit__form .form-done__again { color: var(--wp--preset--color--primary); }
+@media (prefers-reduced-motion: reduce) {
+	.is-invalid { animation: none; }
+	.form-done__check circle, .form-done__check path { stroke-dashoffset: 0; animation: none; }
+}
+
+/* ------------------------------------------------------------------
+   Photos fade in and sharpen as they load.
+   ------------------------------------------------------------------ */
+.is-fade { opacity: 0; filter: blur(12px); transition: opacity .5s ease, filter .9s ease; }
+.is-fade.is-loaded { opacity: 1; filter: blur(0); }
+
+/* ------------------------------------------------------------------
+   Hero filter chips: one gold pill slides between them.
+   ------------------------------------------------------------------ */
+.filters { position: relative; }
+.filters__hl {
+	position: absolute; left: 0; top: 0; z-index: 0; width: var(--hl-w, 0px); height: var(--hl-h, 40px);
+	translate: var(--hl-x, 0px) var(--hl-y, 0px); border-radius: var(--wp--custom--radius--pill);
+	background: var(--wp--preset--color--primary); opacity: 0; pointer-events: none;
+	transition: translate .45s cubic-bezier(.22, 1, .36, 1), width .45s cubic-bezier(.22, 1, .36, 1), opacity .2s ease;
+}
+.filters.is-placed .filters__hl { opacity: 1; }
+.filters.is-placed .chip { z-index: 1; }
+.filters.is-placed .chip span, .filters.is-placed .chip input:checked + span { background: transparent; }
+.filters.is-placed .chip input:checked + span { border-color: transparent; }
+@media (prefers-reduced-motion: reduce) { .filters__hl { transition: none; } }
+
+/* ------------------------------------------------------------------
+   Not found. Two faces. Under a listings path: "404" set across the page,
+   each numeral filled with a listing's photo and linking to it. Anywhere
+   else: an architect's floor plan with one room that was never built.
+   ------------------------------------------------------------------ */
+.lost__title { margin: 0; font-size: clamp(38px, 4.6vw, 64px); font-weight: 600; line-height: 1.02; letter-spacing: -0.03em; text-wrap: balance; }
+.lost__lede { max-width: 46ch; margin: 20px 0 0; font-size: 17px; line-height: 1.55; color: var(--wp--preset--color--ink-soft); }
+.lost__path { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin: 18px 0 0; font-size: 14px; color: var(--wp--preset--color--ink-muted); font-variant-numeric: tabular-nums; }
+.lost__path b { font-weight: 500; color: var(--wp--preset--color--ink-soft); overflow-wrap: anywhere; }
+.lost__actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px 28px; margin-top: 32px; }
+.lost__search { display: flex; flex: 1 1 300px; max-width: 440px; align-items: flex-end; gap: 12px; }
+.lost__field { flex: 1 1 auto; margin: 0; }
+
+/* the plan */
+.lost__plan { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px 72px; align-items: center; min-height: calc(100vh - var(--wp--custom--header--height)); padding-block: 40px 72px; }
+.lost__sheet { margin: 0; color: var(--wp--preset--color--contrast); }
+.lost__sheet svg { display: block; width: 100%; height: auto; overflow: visible; }
+.lost__wall { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linejoin: miter; }
+.lost__thin { fill: none; stroke: currentColor; stroke-width: 1; opacity: .55; }
+.lost__door { fill: none; stroke: currentColor; stroke-width: 1; }
+.lost__gap { stroke: var(--wp--preset--color--base); stroke-width: 4; }
+.lost__dim { fill: none; stroke: var(--wp--preset--color--ink-muted); stroke-width: .8; }
+.lost__north { fill: currentColor; }
+.lost__label { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; fill: var(--wp--preset--color--ink-soft); }
+.lost__size { font-size: 10px; fill: var(--wp--preset--color--ink-muted); }
+.lost__missing { fill: rgba(249, 235, 178, 0.22); stroke: var(--wp--preset--color--primary-dark); stroke-width: 2; stroke-dasharray: 8 6; animation: lost-march 1.6s linear infinite; }
+.lost__missing-num { font-size: 64px; font-weight: 700; letter-spacing: -.04em; fill: var(--wp--preset--color--primary-dark); opacity: .9; }
+.lost__missing-label { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; fill: var(--wp--preset--color--primary-dark); }
+@keyframes lost-march { to { stroke-dashoffset: -28; } }
+.lost__note { display: flex; justify-content: space-between; gap: 16px; margin-top: 14px; font-size: 12px; letter-spacing: .04em; color: var(--wp--preset--color--ink-muted); }
+
+/* the three homes */
+.lost__homes { padding-block: 24px 80px; }
+.lost__nums { display: flex; justify-content: space-between; align-items: flex-end; line-height: .82; }
+.lost__num {
+	position: relative; display: block; font-size: clamp(100px, 27vw, 420px); font-weight: 800; letter-spacing: -.07em; text-decoration: none;
+	color: transparent; -webkit-text-fill-color: transparent; background-size: cover; background-position: 50% 50%; -webkit-background-clip: text; background-clip: text;
+	transition: transform .6s cubic-bezier(.22, 1, .36, 1);
+}
+.lost__num:nth-child(2) { animation-delay: -5s; } .lost__num:nth-child(3) { animation-delay: -9s; }
+.lost__num:focus-visible { outline-offset: 12px; }
+.lost__cap { position: absolute; left: 50%; bottom: -34px; white-space: nowrap; font-size: 13px; font-weight: 500; letter-spacing: 0; line-height: 1.3; color: var(--wp--preset--color--ink-soft); -webkit-text-fill-color: var(--wp--preset--color--ink-soft); opacity: 0; translate: -50% 6px; transition: opacity .3s ease, translate .4s cubic-bezier(.22, 1, .36, 1); }
+.lost__cap b { display: block; font-weight: 600; color: var(--wp--preset--color--ink); -webkit-text-fill-color: var(--wp--preset--color--ink); }
+.lost__num:hover .lost__cap, .lost__num:focus-visible .lost__cap { opacity: 1; translate: -50% 0; }
+@media (hover: hover) { .lost__num:hover { transform: translateY(-10px); } }
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes lost-drift { from { background-position: 40% 45%; } to { background-position: 60% 55%; } }
+	.lost__num { animation: lost-drift 14s ease-in-out infinite alternate; }
+}
+.lost__under { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px 64px; align-items: end; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--wp--preset--color--border); }
+.lost__under .lost__actions { margin-top: 0; }
+
+/* what is on the market, under the plan */
+.lost__more { padding-block: 24px 24px; }
+.lost__head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--wp--preset--color--border); }
+.lost__h2 { margin: 0; font-size: clamp(24px, 2.4vw, 32px); font-weight: 600; letter-spacing: -0.02em; }
+.lost__more .cards { margin-top: 36px; }
+@media (max-width: 900px) {
+	.lost__plan { grid-template-columns: 1fr; gap: 40px; min-height: 0; padding-block: 24px 56px; }
+	.lost__under { grid-template-columns: 1fr; margin-top: 40px; }
+	.lost__cap { display: none; }
+	.lost__homes { padding-block: 8px 56px; }
+}
+@media (max-width: 720px) {
+	.lost__actions { gap: 18px; }
+	.lost__num { font-size: 30vw; }
+	.lost__actions .btn--accent { width: 100%; justify-content: center; }
+	.lost__search { flex-basis: 100%; max-width: none; }
+	.lost__more { padding-block: 40px 16px; }
+	.lost__head { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { .lost__missing { animation: none; } }

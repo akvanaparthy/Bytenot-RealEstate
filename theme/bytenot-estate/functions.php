@@ -131,6 +131,9 @@ function bytenot_config() {
 			'save'          => __( 'Save', 'bytenot-estate' ),
 			'savedLabel'    => __( 'Saved', 'bytenot-estate' ),
 			'copied'        => __( 'Link copied to your clipboard.', 'bytenot-estate' ),
+			'again'         => __( 'Send another enquiry', 'bytenot-estate' ),
+			'copiedPhone'   => __( 'Phone number copied.', 'bytenot-estate' ),
+			'copiedEmail'   => __( 'Email address copied.', 'bytenot-estate' ),
 			/* translators: %s: years. */
 			'years'         => __( '%s years', 'bytenot-estate' ),
 			'tenure'        => __( 'Tenure', 'bytenot-estate' ),
