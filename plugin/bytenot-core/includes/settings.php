@@ -26,6 +26,7 @@ function bytenot_core_default_settings() {
 		'email_to'     => get_option( 'admin_email' ),
 		'rera_number'  => '',
 		'rera_state'   => '',
+		'og_image'     => 0,       // attachment shown when a page is shared; listing pages use their own photo
 		'emi_rate'     => 8.5,
 		'emi_years'    => 20,
 		'emi_ltv'      => 80,
@@ -78,7 +79,7 @@ function bytenot_core_sanitize_settings( $input ) {
 	$input   = (array) $input;
 	$current = wp_parse_args( (array) get_option( 'bytenot_core_settings', array() ), bytenot_core_default_settings() );
 	$screens = array(
-		'bytenot-setup'        => array( 'kinds', 'intents', 'budget_bands', 'phone', 'phone_prefix', 'whatsapp', 'email_to', 'rera_number', 'rera_state', 'emi_rate', 'emi_years', 'emi_ltv', 'stamp_duty' ),
+		'bytenot-setup'        => array( 'kinds', 'intents', 'budget_bands', 'phone', 'phone_prefix', 'whatsapp', 'email_to', 'rera_number', 'rera_state', 'og_image', 'emi_rate', 'emi_years', 'emi_ltv', 'stamp_duty' ),
 		'bytenot-integrations' => array( 'crm_provider', 'crm_webhook' ),
 		'bytenot-tools'        => array( 'preview_mode', 'preview_code' ),
 	);
@@ -121,6 +122,7 @@ function bytenot_core_sanitize_settings( $input ) {
 		'email_to'     => sanitize_email( (string) $raw['email_to'] ),
 		'rera_number'  => sanitize_text_field( (string) $raw['rera_number'] ),
 		'rera_state'   => sanitize_text_field( (string) $raw['rera_state'] ),
+		'og_image'     => absint( $raw['og_image'] ?? 0 ),
 		'emi_rate'     => (float) ( $raw['emi_rate'] ?: 8.5 ),
 		'emi_years'    => absint( $raw['emi_years'] ?: 20 ),
 		'emi_ltv'      => min( 100, absint( $raw['emi_ltv'] ?: 80 ) ),

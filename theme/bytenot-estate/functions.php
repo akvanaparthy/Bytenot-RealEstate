@@ -72,6 +72,23 @@ function bytenot_assets() {
 add_action( 'wp_enqueue_scripts', 'bytenot_assets' );
 
 /**
+ * The line a shared link shows for the home page: the hero lede, not the one-word tagline.
+ *
+ * @param string $desc Description from the plugin.
+ * @return string
+ */
+function bytenot_social_description( $desc ) {
+	if ( is_front_page() ) {
+		$lede = trim( wp_strip_all_tags( (string) bytenot_mod( 'hero_lede' ) ) );
+		if ( '' !== $lede ) {
+			return $lede;
+		}
+	}
+	return $desc;
+}
+add_filter( 'bytenot_core_social_description', 'bytenot_social_description' );
+
+/**
  * The body font is fetched before the stylesheet asks for it, so the first paint uses it.
  *
  * @param array $resources Preload entries.

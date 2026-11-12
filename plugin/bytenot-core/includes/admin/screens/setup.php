@@ -58,6 +58,7 @@ function bytenot_core_screen_setup() {
 			. bytenot_core_field( __( 'WhatsApp', 'bytenot-core' ), bytenot_core_input( 'whatsapp', $s, 'text', array( 'placeholder' => '919876543210', 'inputmode' => 'numeric' ) ), __( 'Digits only, with the country code.', 'bytenot-core' ), 'bn-whatsapp' )
 			. bytenot_core_field( __( 'Send leads to', 'bytenot-core' ), bytenot_core_input( 'email_to', $s, 'email' ), __( 'Every enquiry is emailed here immediately.', 'bytenot-core' ), 'bn-email_to' )
 			. bytenot_core_field( __( 'Agency RERA', 'bytenot-core' ), '<div class="bn-row">' . bytenot_core_input( 'rera_number', $s, 'text', array( 'placeholder' => __( 'Number', 'bytenot-core' ) ) ) . bytenot_core_input( 'rera_state', $s, 'text', array( 'placeholder' => __( 'Authority, e.g. Telangana RERA', 'bytenot-core' ) ) ) . '</div>', '', 'bn-rera_number' )
+			. bytenot_core_field( __( 'Sharing image', 'bytenot-core' ), bytenot_core_image_picker( 'og_image', $s ), __( 'Shown when a page is shared on WhatsApp, LinkedIn or X. 1200 × 630 pixels works best. Listing pages share their own photo instead.', 'bytenot-core' ) )
 		);
 		bytenot_core_card(
 			__( 'Numbers on listing pages', 'bytenot-core' ),

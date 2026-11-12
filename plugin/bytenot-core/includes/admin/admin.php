@@ -109,9 +109,10 @@ function bytenot_core_admin_assets( $hook ) {
 	if ( ! $ours ) {
 		return;
 	}
+	wp_enqueue_media(); // the sharing image picker on the setup screen
 	wp_enqueue_style( 'bytenot-core-admin', BYTENOT_CORE_URL . 'assets/admin/admin.css', array(), BYTENOT_CORE_VERSION );
 	wp_enqueue_script( 'bytenot-core-admin', BYTENOT_CORE_URL . 'assets/admin/admin.js', array(), BYTENOT_CORE_VERSION, true );
-	wp_localize_script( 'bytenot-core-admin', 'bytenotAdmin', array( 'copied' => __( 'Copied', 'bytenot-core' ), 'confirmDemo' => __( 'Reinstall the demo content? Demo records are updated in place; your own records and settings are untouched.', 'bytenot-core' ) ) );
+	wp_localize_script( 'bytenot-core-admin', 'bytenotAdmin', array( 'copied' => __( 'Copied', 'bytenot-core' ), 'choose' => __( 'Choose image', 'bytenot-core' ), 'none' => __( 'None', 'bytenot-core' ), 'confirmDemo' => __( 'Reinstall the demo content? Demo records are updated in place; your own records and settings are untouched.', 'bytenot-core' ) ) );
 }
 add_action( 'admin_enqueue_scripts', 'bytenot_core_admin_assets' );
 
@@ -309,6 +310,25 @@ function bytenot_core_field( $label, $control, $help = '', $for = '' ) {
 	return '<div class="bn-field">'
 		. ( $for ? '<label class="bn-field__label" for="' . esc_attr( $for ) . '">' : '<span class="bn-field__label">' ) . esc_html( $label ) . ( $for ? '</label>' : '</span>' )
 		. '<div class="bn-field__control">' . $control . ( $help ? '<p class="bn-field__help">' . esc_html( $help ) . '</p>' : '' ) . '</div></div>';
+}
+
+/**
+ * A single-image picker bound to the settings array: a thumbnail, the file name, choose and remove.
+ *
+ * @param string $key Setting key holding an attachment ID.
+ * @param array  $s   Settings.
+ * @return string
+ */
+function bytenot_core_image_picker( $key, $s ) {
+	$id  = absint( $s[ $key ] ?? 0 );
+	$src = $id ? wp_get_attachment_image_url( $id, 'medium' ) : '';
+	return '<div class="bn-media bn-media--image" data-media="image">'
+		. '<input type="hidden" name="bytenot_core_settings[' . esc_attr( $key ) . ']" value="' . ( $id ? $id : '' ) . '">'
+		. '<img class="bn-media__thumb" src="' . esc_url( $src ) . '" alt=""' . ( $src ? '' : ' hidden' ) . '>'
+		. '<span class="bn-media__name">' . ( $id ? esc_html( basename( (string) get_attached_file( $id ) ) ) : '<span class="bn-muted">' . esc_html__( 'None', 'bytenot-core' ) . '</span>' ) . '</span> '
+		. '<button type="button" class="bn-btn bn-btn--ghost bn-media__add">' . esc_html__( 'Choose', 'bytenot-core' ) . '</button> '
+		. '<button type="button" class="bn-btn bn-btn--ghost bn-media__clear"' . ( $id ? '' : ' hidden' ) . '>' . esc_html__( 'Remove', 'bytenot-core' ) . '</button>'
+		. '</div>';
 }
 
 /**

@@ -52,6 +52,64 @@ function bytenot_core_jsonld() {
 add_action( 'wp_head', 'bytenot_core_jsonld', 20 );
 
 /**
+ * Description, Open Graph and Twitter card tags, so a shared link shows a title, a line and a
+ * picture. A listing shares its own photo; everything else shares the sharing image from
+ * Setup, or the site icon. Skipped when an SEO plugin is active.
+ */
+function bytenot_core_social_meta() {
+	if ( bytenot_core_seo_plugin_active() || is_404() || is_search() ) {
+		return;
+	}
+	$single = is_singular();
+	$title  = wp_get_document_title();
+	$desc   = $single ? wp_strip_all_tags( get_the_excerpt() ) : '';
+	if ( ! $desc ) {
+		$desc = get_bloginfo( 'description' );
+	}
+	/**
+	 * The line a shared link shows. The theme supplies its own on the home page.
+	 *
+	 * @param string $desc Description so far.
+	 */
+	$desc = apply_filters( 'bytenot_core_social_description', $desc );
+	$desc = wp_trim_words( trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $desc ) ) ), 28, '…' );
+	$url   = $single ? get_permalink() : ( is_front_page() ? home_url( '/' ) : home_url( '/' . ltrim( (string) ( $GLOBALS['wp']->request ?? '' ), '/' ) ) );
+	$image = $single && has_post_thumbnail() ? get_post_thumbnail_id() : 0;
+	$size  = $image ? 'large' : 'full';
+	if ( ! $image ) {
+		$image = absint( bytenot_core_setting( 'og_image' ) );
+	}
+	if ( ! $image ) {
+		$image = (int) get_option( 'site_icon' );
+	}
+	$src = $image ? wp_get_attachment_image_src( $image, $size ) : null;
+	$tag = static function ( $attr, $key, $value ) {
+		if ( '' !== (string) $value ) {
+			echo '<meta ' . $attr . '="' . esc_attr( $key ) . '" content="' . esc_attr( $value ) . '">' . "\n";
+		}
+	};
+	$tag( 'name', 'description', $desc );
+	$tag( 'property', 'og:type', is_singular( 'post' ) ? 'article' : 'website' );
+	$tag( 'property', 'og:site_name', get_bloginfo( 'name' ) );
+	$tag( 'property', 'og:locale', get_locale() );
+	$tag( 'property', 'og:title', $title );
+	$tag( 'property', 'og:description', $desc );
+	$tag( 'property', 'og:url', $url );
+	if ( $src ) {
+		$tag( 'property', 'og:image', $src[0] );
+		$tag( 'property', 'og:image:width', (int) $src[1] );
+		$tag( 'property', 'og:image:height', (int) $src[2] );
+	}
+	$tag( 'name', 'twitter:card', $src ? 'summary_large_image' : 'summary' );
+	$tag( 'name', 'twitter:title', $title );
+	$tag( 'name', 'twitter:description', $desc );
+	if ( $src ) {
+		$tag( 'name', 'twitter:image', $src[0] );
+	}
+}
+add_action( 'wp_head', 'bytenot_core_social_meta', 5 );
+
+/**
  * The RealEstateListing node for one listing.
  *
  * @param int $id Listing ID.

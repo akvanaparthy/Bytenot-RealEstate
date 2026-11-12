@@ -193,6 +193,15 @@ function bytenot_core_install_demo_partners() {
 			update_option( 'site_icon', $icon );
 		}
 	}
+	// the sharing image, if none is set
+	$settings = (array) get_option( 'bytenot_core_settings', array() );
+	if ( empty( $settings['og_image'] ) ) {
+		$og = bytenot_core_demo_image( 'og.png' );
+		if ( $og ) {
+			$settings['og_image'] = $og;
+			update_option( 'bytenot_core_settings', $settings );
+		}
+	}
 	remove_filter( 'upload_mimes', $svg_mimes );
 	remove_filter( 'wp_check_filetype_and_ext', $svg_check, 10 );
 	return $ids;
