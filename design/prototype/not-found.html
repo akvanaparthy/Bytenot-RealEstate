@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" data-v="a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found — three directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<style>
+/* ======================================================================
+   Prototype-only styles over style.css. html[data-v="a|b|c"] switches
+   the three directions; ?v=b in the URL picks one on load.
+   ====================================================================== */
+html:not([data-v="a"]) .v-a, html:not([data-v="b"]) .v-b, html:not([data-v="c"]) .v-c { display: none !important; }
+body { background: #fff; }
+main { padding-top: var(--wp--custom--header--height, 86px); }
+
+.sw { position: fixed; right: 18px; bottom: 18px; z-index: 90; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(20, 47, 63, 0.92); color: #fff; font-size: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.sw button { width: 38px; height: 32px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; font: inherit; font-weight: 700; cursor: pointer; }
+.sw button[aria-pressed="true"] { background: var(--wp--preset--color--primary); color: var(--wp--preset--color--contrast); }
+.sw__name { align-self: center; padding: 0 12px 0 10px; font-weight: 500; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.75); white-space: nowrap; }
+@media (max-width: 720px) { .sw__name { display: none; } }
+
+/* shared copy block */
+.nf-copy h1 { margin: 0; font-size: clamp(38px, 4.6vw, 64px); font-weight: 600; line-height: 1.02; letter-spacing: -0.03em; text-wrap: balance; }
+.nf-copy p { max-width: 46ch; margin: 20px 0 0; font-size: 17px; line-height: 1.55; }
+.nf-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px 28px; margin-top: 32px; }
+.nf-search { display: flex; flex: 1 1 300px; max-width: 440px; align-items: flex-end; gap: 12px; }
+.nf-search .uf { flex: 1 1 auto; margin: 0; }
+.nf-path { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin-top: 18px; font-size: 14px; color: var(--wp--preset--color--ink-muted); font-variant-numeric: tabular-nums; }
+.nf-path b { font-weight: 500; color: var(--wp--preset--color--ink-soft); overflow-wrap: anywhere; }
+html[data-v="c"] .sw { bottom: auto; top: 100px; }
+
+/* ======================================================================
+   A — NOT ON THE PLAN
+   A floor plan drawn in the site's hairlines; the room that was asked for
+   is a dashed gold outline that never got built.
+   ====================================================================== */
+.a-wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px 72px; align-items: center; min-height: calc(100vh - 86px); padding-block: 40px 72px; }
+.a-plan { position: relative; }
+.a-plan svg { display: block; width: 100%; height: auto; overflow: visible; }
+.a-plan .wall { fill: none; stroke: var(--wp--preset--color--contrast); stroke-width: 2.6; stroke-linejoin: miter; }
+.a-plan .thin { fill: none; stroke: var(--wp--preset--color--contrast); stroke-width: 1; opacity: .55; }
+.a-plan .dim { fill: none; stroke: var(--wp--preset--color--ink-muted); stroke-width: .8; }
+.a-plan .door { fill: none; stroke: var(--wp--preset--color--contrast); stroke-width: 1; }
+.a-plan .label { font: 500 11px/1 "Figtree", sans-serif; letter-spacing: .08em; text-transform: uppercase; fill: var(--wp--preset--color--ink-soft); }
+.a-plan .size { font: 400 10px/1 "Figtree", sans-serif; fill: var(--wp--preset--color--ink-muted); }
+.a-plan .grid { fill: url(#grid); }
+.a-plan .missing { fill: rgba(249, 235, 178, 0.22); stroke: var(--wp--preset--color--primary-dark); stroke-width: 2; stroke-dasharray: 8 6; animation: march 1.6s linear infinite; }
+.a-plan .missing-label { font: 600 12px/1 "Figtree", sans-serif; letter-spacing: .1em; text-transform: uppercase; fill: var(--wp--preset--color--primary-dark); }
+.a-plan .missing-num { font: 700 64px/1 "Figtree", sans-serif; letter-spacing: -.04em; fill: var(--wp--preset--color--primary-dark); opacity: .9; }
+@keyframes march { to { stroke-dashoffset: -28; } }
+.a-note { margin-top: 14px; font-size: 12px; letter-spacing: .04em; color: var(--wp--preset--color--ink-muted); display: flex; justify-content: space-between; }
+@media (max-width: 900px) { .a-wrap { grid-template-columns: 1fr; gap: 40px; min-height: 0; padding-top: 24px; } }
+@media (prefers-reduced-motion: reduce) { .a-plan .missing { animation: none; } }
+
+/* ======================================================================
+   B — THE THREE THAT ARE HERE INSTEAD
+   "404" set at the width of the page, each numeral filled with a listing
+   photo. Each numeral is a link to that listing; its name appears below.
+   ====================================================================== */
+.b-wrap { padding-block: 24px 80px; }
+.b-nums { display: flex; justify-content: space-between; align-items: flex-end; gap: 0; line-height: .82; }
+.b-num { position: relative; display: block; font-size: clamp(110px, 27vw, 420px); font-weight: 800; letter-spacing: -.07em; text-decoration: none; color: transparent; -webkit-text-fill-color: transparent; background-size: cover; background-position: 50% 50%; -webkit-background-clip: text; background-clip: text; transition: transform .6s cubic-bezier(.22, 1, .36, 1); animation: drift 14s ease-in-out infinite alternate; }
+.b-num:nth-child(2) { animation-delay: -5s; } .b-num:nth-child(3) { animation-delay: -9s; }
+@keyframes drift { from { background-position: 40% 45%; } to { background-position: 60% 55%; } }
+.b-num:hover { transform: translateY(-10px); }
+.b-cap { position: absolute; left: 50%; bottom: -34px; translate: -50% 0; white-space: nowrap; font-size: 13px; font-weight: 500; letter-spacing: 0; line-height: 1.3; color: var(--wp--preset--color--ink-soft); -webkit-text-fill-color: var(--wp--preset--color--ink-soft); opacity: 0; translate: -50% 6px; transition: opacity .3s ease, translate .4s cubic-bezier(.22, 1, .36, 1); }
+.b-cap b { display: block; font-weight: 600; color: var(--wp--preset--color--ink); -webkit-text-fill-color: var(--wp--preset--color--ink); }
+.b-num:hover .b-cap, .b-num:focus-visible .b-cap { opacity: 1; translate: -50% 0; }
+.b-under { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px 64px; align-items: end; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--wp--preset--color--border); }
+.b-hint { font-size: 14px; color: var(--wp--preset--color--ink-muted); }
+@media (max-width: 900px) { .b-under { grid-template-columns: 1fr; } .b-cap { display: none; } .b-wrap { padding-top: 8px; } }
+@media (prefers-reduced-motion: reduce) { .b-num { animation: none; } }
+
+/* ======================================================================
+   C — NOT ON OUR MAP
+   A navy plate with a drawn map. The pin for the address asked for drops
+   on an empty plot; the three gold pins are real listings.
+   ====================================================================== */
+.c-plate { position: relative; overflow: hidden; margin: 12px 12px 0; border-radius: var(--wp--custom--radius--card); background: var(--wp--preset--color--contrast); color: #fff; min-height: calc(100vh - 110px); }
+.c-map { position: absolute; inset: 0; }
+.c-map svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.c-map .road { fill: none; stroke: rgba(255,255,255,.16); stroke-linecap: round; }
+.c-map .road--main { stroke-width: 9; } .c-map .road--mid { stroke-width: 4; } .c-map .road--lane { stroke-width: 1.5; stroke: rgba(255,255,255,.1); }
+.c-map .block { fill: rgba(255,255,255,.035); }
+.c-map .water { fill: rgba(249, 235, 178, 0.06); }
+.c-map .plot { fill: none; stroke: var(--wp--preset--color--primary); stroke-width: 1.5; stroke-dasharray: 6 5; opacity: .9; animation: march 1.6s linear infinite; }
+.c-copy { position: relative; z-index: 2; padding: 72px clamp(28px, 6vw, 96px) 64px; max-width: 640px; }
+.c-copy p { color: rgba(255,255,255,.78); }
+.c-copy .uf__label { color: rgba(255,255,255,.7); } .c-copy .uf__input { color: #fff; border-bottom-color: rgba(255,255,255,.35); } .c-copy .uf__input::placeholder { color: rgba(255,255,255,.45); }
+.c-copy .nf-path { color: rgba(255,255,255,.6); } .c-copy .nf-path b { color: rgba(255,255,255,.85); }
+.pin { position: absolute; z-index: 3; translate: -50% -100%; width: 28px; height: 36px; }
+.pin svg { display: block; width: 28px; height: 36px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.35)); }
+.pin--lost { animation: drop .9s cubic-bezier(.22, 1, .36, 1) .4s both; }
+.pin--lost::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 12px; height: 12px; border-radius: 50%; translate: -50% 0; border: 1.5px solid var(--wp--preset--color--primary); animation: ripple 2.4s ease-out 1.3s infinite; }
+@keyframes drop { from { translate: -50% calc(-100% - 60px); opacity: 0; } to { translate: -50% -100%; opacity: 1; } }
+@keyframes ripple { from { scale: 1; opacity: .9; } to { scale: 5; opacity: 0; } }
+.pin--home { cursor: pointer; }
+.pin--home .pin__card { position: absolute; left: 50%; bottom: calc(100% + 10px); z-index: 4; display: grid; grid-template-columns: 56px 1fr; gap: 10px; width: 230px; padding: 8px; border-radius: 14px; background: #fff; color: var(--wp--preset--color--ink); text-decoration: none; translate: -50% 6px; opacity: 0; pointer-events: none; box-shadow: 0 20px 40px rgba(0,0,0,.35); transition: opacity .25s ease, translate .35s cubic-bezier(.22, 1, .36, 1); }
+.pin--home:hover .pin__card, .pin--home:focus-within .pin__card { opacity: 1; translate: -50% 0; pointer-events: auto; }
+.pin__card img { width: 56px; height: 56px; object-fit: cover; border-radius: 9px; }
+.pin__card b { display: block; font-size: 13px; font-weight: 600; line-height: 1.25; }
+.pin__card span { display: block; margin-top: 2px; font-size: 12px; color: var(--wp--preset--color--ink-muted); }
+.pin__name { position: absolute; left: 50%; top: calc(100% + 4px); translate: -50% 0; white-space: nowrap; font-size: 11px; letter-spacing: .04em; color: rgba(255,255,255,.75); }
+.pin--lost .pin__name { color: var(--wp--preset--color--primary); font-weight: 600; }
+.c-legend { position: absolute; z-index: 2; right: clamp(20px, 4vw, 48px); bottom: 24px; display: flex; gap: 18px; font-size: 12px; color: rgba(255,255,255,.65); }
+.c-legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 50%; vertical-align: -1px; }
+@media (max-width: 900px) {
+	html[data-v="c"] .sw { top: auto; bottom: 18px; }
+	.c-plate { min-height: 0; }
+	.c-map { position: relative; height: 380px; }
+	.c-copy { padding: 48px 24px 24px; }
+	.c-legend { position: static; padding: 0 24px 24px; }
+	.pin__card { width: 200px; }
+}
+@media (prefers-reduced-motion: reduce) { .pin--lost { animation: none; } .pin--lost::after { display: none; } .c-map .plot { animation: none; } }
+
+.proto-foot { padding: 60px 0 120px; border-top: 1px solid var(--wp--preset--color--border); font-size: 13px; color: var(--wp--preset--color--ink-muted); }
+</style>
+</head>
+<body class="page--solid">
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header site-header--dark" id="site-header" data-header>
+	<div class="container site-header__inner">
+		<a class="brand" href="index.html" aria-label="Lavenor Realty, home">
+			<img class="brand__mark" src="assets/logo-mark.svg" alt="" width="42" height="26">
+			<span class="brand__text"><span class="brand__name">Lavenor</span><span class="brand__sub">Realty</span></span>
+		</a>
+		<nav class="nav" aria-label="Primary">
+			<ul class="nav__list"><li class="nav__hl" aria-hidden="true"></li>
+				<li><a class="nav__link" href="index.html">Home</a></li>
+				<li><a class="nav__link" href="index.html#about">About Us</a></li>
+				<li><a class="nav__link" href="properties.html">Projects</a></li>
+				<li><a class="nav__link" href="#contact">Contact Us</a></li>
+			</ul>
+		</nav>
+		<div class="site-header__right">
+			<a class="btn btn--accent btn--cta" href="#visit"><span class="btn__long">Talk to an advisor</span><span class="btn__short">Enquire</span></a>
+			<button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+		</div>
+	</div>
+</header>
+
+<div class="sw" role="group" aria-label="Direction">
+	<span class="sw__name" data-sw-name>A · Not on the plan</span>
+	<button type="button" data-sw="a" aria-pressed="true">A</button>
+	<button type="button" data-sw="b" aria-pressed="false">B</button>
+	<button type="button" data-sw="c" aria-pressed="false">C</button>
+</div>
+
+<main id="main">
+
+	<!-- ================= A ================= -->
+	<section class="container a-wrap v-a" aria-labelledby="a-title">
+		<div class="nf-copy">
+			<h1 id="a-title">This room isn't on the plan.</h1>
+			<p>The page you asked for was never built, or it has been sold and taken down. Everything we have on the market is drawn up and ready to walk through.</p>
+			<p class="nf-path">Asked for <b>lavenorrealty.local/projects/old-villa-that-sold/</b></p>
+			<div class="nf-actions">
+				<a class="btn btn--accent" href="properties.html">See all projects <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+				<form class="nf-search" role="search"><label class="uf"><span class="uf__label">Search</span><input class="uf__input" type="search" placeholder="Project or locality"></label><button class="btn btn--dark btn--sm" type="submit">Search</button></form>
+			</div>
+		</div>
+		<figure class="a-plan" aria-hidden="true">
+			<svg viewBox="-40 -40 720 540">
+				<defs>
+					<pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#142f3f" stroke-opacity=".07" stroke-width=".6"/></pattern>
+				</defs>
+				<rect class="grid" x="-40" y="-40" width="720" height="540"/>
+				<!-- dimension lines -->
+				<g class="dim"><path d="M0 -22H640M0 -27V-17M640 -27V-17M-22 0V440M-27 0H-17M-27 440H-17"/></g>
+				<text class="size" x="320" y="-30" text-anchor="middle">64' 0"</text>
+				<text class="size" x="-30" y="224" text-anchor="middle" transform="rotate(-90 -30 224)">44' 0"</text>
+				<!-- outer walls -->
+				<rect class="wall" x="0" y="0" width="640" height="440"/>
+				<!-- inner walls -->
+				<path class="wall" d="M300 0V240M300 160H460M460 0V240M0 240H400M260 240V440M400 240V440"/>
+				<!-- windows -->
+				<path class="thin" d="M60 -4H200M60 4H200M500 -4H600M500 4H600M-4 300V400M4 300V400M636 60V180M644 60V180"/>
+				<!-- doors -->
+				<path class="door" d="M300 60V110A50 50 0 0 1 250 60"/>
+				<path class="door" d="M460 60V110A50 50 0 0 0 510 60"/>
+				<path class="door" d="M120 240H170A50 50 0 0 1 120 290"/>
+				<path class="door" d="M330 160V210A50 50 0 0 1 380 160"/>
+				<path class="door" d="M260 300V350A50 50 0 0 1 310 300"/>
+				<path class="door" d="M400 420H350A50 50 0 0 1 400 370"/>
+				<!-- entrance -->
+				<path class="wall" d="M310 440H370" stroke="#fff" stroke-width="4"/>
+				<path class="door" d="M310 440V380A60 60 0 0 1 370 440" transform="translate(0 0)"/>
+				<!-- labels -->
+				<text class="label" x="150" y="118" text-anchor="middle">Living</text><text class="size" x="150" y="136" text-anchor="middle">18' × 14'</text>
+				<text class="label" x="380" y="76" text-anchor="middle">Kitchen</text><text class="size" x="380" y="94" text-anchor="middle">12' × 9'</text>
+				<text class="label" x="380" y="196" text-anchor="middle">Bath</text><text class="size" x="380" y="214" text-anchor="middle">8' × 6'</text>
+				<text class="label" x="550" y="118" text-anchor="middle">Bedroom</text><text class="size" x="550" y="136" text-anchor="middle">14' × 12'</text>
+				<text class="label" x="130" y="336" text-anchor="middle">Bedroom 2</text><text class="size" x="130" y="354" text-anchor="middle">13' × 12'</text>
+				<text class="label" x="330" y="330" text-anchor="middle">Passage</text>
+				<!-- the room that was asked for -->
+				<rect class="missing" x="400" y="240" width="240" height="200"/>
+				<text class="missing-num" x="520" y="356" text-anchor="middle">404</text>
+				<text class="missing-label" x="520" y="392" text-anchor="middle">Not built</text>
+				<!-- north arrow -->
+				<g transform="translate(615 -10)"><path d="M0 -14L6 6L0 2L-6 6Z" fill="#142f3f"/><text class="size" x="0" y="-18" text-anchor="middle">N</text></g>
+			</svg>
+			<figcaption class="a-note"><span>Sheet 1 of 1 · 1:100</span><span>Drawn from the address you asked for</span></figcaption>
+		</figure>
+	</section>
+
+	<!-- ================= B ================= -->
+	<section class="container b-wrap v-b" aria-labelledby="b-title">
+		<div class="b-nums" aria-label="Three homes on the market">
+			<a class="b-num" href="property.html" style="background-image:url(assets/p3.jpg)">4<span class="b-cap"><b>Rajapushpa Provincia</b>Kokapet · ₹1.2 – 2.9 Cr</span></a>
+			<a class="b-num" href="property.html" style="background-image:url(assets/p6.jpg)">0<span class="b-cap"><b>Aparna Zenon</b>Gachibowli · ₹1.35 – 2.1 Cr</span></a>
+			<a class="b-num" href="property.html" style="background-image:url(assets/p1.jpg)">4<span class="b-cap"><b>Jayabheri Orange County</b>Tellapur · ₹2.7 – 3.4 Cr</span></a>
+		</div>
+		<div class="b-under">
+			<div class="nf-copy">
+				<h1 id="b-title">Nothing lives at that address. These three do.</h1>
+				<p>The page may have been sold or the link mistyped. The numbers above are real homes on the market this week: point at one to see it, click to walk through.</p>
+				<p class="nf-path">Asked for <b>lavenorrealty.local/projects/old-villa-that-sold/</b></p>
+			</div>
+			<div>
+				<div class="nf-actions" style="margin-top:0">
+					<a class="btn btn--accent" href="properties.html">See all projects <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+					<form class="nf-search" role="search"><label class="uf"><span class="uf__label">Search</span><input class="uf__input" type="search" placeholder="Project or locality"></label><button class="btn btn--dark btn--sm" type="submit">Search</button></form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ================= C ================= -->
+	<section class="c-plate v-c" aria-labelledby="c-title">
+		<div class="c-map" aria-hidden="true">
+			<svg viewBox="0 0 1000 640" preserveAspectRatio="xMidYMid slice">
+				<path class="water" d="M0 520C140 480 220 560 360 520S600 430 760 470 920 560 1000 540V640H0Z"/>
+				<g class="block"><rect x="80" y="60" width="180" height="120" rx="6"/><rect x="300" y="40" width="140" height="150" rx="6"/><rect x="480" y="90" width="220" height="110" rx="6"/><rect x="760" y="40" width="160" height="200" rx="6"/><rect x="120" y="230" width="150" height="170" rx="6"/><rect x="320" y="240" width="200" height="140" rx="6"/><rect x="580" y="250" width="130" height="120" rx="6"/><rect x="750" y="290" width="200" height="130" rx="6"/></g>
+				<path class="road road--main" d="M-20 210H1020"/>
+				<path class="road road--main" d="M740 -20C720 200 760 420 700 660"/>
+				<path class="road road--mid" d="M280 -20V640M540 -20C560 180 520 400 560 660M-20 430C200 420 400 460 640 440S900 400 1020 420"/>
+				<path class="road road--lane" d="M100 -20V210M460 210V640M860 -20V210M380 430V640M-20 300H280M740 300H1020M20 60H280M620 60H740"/>
+				<rect class="plot" x="596" y="282" width="100" height="72" rx="4"/>
+			</svg>
+			<div class="pin pin--home" style="left:57%;top:27%"><a class="pin__card" href="property.html"><img src="assets/p3.jpg" alt=""><span><b>Rajapushpa Provincia</b><span>Kokapet · ₹1.2 – 2.9 Cr</span></span></a><svg viewBox="0 0 28 36"><path d="M14 35C14 35 3 21 3 13a11 11 0 0 1 22 0c0 8-11 22-11 22Z" fill="#f9ebb2" stroke="#897749"/><circle cx="14" cy="13" r="4.5" fill="#142f3f"/></svg><span class="pin__name">Kokapet</span></div>
+			<div class="pin pin--home" style="left:46%;top:82%"><a class="pin__card" href="property.html"><img src="assets/p6.jpg" alt=""><span><b>Aparna Zenon</b><span>Gachibowli · ₹1.35 – 2.1 Cr</span></span></a><svg viewBox="0 0 28 36"><path d="M14 35C14 35 3 21 3 13a11 11 0 0 1 22 0c0 8-11 22-11 22Z" fill="#f9ebb2" stroke="#897749"/><circle cx="14" cy="13" r="4.5" fill="#142f3f"/></svg><span class="pin__name">Gachibowli</span></div>
+			<div class="pin pin--home" style="left:84%;top:22%"><a class="pin__card" href="property.html"><img src="assets/p1.jpg" alt=""><span><b>Jayabheri Orange County</b><span>Tellapur · ₹2.7 – 3.4 Cr</span></span></a><svg viewBox="0 0 28 36"><path d="M14 35C14 35 3 21 3 13a11 11 0 0 1 22 0c0 8-11 22-11 22Z" fill="#f9ebb2" stroke="#897749"/><circle cx="14" cy="13" r="4.5" fill="#142f3f"/></svg><span class="pin__name">Tellapur</span></div>
+			<div class="pin pin--lost" style="left:64.6%;top:50%"><svg viewBox="0 0 28 36"><path d="M14 35C14 35 3 21 3 13a11 11 0 0 1 22 0c0 8-11 22-11 22Z" fill="#fff" stroke="#142f3f"/><circle cx="14" cy="13" r="4.5" fill="#142f3f"/></svg><span class="pin__name">/projects/old-villa-that-sold/</span></div>
+		</div>
+		<div class="c-copy nf-copy">
+			<h1 id="c-title">That address isn't on our map.</h1>
+			<p>The page may have been sold, moved or mistyped. The gold pins are homes on the market now: point at one to see it.</p>
+			<div class="nf-actions">
+				<a class="btn btn--accent" href="properties.html">See all projects <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+				<form class="nf-search" role="search"><label class="uf"><span class="uf__label">Search</span><input class="uf__input" type="search" placeholder="Project or locality"></label><button class="btn btn--light btn--sm" type="submit">Search</button></form>
+			</div>
+		</div>
+		<div class="c-legend" aria-hidden="true"><span><i style="background:#f9ebb2"></i>On the market</span><span><i style="background:#fff"></i>What you asked for</span></div>
+	</section>
+
+</main>
+
+<footer class="container proto-foot">Prototype · Lavenor Realty · the lead form and footer follow as on every page</footer>
+
+<script>
+const names = { a: 'A · Not on the plan', b: 'B · The three that are here', c: 'C · Not on our map' };
+const set = (v) => { document.documentElement.dataset.v = v; document.querySelectorAll('[data-sw]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sw === v))); document.querySelector('[data-sw-name]').textContent = names[v]; };
+set(new URLSearchParams(location.search).get('v') || 'a');
+document.querySelectorAll('[data-sw]').forEach((b) => b.addEventListener('click', () => set(b.dataset.sw)));
+</script>
+</body>
+</html>
